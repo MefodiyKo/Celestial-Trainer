@@ -331,6 +331,53 @@ function calcGyro() {
 
     </div>
 </div>
+function calcCompass() {
+
+    let t = parseFloat(document.getElementById("trueCompass").value);
+    let c = parseFloat(document.getElementById("compassBearing").value);
+
+    if (isNaN(t) || isNaN(c)) {
+        document.getElementById("compassResult").innerText =
+            "Enter both values";
+        return;
+    }
+
+    let error = t - c;
+
+    while (error > 180) error -= 360;
+    while (error < -180) error += 360;
+
+    let dir = error >= 0 ? "E" : "W";
+
+    document.getElementById("compassResult").innerText =
+        "Compass Error: " +
+        Math.abs(error).toFixed(1) +
+        "° " + dir;
+}
+
+function calcTotalError() {
+
+    let varValue =
+        parseFloat(document.getElementById("variation").value);
+
+    let devValue =
+        parseFloat(document.getElementById("deviation").value);
+
+    if (isNaN(varValue) || isNaN(devValue)) {
+        document.getElementById("totalErrorResult").innerText =
+            "Enter variation and deviation";
+        return;
+    }
+
+    let total = varValue + devValue;
+
+    let dir = total >= 0 ? "E" : "W";
+
+    document.getElementById("totalErrorResult").innerText =
+        "Total Error: " +
+        Math.abs(total).toFixed(1) +
+        "° " + dir;
+}
 </script>
 
 </body>
