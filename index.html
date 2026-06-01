@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v2.1</title>
+<title>Celestial Trainer v2.2</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
@@ -25,13 +25,14 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 .result{margin-top:15px;color:#9ee7ff;font-size:18px;line-height:1.7}
 .resultBox{border:1px solid #31506a;border-radius:8px;padding:10px;margin-top:8px}
 .small{font-size:13px;color:#ccc}
+hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Celestial Trainer v2.1</h2>
+<h2>Celestial Trainer v2.2</h2>
 <p>Nautical Almanac Style</p>
 </header>
 
@@ -82,15 +83,39 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 <button class="main" onclick="calculateSun()">Calculate Sun</button>
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
-
-<p class="small">GHA, Dec, LHA, Hc and Zn are calculated offline for training only.</p>
 </div>
 </div>
 
 <div id="observation" class="section">
 <div class="card">
-<h3>Compass Observation</h3>
-<p>Next step: Object, position, bearings, variation → Zn, gyro error, compass error, deviation.</p>
+<h3>Sun Compass Observation</h3>
+
+<p class="small">
+This page automatically uses the last Zn calculated in Almanac.
+</p>
+
+<div class="resultBox">
+True Bearing / Zn: <span id="obsZn">--</span>
+</div>
+
+<label>Gyro Bearing</label>
+<input id="obsGyroBearing" class="full" type="number" step="0.1">
+
+<label>Compass Bearing</label>
+<input id="obsCompassBearing" class="full" type="number" step="0.1">
+
+<label>Variation</label>
+<div class="row">
+<input id="obsVariationValue" class="boxMin" type="number" step="0.1">
+<select id="obsVariationDir" class="boxDir">
+<option>E</option>
+<option>W</option>
+</select>
+</div>
+
+<button class="main" onclick="calculateObservation()">Calculate Observation</button>
+
+<div class="result" id="observationResult">Calculate Sun in Almanac first.</div>
 </div>
 </div>
 
@@ -136,11 +161,13 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 <h3>Notes</h3>
 <p>This app is for training and educational purposes only.</p>
 <p>Not for official navigation.</p>
-<p>East errors are positive. West errors are negative.</p>
+<p>East error = positive. West error = negative.</p>
 </div>
 </div>
 
 <script>
+let lastSunData=null;
+
 function openTab(id,btn){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
@@ -175,10 +202,12 @@ let d=Math.floor(deg);
 let m=(deg-d)*60;
 return String(d).padStart(3,"0")+"° "+m.toFixed(1)+"'";
 }
+
 function formatBearing(deg){
 deg=norm360(deg);
 return deg.toFixed(1)+"°";
 }
+
 function formatAlt(deg){
 let sign=deg<0?"-":"";
 deg=Math.abs(deg);
@@ -210,13 +239,9 @@ function getCoord(degId,minId,dirId){
 let d=parseFloat(document.getElementById(degId).value);
 let m=parseFloat(document.getElementById(minId).value);
 let dir=document.getElementById(dirId).value;
-
 if(isNaN(d)||isNaN(m)) return null;
-
 let value=d+m/60;
-
 if(dir==="S"||dir==="W") value=-value;
-
 return value;
 }
 
@@ -278,7 +303,6 @@ return;
 }
 
 let sun=sunAlmanac(date,time);
-
 let LHA=norm360(sun.GHA+lon);
 
 let sinHc=
@@ -293,6 +317,10 @@ Math.tan(degToRad(sun.Dec))*Math.cos(degToRad(lat));
 
 let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
 
+lastSunData={date:date,time:time,lat:lat,lon:lon,GHA:sun.GHA,Dec:sun.Dec,LHA:LHA,Hc:Hc,Zn:Zn};
+
+document.getElementById("obsZn").innerText=formatBearing(Zn);
+
 document.getElementById("sunResult").innerHTML=
 "<b>SUN</b><br><br>"+
 "<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
@@ -303,15 +331,47 @@ document.getElementById("sunResult").innerHTML=
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
 }
 
+function calculateObservation(){
+if(!lastSunData){
+document.getElementById("observationResult").innerHTML="Calculate Sun in Almanac first.";
+return;
+}
+
+let gyro=parseFloat(document.getElementById("obsGyroBearing").value);
+let compass=parseFloat(document.getElementById("obsCompassBearing").value);
+let variation=parseFloat(document.getElementById("obsVariationValue").value);
+let vDir=document.getElementById("obsVariationDir").value;
+
+if(isNaN(gyro)||isNaN(compass)||isNaN(variation)){
+document.getElementById("observationResult").innerHTML="Enter Gyro Bearing, Compass Bearing and Variation.";
+return;
+}
+
+if(vDir==="W") variation=-variation;
+
+let trueBearing=lastSunData.Zn;
+let gyroError=normalizeError(trueBearing-gyro);
+let compassError=normalizeError(trueBearing-compass);
+let deviation=normalizeError(compassError-variation);
+
+document.getElementById("observationResult").innerHTML=
+"<b>SUN COMPASS OBSERVATION</b><br><br>"+
+"True Bearing / Zn: "+formatBearing(trueBearing)+"<br><br>"+
+"Gyro Bearing: "+gyro.toFixed(1)+"°<br>"+
+"Gyro Error: "+formatError(gyroError)+"<br><br>"+
+"Compass Bearing: "+compass.toFixed(1)+"°<br>"+
+"Compass Error: "+formatError(compassError)+"<br><br>"+
+"Variation: "+formatError(variation)+"<br>"+
+"Deviation: "+formatError(deviation);
+}
+
 function calcGyro(){
 let t=parseFloat(document.getElementById("trueB").value);
 let g=parseFloat(document.getElementById("gyroB").value);
-
 if(isNaN(t)||isNaN(g)){
 document.getElementById("gyroResult").innerText="Enter both values";
 return;
 }
-
 let err=normalizeError(t-g);
 document.getElementById("gyroResult").innerText="Gyro Error: "+formatError(err);
 }
