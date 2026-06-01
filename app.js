@@ -1,20 +1,44 @@
- let currentAltitude = null;
+let currentAltitude = null;
 
 function openTab(tabName, button) {
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-
     document.getElementById(tabName).classList.add("active");
     button.classList.add("active");
 }
 
 function updateUTC() {
-    document.getElementById("utc").innerText =
-        new Date().toISOString().substring(11, 19);
+    const utc = new Date().toISOString().substring(11, 19);
+    const utcBox = document.getElementById("utc");
+    if (utcBox) utcBox.innerText = utc;
 }
 
 setInterval(updateUTC, 1000);
 updateUTC();
+
+function normalizeAngle(a) {
+    while (a >= 360) a -= 360;
+    while (a < 0) a += 360;
+    return a;
+}
+
+function normalizeError(e) {
+    while (e > 180) e -= 360;
+    while (e < -180) e += 360;
+    return e;
+}
+
+function formatError(e) {
+    e = normalizeError(e);
+    let dir = e >= 0 ? "E" : "W";
+    return Math.abs(e).toFixed(1) + "° " + dir;
+}
+
+function formatAngle(a) {
+    let deg = Math.floor(a);
+    let min = (a - deg) * 60;
+    return deg + "° " + min.toFixed(1) + "'";
+}
 
 async function startSextant() {
     if (
@@ -23,7 +47,6 @@ async function startSextant() {
     ) {
         try {
             const permission = await DeviceOrientationEvent.requestPermission();
-
             if (permission !== "granted") {
                 alert("Sensor permission not granted");
                 return;
@@ -51,15 +74,7 @@ function handleOrientation(event) {
     if (altitude > 90) altitude = 90;
 
     currentAltitude = altitude;
-
     document.getElementById("altitude").innerText = formatAngle(altitude);
-}
-
-function formatAngle(decimalDegrees) {
-    let deg = Math.floor(decimalDegrees);
-    let min = (decimalDegrees - deg) * 60;
-
-    return deg + "° " + min.toFixed(1) + "'";
 }
 
 function calcGyro() {
@@ -71,15 +86,10 @@ function calcGyro() {
         return;
     }
 
-    let error = trueB - gyroB;
-
-    while (error > 180) error -= 360;
-    while (error < -180) error += 360;
-
-    let direction = error >= 0 ? "E" : "W";
+    let error = normalizeError(trueB - gyroB);
 
     document.getElementById("gyroResult").innerText =
-        "Gyro Error: " + Math.abs(error).toFixed(1) + "° " + direction;
+        "Gyro Error: " + formatError(error);
 }
 
 function calcCompass() {
@@ -91,15 +101,10 @@ function calcCompass() {
         return;
     }
 
-    let error = t - c;
-
-    while (error > 180) error -= 360;
-    while (error < -180) error += 360;
-
-    let dir = error >= 0 ? "E" : "W";
+    let error = normalizeError(t - c);
 
     document.getElementById("compassResult").innerText =
-        "Compass Error: " + Math.abs(error).toFixed(1) + "° " + dir;
+        "Compass Error: " + formatError(error);
 }
 
 function calcTotalError() {
@@ -112,9 +117,64 @@ function calcTotalError() {
         return;
     }
 
-    let total = v + d;
-    let dir = total >= 0 ? "E" : "W";
+    let total = normalizeError(v + d);
 
     document.getElementById("totalErrorResult").innerText =
-        "Total Error: " + Math.abs(total).toFixed(1) + "° " + dir;
+        "Total Error: " + formatError(total);
+}
+
+/*
+Temporary test almanac.
+Later this function will be replaced by real offline almanac calculation:
+Date + UTC + Lat + Lon + Object → True Bearing / Zn
+*/
+function getTrueBearingFromAlmanac(objectName) {
+    if (objectName === "Sun") return 063.0;
+    if (objectName === "Moon") return 219.0;
+    if (objectName === "Venus") return 120.0;
+    if (objectName === "Mars") return 145.0;
+    if (objectName === "Jupiter") return 180.0;
+    if (objectName === "Saturn") return 200.0;
+    if (objectName === "Polaris") return 000.0;
+    if (objectName === "Sirius") return 135.0;
+    if (objectName === "Canopus") return 160.0;
+    return 0.0;
+}
+
+function calculateObservation() {
+    let date = document.getElementById("obsDate").value;
+    let time = document.getElementById("obsTime").value;
+    let lat = document.getElementById("obsLat").value;
+    let lon = document.getElementById("obsLon").value;
+    let objectName = document.getElementById("objectName").value;
+
+    let gyroBearing = parseFloat(document.getElementById("obsGyro").value);
+    let standardBearing = parseFloat(document.getElementById("obsStandard").value);
+    let variation = parseFloat(document.getElementById("obsVariation").value);
+
+    if (isNaN(gyroBearing) || isNaN(standardBearing) || isNaN(variation)) {
+        document.getElementById("observationResult").innerHTML =
+            "Enter Gyro Bearing, Standard Bearing and Variation";
+        return;
+    }
+
+    let trueBearing = getTrueBearingFromAlmanac(objectName);
+
+    let gyroError = normalizeError(trueBearing - gyroBearing);
+    let compassError = normalizeError(trueBearing - standardBearing);
+    let deviation = normalizeError(compassError - variation);
+
+    document.getElementById("observationResult").innerHTML =
+        "<b>COMPASS OBSERVATION</b><br><br>" +
+        "Date: " + (date || "--") + "<br>" +
+        "UTC: " + (time || "--") + "<br>" +
+        "Position: " + (lat || "--") + " / " + (lon || "--") + "<br>" +
+        "Object: " + objectName + "<br><br>" +
+        "True Bearing: " + trueBearing.toFixed(1) + "°<br>" +
+        "Gyro Bearing: " + gyroBearing.toFixed(1) + "°<br>" +
+        "Standard Bearing: " + standardBearing.toFixed(1) + "°<br><br>" +
+        "Gyro Error: " + formatError(gyroError) + "<br>" +
+        "Compass Error: " + formatError(compassError) + "<br>" +
+        "Variation: " + formatError(variation) + "<br>" +
+        "Deviation: " + formatError(deviation);
 }
