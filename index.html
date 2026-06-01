@@ -1,220 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Celestial Trainer v1.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Test</title>
 <style>
-body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
-header{padding:15px;background:#102f4a;text-align:center}
-.warning{background:#8b0000;padding:10px;text-align:center;font-weight:bold}
-.tabs{display:flex;overflow-x:auto;background:#173b5c}
-.tabs button{min-width:90px;flex:1;padding:12px;border:0;background:#173b5c;color:white}
-.tabs button.active{background:#1f6fa8}
-.section{display:none;padding:15px}
+body{font-family:Arial;background:#0b1b2b;color:white;margin:0}
+.tabs{display:flex;background:#173b5c}
+button{flex:1;padding:15px;background:#173b5c;color:white;border:0}
+button.active{background:#1f6fa8}
+.section{display:none;padding:20px}
 .section.active{display:block}
-.card{background:#132f46;padding:15px;border-radius:10px}
-label{display:block;margin-top:12px}
-input,select{width:100%;padding:10px;font-size:16px;box-sizing:border-box;border-radius:6px;border:0;margin-top:5px}
-button.main{width:100%;padding:14px;font-size:16px;background:#1f8ac0;color:white;border:0;border-radius:8px;margin-top:15px}
-.result{font-size:18px;margin-top:15px;color:#9ee7ff;line-height:1.5}
-#sextantBox{height:250px;background:linear-gradient(#87ceeb 0%,#87ceeb 48%,#103b5c 52%,#103b5c 100%);border-radius:10px;position:relative}
-.horizon{position:absolute;top:50%;width:100%;height:2px;background:white}
-.cross{position:absolute;top:50%;left:50%;width:20px;height:20px;margin-left:-10px;margin-top:-10px;border:2px solid yellow;border-radius:50%}
 </style>
 </head>
-
 <body>
 
-<header>
-<h2>Celestial Trainer v1.4</h2>
-<p>Offline Training App</p>
-</header>
-
-<div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
+<h2>Celestial Trainer Test</h2>
 
 <div class="tabs">
-<button class="tab active" onclick="openTab('sextant',this)">Sextant</button>
-<button class="tab" onclick="openTab('gyro',this)">Gyro</button>
-<button class="tab" onclick="openTab('compass',this)">Compass</button>
-<button class="tab" onclick="openTab('observation',this)">Observation</button>
-<button class="tab" onclick="openTab('notes',this)">Notes</button>
+<button class="tab active" onclick="openTab('one',this)">One</button>
+<button class="tab" onclick="openTab('two',this)">Two</button>
+<button class="tab" onclick="openTab('three',this)">Three</button>
 </div>
 
-<div id="sextant" class="section active">
-<div class="card">
-<h3>Digital Sextant</h3>
-<div id="sextantBox"><div class="horizon"></div><div class="cross"></div></div>
-<button class="main" onclick="startSextant()">Start Sensor</button>
-<div class="result">Hs: <span id="altitude">--</span></div>
-<p>UTC: <span id="utc">--</span></p>
-</div>
+<div id="one" class="section active">
+<h3>Tab One works</h3>
 </div>
 
-<div id="gyro" class="section">
-<div class="card">
-<h3>Gyro Error Calculator</h3>
-<label>True Bearing</label><input id="trueBearing" type="number">
-<label>Gyro Bearing</label><input id="gyroBearing" type="number">
-<button class="main" onclick="calcGyro()">Calculate</button>
-<div class="result" id="gyroResult">--</div>
-</div>
+<div id="two" class="section">
+<h3>Tab Two works</h3>
 </div>
 
-<div id="compass" class="section">
-<div class="card">
-<h3>Compass Error Calculator</h3>
-<label>True Bearing</label><input id="trueCompass" type="number">
-<label>Compass Bearing</label><input id="compassBearing" type="number">
-<button class="main" onclick="calcCompass()">Calculate</button>
-<div class="result" id="compassResult">--</div>
-
-<h3>Total Error</h3>
-<label>Variation (+E / -W)</label><input id="variation" type="number">
-<label>Deviation (+E / -W)</label><input id="deviation" type="number">
-<button class="main" onclick="calcTotalError()">Calculate</button>
-<div class="result" id="totalErrorResult">--</div>
-</div>
-</div>
-
-<div id="observation" class="section">
-<div class="card">
-<h3>Compass Observation</h3>
-
-<label>Date</label><input id="obsDate" type="date">
-<label>UTC</label><input id="obsTime" type="time">
-<label>Latitude</label><input id="obsLat" type="text" placeholder="08°43.5'N">
-<label>Longitude</label><input id="obsLon" type="text" placeholder="086°48.3'E">
-
-<label>Object</label>
-<select id="objectName">
-<option>Sun</option>
-<option>Moon</option>
-<option>Venus</option>
-<option>Mars</option>
-<option>Jupiter</option>
-<option>Saturn</option>
-<option>Polaris</option>
-<option>Sirius</option>
-<option>Canopus</option>
-</select>
-
-<label>Gyro Bearing</label><input id="obsGyro" type="number">
-<label>Standard Bearing</label><input id="obsStandard" type="number">
-<label>Variation (+E / -W)</label><input id="obsVariation" type="number">
-
-<button class="main" onclick="calculateObservation()">Calculate Observation</button>
-<div class="result" id="observationResult">Waiting for calculation...</div>
-</div>
-</div>
-
-<div id="notes" class="section">
-<div class="card">
-<h3>Notes</h3>
-<p>Training use only. Not for official navigation.</p>
-</div>
+<div id="three" class="section">
+<h3>Tab Three works</h3>
 </div>
 
 <script>
-function openTab(tabName,button){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-document.getElementById(tabName).classList.add("active");
-button.classList.add("active");
-}
-
-function updateUTC(){
-let u=document.getElementById("utc");
-if(u)u.innerText=new Date().toISOString().substring(11,19);
-}
-setInterval(updateUTC,1000);
-updateUTC();
-
-function normalizeError(e){
-while(e>180)e-=360;
-while(e<-180)e+=360;
-return e;
-}
-
-function formatError(e){
-e=normalizeError(e);
-let dir=e>=0?"E":"W";
-return Math.abs(e).toFixed(1)+"° "+dir;
-}
-
-function calcGyro(){
-let t=parseFloat(document.getElementById("trueBearing").value);
-let g=parseFloat(document.getElementById("gyroBearing").value);
-if(isNaN(t)||isNaN(g)){document.getElementById("gyroResult").innerText="Enter both values";return;}
-let err=normalizeError(t-g);
-document.getElementById("gyroResult").innerText="Gyro Error: "+formatError(err);
-}
-
-function calcCompass(){
-let t=parseFloat(document.getElementById("trueCompass").value);
-let c=parseFloat(document.getElementById("compassBearing").value);
-if(isNaN(t)||isNaN(c)){document.getElementById("compassResult").innerText="Enter both values";return;}
-let err=normalizeError(t-c);
-document.getElementById("compassResult").innerText="Compass Error: "+formatError(err);
-}
-
-function calcTotalError(){
-let v=parseFloat(document.getElementById("variation").value);
-let d=parseFloat(document.getElementById("deviation").value);
-if(isNaN(v)||isNaN(d)){document.getElementById("totalErrorResult").innerText="Enter variation and deviation";return;}
-document.getElementById("totalErrorResult").innerText="Total Error: "+formatError(v+d);
-}
-
-function getTrueBearing(objectName){
-if(objectName==="Sun")return 63.0;
-if(objectName==="Moon")return 219.0;
-if(objectName==="Venus")return 120.0;
-if(objectName==="Mars")return 145.0;
-if(objectName==="Jupiter")return 180.0;
-if(objectName==="Saturn")return 200.0;
-if(objectName==="Polaris")return 0.0;
-if(objectName==="Sirius")return 135.0;
-if(objectName==="Canopus")return 160.0;
-return 0.0;
-}
-
-function calculateObservation(){
-let date=document.getElementById("obsDate").value;
-let time=document.getElementById("obsTime").value;
-let lat=document.getElementById("obsLat").value;
-let lon=document.getElementById("obsLon").value;
-let obj=document.getElementById("objectName").value;
-let gyro=parseFloat(document.getElementById("obsGyro").value);
-let std=parseFloat(document.getElementById("obsStandard").value);
-let variation=parseFloat(document.getElementById("obsVariation").value);
-
-if(isNaN(gyro)||isNaN(std)||isNaN(variation)){
-document.getElementById("observationResult").innerHTML="Enter Gyro Bearing, Standard Bearing and Variation";
-return;
-}
-
-let trueB=getTrueBearing(obj);
-let gyroErr=normalizeError(trueB-gyro);
-let compErr=normalizeError(trueB-std);
-let dev=normalizeError(compErr-variation);
-
-document.getElementById("observationResult").innerHTML=
-"<b>COMPASS OBSERVATION</b><br><br>"+
-"Date: "+(date||"--")+"<br>"+
-"UTC: "+(time||"--")+"<br>"+
-"Position: "+(lat||"--")+" / "+(lon||"--")+"<br>"+
-"Object: "+obj+"<br><br>"+
-"True Bearing: "+trueB.toFixed(1)+"°<br>"+
-"Gyro Bearing: "+gyro.toFixed(1)+"°<br>"+
-"Standard Bearing: "+std.toFixed(1)+"°<br><br>"+
-"Gyro Error: "+formatError(gyroErr)+"<br>"+
-"Compass Error: "+formatError(compErr)+"<br>"+
-"Variation: "+formatError(variation)+"<br>"+
-"Deviation: "+formatError(dev);
-}
-
-async function startSextant(){
-alert("Sensor module will be restored after Observation is stable.");
+function openTab(id,btn){
+document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+btn.classList.add('active');
 }
 </script>
 
