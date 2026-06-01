@@ -2,187 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v1.2</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#0b1b2b;color:white}
-header{padding:15px;background:#102f4a;text-align:center}
-.warning{background:#8b0000;padding:10px;text-align:center;font-weight:bold}
-.tabs{display:flex;background:#173b5c}
-.tabs button{flex:1;padding:12px;border:none;background:#173b5c;color:white}
-.tabs button.active{background:#1f6fa8}
-.section{display:none;padding:15px}
-.section.active{display:block}
-.card{background:#132f46;padding:15px;border-radius:10px}
-input{width:100%;padding:10px;font-size:16px;box-sizing:border-box}
-button.main{width:100%;padding:14px;font-size:16px;background:#1f8ac0;color:white;border:none;border-radius:8px;margin-top:10px}
-.result{font-size:22px;margin-top:15px;color:#9ee7ff}
-#sextantBox{position:relative;height:250px;background:linear-gradient(#87ceeb 0%,#87ceeb 48%,#103b5c 52%,#103b5c 100%);overflow:hidden;border-radius:10px}
-.horizon{position:absolute;top:50%;width:100%;height:2px;background:white}
-.cross{position:absolute;top:50%;left:50%;width:20px;height:20px;margin-left:-10px;margin-top:-10px;border:2px solid yellow;border-radius:50%}
-</style>
+
+<title>Celestial Trainer</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 
 <header>
-<h2>Celestial Trainer v1.2</h2>
-<p>Offline Training App</p>
+    <h2>Celestial Trainer v1.3</h2>
+    <p>Offline Training App</p>
 </header>
 
-<div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
+<div class="warning">
+    FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION
+</div>
 
 <div class="tabs">
-<button class="tab active" onclick="openTab('sextant',this)">Sextant</button>
-<button class="tab" onclick="openTab('gyro',this)">Gyro</button>
-<button class="tab" onclick="openTab('compass',this)">Compass</button>
-<button class="tab" onclick="openTab('notes',this)">Notes</button>
+    <button class="tab active" onclick="openTab('sextant',this)">Sextant</button>
+    <button class="tab" onclick="openTab('gyro',this)">Gyro</button>
+    <button class="tab" onclick="openTab('compass',this)">Compass</button>
+    <button class="tab" onclick="openTab('notes',this)">Notes</button>
 </div>
 
 <div id="sextant" class="section active">
-<div class="card">
-<h3>Digital Sextant</h3>
-<div id="sextantBox">
-<div class="horizon"></div>
-<div class="cross"></div>
-</div>
-<button class="main" onclick="startSextant()">Start Sensor</button>
-<div class="result">Hs: <span id="altitude">--</span></div>
-<p>UTC: <span id="utc">--</span></p>
-<p>Estimated accuracy: ±1° to ±3°</p>
-</div>
+    <div class="card">
+
+        <h3>Digital Sextant</h3>
+
+        <div id="sextantBox">
+            <div class="horizon"></div>
+            <div class="cross"></div>
+        </div>
+
+        <button class="main" onclick="startSextant()">
+            Start Sensor
+        </button>
+
+        <div class="result">
+            Hs: <span id="altitude">--</span>
+        </div>
+
+        <p>UTC: <span id="utc">--</span></p>
+
+        <p>Estimated accuracy: ±1° to ±3°</p>
+
+    </div>
 </div>
 
 <div id="gyro" class="section">
-<div class="card">
-<h3>Gyro Error Calculator</h3>
-<label>True Bearing</label><br>
-<input id="trueBearing" type="number" placeholder="Example: 125.5"><br><br>
-<label>Gyro Bearing</label><br>
-<input id="gyroBearing" type="number" placeholder="Example: 123.0"><br><br>
-<button class="main" onclick="calcGyro()">Calculate Gyro Error</button>
-<div class="result" id="gyroResult">--</div>
-</div>
+    <div class="card">
+
+        <h3>Gyro Error Calculator</h3>
+
+        <label>True Bearing</label><br>
+        <input id="trueBearing" type="number"><br><br>
+
+        <label>Gyro Bearing</label><br>
+        <input id="gyroBearing" type="number"><br><br>
+
+        <button class="main" onclick="calcGyro()">
+            Calculate Gyro Error
+        </button>
+
+        <div class="result" id="gyroResult">
+            --
+        </div>
+
+    </div>
 </div>
 
 <div id="compass" class="section">
-<div class="card">
-<h3>Compass Error Calculator</h3>
-<label>True Bearing</label><br>
-<input id="trueCompass" type="number" placeholder="Example: 090"><br><br>
-<label>Compass Bearing</label><br>
-<input id="compassBearing" type="number" placeholder="Example: 087"><br><br>
-<button class="main" onclick="calcCompass()">Calculate Compass Error</button>
-<div class="result" id="compassResult">--</div>
-<hr>
-<h3>Variation & Deviation</h3>
-<label>Variation East + / West -</label><br>
-<input id="variation" type="number" placeholder="Example: 2"><br><br>
-<label>Deviation East + / West -</label><br>
-<input id="deviation" type="number" placeholder="Example: -1"><br><br>
-<button class="main" onclick="calcTotalError()">Calculate Total Error</button>
-<div class="result" id="totalErrorResult">--</div>
-</div>
+    <div class="card">
+
+        <h3>Compass Error Calculator</h3>
+
+        <label>True Bearing</label><br>
+        <input id="trueCompass" type="number"><br><br>
+
+        <label>Compass Bearing</label><br>
+        <input id="compassBearing" type="number"><br><br>
+
+        <button class="main" onclick="calcCompass()">
+            Calculate Compass Error
+        </button>
+
+        <div class="result" id="compassResult">
+            --
+        </div>
+
+        <hr>
+
+        <h3>Variation & Deviation</h3>
+
+        <label>Variation (East + / West -)</label><br>
+        <input id="variation" type="number"><br><br>
+
+        <label>Deviation (East + / West -)</label><br>
+        <input id="deviation" type="number"><br><br>
+
+        <button class="main" onclick="calcTotalError()">
+            Calculate Total Error
+        </button>
+
+        <div class="result" id="totalErrorResult">
+            --
+        </div>
+
+    </div>
 </div>
 
 <div id="notes" class="section">
-<div class="card">
-<h3>Training Notes</h3>
-<p>This app is made for celestial navigation practice only.</p>
-<p>Not for voyage planning, collision avoidance, position fixing, or official navigation.</p>
+    <div class="card">
+
+        <h3>Training Notes</h3>
+
+        <p>
+            This application is for training and educational purposes only.
+        </p>
+
+        <p>
+            Not for official navigation.
+        </p>
+
+    </div>
 </div>
-</div>
 
-<script>
-let currentAltitude=null;
-
-function openTab(tabName,button){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-document.getElementById(tabName).classList.add("active");
-button.classList.add("active");
-}
-
-function updateUTC(){
-document.getElementById("utc").innerText=new Date().toISOString().substring(11,19);
-}
-setInterval(updateUTC,1000);
-updateUTC();
-
-async function startSextant(){
-if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function"){
-try{
-const permission=await DeviceOrientationEvent.requestPermission();
-if(permission!=="granted"){
-alert("Sensor permission not granted");
-return;
-}
-}catch(e){
-alert("Sensor permission error");
-return;
-}
-}
-window.addEventListener("deviceorientation",handleOrientation);
-}
-
-function handleOrientation(event){
-let beta=event.beta;
-if(beta===null){
-document.getElementById("altitude").innerText="Sensor not available";
-return;
-}
-let altitude=90-Math.abs(90-beta);
-if(altitude<0)altitude=0;
-if(altitude>90)altitude=90;
-currentAltitude=altitude;
-document.getElementById("altitude").innerText=formatAngle(altitude);
-}
-
-function formatAngle(decimalDegrees){
-let deg=Math.floor(decimalDegrees);
-let min=(decimalDegrees-deg)*60;
-return deg+"° "+min.toFixed(1)+"'";
-}
-
-function calcGyro(){
-let trueB=parseFloat(document.getElementById("trueBearing").value);
-let gyroB=parseFloat(document.getElementById("gyroBearing").value);
-if(isNaN(trueB)||isNaN(gyroB)){
-document.getElementById("gyroResult").innerText="Enter both values";
-return;
-}
-let error=trueB-gyroB;
-while(error>180)error-=360;
-while(error<-180)error+=360;
-let direction=error>=0?"E":"W";
-document.getElementById("gyroResult").innerText="Gyro Error: "+Math.abs(error).toFixed(1)+"° "+direction;
-}
-
-function calcCompass(){
-let t=parseFloat(document.getElementById("trueCompass").value);
-let c=parseFloat(document.getElementById("compassBearing").value);
-if(isNaN(t)||isNaN(c)){
-document.getElementById("compassResult").innerText="Enter both values";
-return;
-}
-let error=t-c;
-while(error>180)error-=360;
-while(error<-180)error+=360;
-let dir=error>=0?"E":"W";
-document.getElementById("compassResult").innerText="Compass Error: "+Math.abs(error).toFixed(1)+"° "+dir;
-}
-
-function calcTotalError(){
-let v=parseFloat(document.getElementById("variation").value);
-let d=parseFloat(document.getElementById("deviation").value);
-if(isNaN(v)||isNaN(d)){
-document.getElementById("totalErrorResult").innerText="Enter variation and deviation";
-return;
-}
-let total=v+d;
-let dir=total>=0?"E":"W";
-document.getElementById("totalErrorResult").innerText="Total Error: "+Math.abs(total).toFixed(1)+"° "+dir;
-}
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
