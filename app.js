@@ -135,7 +135,7 @@ function getTrueBearingFromAlmanac(objectName) {
     if (objectName === "Mars") return 145.0;
     if (objectName === "Jupiter") return 180.0;
     if (objectName === "Saturn") return 200.0;
-    if (objectName === "Polaris") return 000.0;
+if (objectName === "Polaris") return 0.0;
     if (objectName === "Sirius") return 135.0;
     if (objectName === "Canopus") return 160.0;
     return 0.0;
