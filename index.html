@@ -2,22 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v2.0</title>
+<title>Celestial Trainer v2.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
 header{padding:15px;background:#102f4a;text-align:center}
 .warning{background:#8b0000;padding:10px;text-align:center;font-weight:bold}
 .tabs{display:flex;overflow-x:auto;background:#173b5c}
-.tabs button{min-width:100px;flex:1;padding:12px;border:0;background:#173b5c;color:white}
+.tabs button{min-width:110px;flex:1;padding:12px;border:0;background:#173b5c;color:white;font-weight:bold}
 .tabs button.active{background:#1f6fa8}
 .section{display:none;padding:15px}
 .section.active{display:block}
 .card{background:#132f46;padding:15px;border-radius:10px}
 label{display:block;margin-top:12px}
-input{width:100%;padding:10px;font-size:16px;box-sizing:border-box;border:0;border-radius:6px;margin-top:5px}
-button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;background:#1f8ac0;color:white;font-size:16px}
-.result{margin-top:15px;color:#9ee7ff;font-size:18px;line-height:1.6}
+input,select{padding:10px;font-size:16px;border:0;border-radius:6px;box-sizing:border-box}
+.full{width:100%;margin-top:5px}
+.row{display:flex;gap:8px;align-items:center;margin-top:5px}
+.boxDeg{width:25%}
+.boxMin{width:35%}
+.boxDir{width:25%}
+button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;background:#1f8ac0;color:white;font-size:16px;font-weight:bold}
+.result{margin-top:15px;color:#9ee7ff;font-size:18px;line-height:1.7}
+.resultBox{border:1px solid #31506a;border-radius:8px;padding:10px;margin-top:8px}
 .small{font-size:13px;color:#ccc}
 </style>
 </head>
@@ -25,7 +31,7 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 <body>
 
 <header>
-<h2>Celestial Trainer v2.0</h2>
+<h2>Celestial Trainer v2.1</h2>
 <p>Nautical Almanac Style</p>
 </header>
 
@@ -34,51 +40,94 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Observation</button>
-<button class="tab" onclick="openTab('calculator',this)">Calculator</button>
+<button class="tab" onclick="openTab('calculator',this)">Compass & Gyro</button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
 </div>
 
 <div id="almanac" class="section active">
 <div class="card">
-<h3>Sun Almanac</h3>
+<h3>Sun Almanac / Azimuth</h3>
 
 <label>Date UTC</label>
-<input id="dateUTC" type="date">
+<input id="dateUTC" class="full" type="date">
 
 <label>Time UTC</label>
-<input id="timeUTC" type="time" step="1">
+<input id="timeUTC" class="full" type="time" step="1">
+
+<label>Latitude</label>
+<div class="row">
+<input id="latDeg" class="boxDeg" type="number" placeholder="08">
+<span>°</span>
+<input id="latMin" class="boxMin" type="number" step="0.1" placeholder="43.5">
+<span>'</span>
+<select id="latDir" class="boxDir">
+<option>N</option>
+<option>S</option>
+</select>
+</div>
+
+<label>Longitude</label>
+<div class="row">
+<input id="lonDeg" class="boxDeg" type="number" placeholder="086">
+<span>°</span>
+<input id="lonMin" class="boxMin" type="number" step="0.1" placeholder="48.3">
+<span>'</span>
+<select id="lonDir" class="boxDir">
+<option>E</option>
+<option>W</option>
+</select>
+</div>
 
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
-<button class="main" onclick="calculateSun()">Calculate Sun GHA / Dec</button>
+<button class="main" onclick="calculateSun()">Calculate Sun</button>
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
 
-<p class="small">
-This module calculates Sun GHA and Declination in Nautical Almanac style.
-</p>
+<p class="small">GHA, Dec, LHA, Hc and Zn are calculated offline for training only.</p>
 </div>
 </div>
 
 <div id="observation" class="section">
 <div class="card">
 <h3>Compass Observation</h3>
-<p>Next step: Date, UTC, Position, Object, Gyro Bearing, Compass Bearing, Variation.</p>
+<p>Next step: Object, position, bearings, variation → Zn, gyro error, compass error, deviation.</p>
 </div>
 </div>
 
 <div id="calculator" class="section">
 <div class="card">
-<h3>Quick Calculator</h3>
+<h3>Gyro Error</h3>
 
 <label>True Bearing</label>
-<input id="trueB" type="number">
+<input id="trueB" class="full" type="number">
 
 <label>Gyro Bearing</label>
-<input id="gyroB" type="number">
+<input id="gyroB" class="full" type="number">
 
 <button class="main" onclick="calcGyro()">Calculate Gyro Error</button>
-
 <div class="result" id="gyroResult">--</div>
+
+<hr>
+
+<h3>Compass Error</h3>
+
+<label>True Bearing</label>
+<input id="trueCompass" class="full" type="number">
+
+<label>Compass Bearing</label>
+<input id="compassB" class="full" type="number">
+
+<label>Variation</label>
+<div class="row">
+<input id="variationValue" class="boxMin" type="number" step="0.1">
+<select id="variationDir" class="boxDir">
+<option>E</option>
+<option>W</option>
+</select>
+</div>
+
+<button class="main" onclick="calcCompass()">Calculate Compass Error</button>
+<div class="result" id="compassResult">--</div>
 </div>
 </div>
 
@@ -87,6 +136,7 @@ This module calculates Sun GHA and Declination in Nautical Almanac style.
 <h3>Notes</h3>
 <p>This app is for training and educational purposes only.</p>
 <p>Not for official navigation.</p>
+<p>East errors are positive. West errors are negative.</p>
 </div>
 </div>
 
@@ -113,17 +163,39 @@ if(x<0)x+=360;
 return x;
 }
 
+function normalizeError(e){
+while(e>180)e-=360;
+while(e<-180)e+=360;
+return e;
+}
+
 function formatDM(deg){
-let sign=deg<0?-1:1;
+deg=norm360(deg);
+let d=Math.floor(deg);
+let m=(deg-d)*60;
+return String(d).padStart(3,"0")+"° "+m.toFixed(1)+"'";
+}
+
+function formatAlt(deg){
+let sign=deg<0?"-":"";
 deg=Math.abs(deg);
 let d=Math.floor(deg);
 let m=(deg-d)*60;
-return d+"° "+m.toFixed(1)+"'";
+return sign+d+"° "+m.toFixed(1)+"'";
 }
 
 function formatDec(deg){
 let hemi=deg>=0?"N":"S";
-return formatDM(deg)+" "+hemi;
+deg=Math.abs(deg);
+let d=Math.floor(deg);
+let m=(deg-d)*60;
+return d+"° "+m.toFixed(1)+"' "+hemi;
+}
+
+function formatError(e){
+e=normalizeError(e);
+let dir=e>=0?"E":"W";
+return Math.abs(e).toFixed(1)+"° "+dir;
 }
 
 function julianDate(dateStr,timeStr){
@@ -131,21 +203,26 @@ let d=new Date(dateStr+"T"+timeStr+"Z");
 return d.getTime()/86400000+2440587.5;
 }
 
-function calculateSun(){
-let date=document.getElementById("dateUTC").value;
-let time=document.getElementById("timeUTC").value;
+function getCoord(degId,minId,dirId){
+let d=parseFloat(document.getElementById(degId).value);
+let m=parseFloat(document.getElementById(minId).value);
+let dir=document.getElementById(dirId).value;
 
-if(!date||!time){
-document.getElementById("sunResult").innerHTML="Enter Date and UTC";
-return;
+if(isNaN(d)||isNaN(m)) return null;
+
+let value=d+m/60;
+
+if(dir==="S"||dir==="W") value=-value;
+
+return value;
 }
 
+function sunAlmanac(date,time){
 let JD=julianDate(date,time);
 let T=(JD-2451545.0)/36525.0;
 
 let L0=norm360(280.46646+36000.76983*T+0.0003032*T*T);
 let M=norm360(357.52911+35999.05029*T-0.0001537*T*T);
-let e=0.016708634-0.000042037*T-0.0000001267*T*T;
 
 let C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(degToRad(M))
 +(0.019993-0.000101*T)*Math.sin(degToRad(2*M))
@@ -177,24 +254,50 @@ T*T*T/38710000
 
 let GHA=norm360(GMST-RA);
 
+return {JD:JD,GHA:GHA,Dec:Dec};
+}
+
+function calculateSun(){
+let date=document.getElementById("dateUTC").value;
+let time=document.getElementById("timeUTC").value;
+
+if(!date||!time){
+document.getElementById("sunResult").innerHTML="Enter Date and UTC";
+return;
+}
+
+let lat=getCoord("latDeg","latMin","latDir");
+let lon=getCoord("lonDeg","lonMin","lonDir");
+
+if(lat===null||lon===null){
+document.getElementById("sunResult").innerHTML="Enter Latitude and Longitude";
+return;
+}
+
+let sun=sunAlmanac(date,time);
+
+let LHA=norm360(sun.GHA+lon);
+
+let sinHc=
+Math.sin(degToRad(lat))*Math.sin(degToRad(sun.Dec))+
+Math.cos(degToRad(lat))*Math.cos(degToRad(sun.Dec))*Math.cos(degToRad(LHA));
+
+let Hc=radToDeg(Math.asin(sinHc));
+
+let y=Math.sin(degToRad(LHA));
+let x=Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
+Math.tan(degToRad(sun.Dec))*Math.cos(degToRad(lat));
+
+let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
+
 document.getElementById("sunResult").innerHTML=
 "<b>SUN</b><br><br>"+
-"Julian Date: "+JD.toFixed(5)+"<br>"+
-"GHA Sun: "+formatDM(GHA)+"<br>"+
-"Declination: "+formatDec(Dec)+"<br><br>"+
-"<span class='small'>Next step: LHA, Hc and Zn from position.</span>";
-}
-
-function normalizeError(e){
-while(e>180)e-=360;
-while(e<-180)e+=360;
-return e;
-}
-
-function formatError(e){
-e=normalizeError(e);
-let dir=e>=0?"E":"W";
-return Math.abs(e).toFixed(1)+"° "+dir;
+"<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
+"<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
+"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
+"<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
+"<div class='resultBox'>Zn: "+formatDM(Zn)+"</div>"+
+"<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
 }
 
 function calcGyro(){
@@ -208,6 +311,27 @@ return;
 
 let err=normalizeError(t-g);
 document.getElementById("gyroResult").innerText="Gyro Error: "+formatError(err);
+}
+
+function calcCompass(){
+let t=parseFloat(document.getElementById("trueCompass").value);
+let c=parseFloat(document.getElementById("compassB").value);
+let v=parseFloat(document.getElementById("variationValue").value);
+let vDir=document.getElementById("variationDir").value;
+
+if(isNaN(t)||isNaN(c)||isNaN(v)){
+document.getElementById("compassResult").innerText="Enter True, Compass and Variation";
+return;
+}
+
+if(vDir==="W") v=-v;
+
+let compassError=normalizeError(t-c);
+let deviation=normalizeError(compassError-v);
+
+document.getElementById("compassResult").innerHTML=
+"Compass Error: "+formatError(compassError)+"<br>"+
+"Deviation: "+formatError(deviation);
 }
 
 setNowUTC();
