@@ -175,7 +175,10 @@ let d=Math.floor(deg);
 let m=(deg-d)*60;
 return String(d).padStart(3,"0")+"° "+m.toFixed(1)+"'";
 }
-
+function formatBearing(deg){
+deg=norm360(deg);
+return deg.toFixed(1)+"°";
+}
 function formatAlt(deg){
 let sign=deg<0?"-":"";
 deg=Math.abs(deg);
@@ -296,7 +299,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
-"<div class='resultBox'>Zn: "+formatDM(Zn)+"</div>"+
+"<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>"+
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
 }
 
