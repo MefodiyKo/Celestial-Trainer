@@ -296,6 +296,41 @@ function calcGyro() {
     document.getElementById("gyroResult").innerText =
         "Gyro Error: " + Math.abs(error).toFixed(1) + "° " + direction;
 }
+<div id="compass" class="section">
+    <div class="card">
+
+        <h3>Compass Error Calculator</h3>
+
+        <label>True Bearing:</label><br>
+        <input id="trueCompass" type="number" placeholder="Example: 090"><br><br>
+
+        <label>Compass Bearing:</label><br>
+        <input id="compassBearing" type="number" placeholder="Example: 087"><br><br>
+
+        <button class="main" onclick="calcCompass()">
+            Calculate Compass Error
+        </button>
+
+        <div class="result" id="compassResult">--</div>
+
+        <hr>
+
+        <h3>Variation & Deviation</h3>
+
+        <label>Variation (East + / West -)</label><br>
+        <input id="variation" type="number" placeholder="Example: 2"><br><br>
+
+        <label>Deviation (East + / West -)</label><br>
+        <input id="deviation" type="number" placeholder="Example: -1"><br><br>
+
+        <button class="main" onclick="calcTotalError()">
+            Calculate Total Error
+        </button>
+
+        <div class="result" id="totalErrorResult">--</div>
+
+    </div>
+</div>
 </script>
 
 </body>
