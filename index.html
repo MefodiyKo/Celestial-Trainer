@@ -455,7 +455,7 @@ alert("GPS not supported.");
 return;
 }
 
-navigator.geolocation.watchPosition(
+navigator.geolocation.getCurrentPosition(
 
 function(position){
 
@@ -511,7 +511,8 @@ error.message
 
 {
 enableHighAccuracy:true,
-timeout:10000
+timeout:30000,
+maximumAge:0
 }
 
 );
