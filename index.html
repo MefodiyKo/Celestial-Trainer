@@ -157,7 +157,7 @@ True Bearing / Zn: <span id="obsZn">--</span>
 </select>
 </div>
 
-<button class="main" onclick="calculateObservation()">Calculate Observation</button>
+<button class="main" onclick="copyObservation()">Copy Observation</button>
 
 <div class="result" id="observationResult">Calculate Sun in Almanac first.</div>
 </div>
@@ -510,6 +510,26 @@ enableHighAccuracy:true,
 timeout:10000
 }
 
+);
+
+}
+ function copyObservation(){
+
+let text =
+document.getElementById("observationResult").innerText;
+
+if(!text || text.includes("Calculate Sun")){
+alert("No observation to copy.");
+return;
+}
+
+navigator.clipboard.writeText(text).then(
+function(){
+alert("Observation copied.");
+},
+function(){
+alert("Copy failed.");
+}
 );
 
 }
