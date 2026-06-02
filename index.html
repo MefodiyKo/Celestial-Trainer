@@ -73,7 +73,15 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <option disabled>⭐ Capella</option>
 <option disabled>⭐ Altair</option>
 </select>
+<label>Position Source</label>
+<select id="positionSource" class="full" onchange="togglePositionSource()">
+<option value="manual">Manual</option>
+<option value="gps">GPS</option>
+</select>
 
+<button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">
+Get GPS Position
+</button>
 <label>Date UTC</label>
 <input id="dateUTC" class="full" type="date">
 
