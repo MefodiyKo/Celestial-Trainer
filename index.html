@@ -50,7 +50,28 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 
 <label>Object</label>
 <select id="celestialObject" class="full">
-<option>Sun</option>
+<option value="Sun">☀️ Sun</option>
+
+<option disabled>──────────</option>
+
+<option disabled>🌙 Moon (v2.4)</option>
+
+<option disabled>──────────</option>
+
+<option disabled>♀ Venus</option>
+<option disabled>♂ Mars</option>
+<option disabled>♃ Jupiter</option>
+<option disabled>♄ Saturn</option>
+
+<option disabled>──────────</option>
+
+<option disabled>⭐ Polaris</option>
+<option disabled>⭐ Sirius</option>
+<option disabled>⭐ Canopus</option>
+<option disabled>⭐ Arcturus</option>
+<option disabled>⭐ Vega</option>
+<option disabled>⭐ Capella</option>
+<option disabled>⭐ Altair</option>
 </select>
 
 <label>Date UTC</label>
@@ -99,6 +120,7 @@ This page automatically uses the last celestial calculation.
 </p>
 
 <div class="resultBox">
+Object: <span id="obsObject">Sun</span><br>
 True Bearing / Zn: <span id="obsZn">--</span>
 </div>
 
@@ -289,8 +311,10 @@ let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
 lastSunData={date:date,time:time,lat:lat,lon:lon,GHA:sun.GHA,Dec:sun.Dec,LHA:LHA,Hc:Hc,Zn:Zn};
 
 document.getElementById("obsZn").innerText=formatBearing(Zn);
-
+document.getElementById("obsObject").innerText=
+document.getElementById("celestialObject").value;
 document.getElementById("sunResult").innerHTML=
+
 "<b>SUN</b><br><br>"+
 "<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
 "<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
