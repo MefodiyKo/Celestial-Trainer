@@ -466,10 +466,13 @@ alert("GPS position loaded and Sun calculated.");
 function(error){
 
 alert(
-"Unable to get GPS position.\nPlease allow location access."
+"GPS Error Code: " +
+error.code +
+"\n" +
+error.message
 );
 
-},
+}
 
 {
 enableHighAccuracy:true,
