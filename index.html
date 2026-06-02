@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v2.2</title>
+<title>Celestial Trainer v2.3</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
@@ -32,22 +32,26 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <body>
 
 <header>
-<h2>Celestial Trainer v2.2</h2>
+<h2>Celestial Trainer v2.3</h2>
 <p>Nautical Almanac Style</p>
 </header>
 
 <div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
 
 <div class="tabs">
-<button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
-<button class="tab" onclick="openTab('observation',this)">Observation</button>
-<button class="tab" onclick="openTab('calculator',this)">Compass & Gyro</button>
+<button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
+<button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
 </div>
 
 <div id="almanac" class="section active">
 <div class="card">
-<h3>Sun Almanac / Azimuth</h3>
+<h3>Celestial Almanac</h3>
+
+<label>Object</label>
+<select id="celestialObject" class="full">
+<option>Sun</option>
+</select>
 
 <label>Date UTC</label>
 <input id="dateUTC" class="full" type="date">
@@ -88,10 +92,10 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 
 <div id="observation" class="section">
 <div class="card">
-<h3>Sun Compass Observation</h3>
+<h3>Compass Observation</h3>
 
 <p class="small">
-This page automatically uses the last Zn calculated in Almanac.
+This page automatically uses the last celestial calculation.
 </p>
 
 <div class="resultBox">
@@ -119,42 +123,7 @@ True Bearing / Zn: <span id="obsZn">--</span>
 </div>
 </div>
 
-<div id="calculator" class="section">
-<div class="card">
-<h3>Gyro Error</h3>
 
-<label>True Bearing</label>
-<input id="trueB" class="full" type="number">
-
-<label>Gyro Bearing</label>
-<input id="gyroB" class="full" type="number">
-
-<button class="main" onclick="calcGyro()">Calculate Gyro Error</button>
-<div class="result" id="gyroResult">--</div>
-
-<hr>
-
-<h3>Compass Error</h3>
-
-<label>True Bearing</label>
-<input id="trueCompass" class="full" type="number">
-
-<label>Compass Bearing</label>
-<input id="compassB" class="full" type="number">
-
-<label>Variation</label>
-<div class="row">
-<input id="variationValue" class="boxMin" type="number" step="0.1">
-<select id="variationDir" class="boxDir">
-<option>E</option>
-<option>W</option>
-</select>
-</div>
-
-<button class="main" onclick="calcCompass()">Calculate Compass Error</button>
-<div class="result" id="compassResult">--</div>
-</div>
-</div>
 
 <div id="notes" class="section">
 <div class="card">
