@@ -388,7 +388,17 @@ let compassError=normalizeError(trueBearing-compass);
 let deviation=normalizeError(compassError-variation);
 
 document.getElementById("observationResult").innerHTML=
-"<b>SUN COMPASS OBSERVATION</b><br><br>"+
+"<b>COMPASS OBSERVATION</b><br><br>"+
+"Date UTC: "+lastSunData.date+"<br>"+
+"Time UTC: "+lastSunData.time+"<br><br>"+
+"Object: "+document.getElementById("celestialObject").value+"<br><br>"+
+"Position:<br>"+
+"Lat: "+document.getElementById("latDeg").value+"° "+
+document.getElementById("latMin").value+"' "+
+document.getElementById("latDir").value+"<br>"+
+"Lon: "+document.getElementById("lonDeg").value+"° "+
+document.getElementById("lonMin").value+"' "+
+document.getElementById("lonDir").value+"<br><br>"+
 "True Bearing / Zn: "+formatBearing(trueBearing)+"<br><br>"+
 "Gyro Bearing: "+gyro.toFixed(1)+"°<br>"+
 "Gyro Error: "+formatError(gyroError)+"<br><br>"+
