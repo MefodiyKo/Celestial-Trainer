@@ -397,8 +397,89 @@ document.getElementById("compassResult").innerHTML=
 "Compass Error: "+formatError(compassError)+"<br>"+
 "Deviation: "+formatError(deviation);
 }
+function togglePositionSource(){
 
+let mode =
+document.getElementById("positionSource").value;
+
+let disabled = (mode === "gps");
+
+document.getElementById("latDeg").disabled = disabled;
+document.getElementById("latMin").disabled = disabled;
+document.getElementById("latDir").disabled = disabled;
+
+document.getElementById("lonDeg").disabled = disabled;
+document.getElementById("lonMin").disabled = disabled;
+document.getElementById("lonDir").disabled = disabled;
+
+document.getElementById("gpsButton").style.display =
+disabled ? "block" : "none";
+}
+
+function getGPSPosition(){
+
+if(!navigator.geolocation){
+alert("GPS not supported.");
+return;
+}
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+let lat = position.coords.latitude;
+let lon = position.coords.longitude;
+
+let latDir = lat >= 0 ? "N" : "S";
+let lonDir = lon >= 0 ? "E" : "W";
+
+lat = Math.abs(lat);
+lon = Math.abs(lon);
+
+let latDeg = Math.floor(lat);
+let latMin = (lat - latDeg) * 60;
+
+let lonDeg = Math.floor(lon);
+let lonMin = (lon - lonDeg) * 60;
+
+document.getElementById("latDeg").value = latDeg;
+document.getElementById("latMin").value = latMin.toFixed(1);
+document.getElementById("latDir").value = latDir;
+
+document.getElementById("lonDeg").value = lonDeg;
+document.getElementById("lonMin").value = lonMin.toFixed(1);
+document.getElementById("lonDir").value = lonDir;
+
+let now = new Date();
+
+document.getElementById("dateUTC").value =
+now.toISOString().substring(0,10);
+
+document.getElementById("timeUTC").value =
+now.toISOString().substring(11,19);
+
+alert("GPS position loaded.");
+
+},
+
+function(error){
+
+alert(
+"Unable to get GPS position.\nPlease allow location access."
+);
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:10000
+}
+
+);
+
+}
 setNowUTC();
+togglePositionSource();
 </script>
 
 </body>
