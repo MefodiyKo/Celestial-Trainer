@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v2.2</title>
+<title>Celestial Trainer v2.3</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
@@ -32,29 +32,72 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <body>
 
 <header>
-<h2>Celestial Trainer v2.2</h2>
+<h2>Celestial Trainer v2.3</h2>
 <p>Nautical Almanac Style</p>
 </header>
 
 <div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
 
 <div class="tabs">
-<button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
-<button class="tab" onclick="openTab('observation',this)">Observation</button>
-<button class="tab" onclick="openTab('calculator',this)">Compass & Gyro</button>
+<button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
+<button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
 </div>
 
 <div id="almanac" class="section active">
 <div class="card">
-<h3>Sun Almanac / Azimuth</h3>
+<h3>Celestial Almanac</h3>
 
+<label>Object</label>
+<select id="celestialObject" class="full">
+<option value="Sun">☀️ Sun</option>
+
+<option disabled>──────────</option>
+
+<option disabled>🌙 Moon (v2.4)</option>
+
+<option disabled>──────────</option>
+
+<option disabled>♀ Venus</option>
+<option disabled>♂ Mars</option>
+<option disabled>♃ Jupiter</option>
+<option disabled>♄ Saturn</option>
+
+<option disabled>──────────</option>
+
+<option disabled>⭐ Polaris</option>
+<option disabled>⭐ Sirius</option>
+<option disabled>⭐ Canopus</option>
+<option disabled>⭐ Arcturus</option>
+<option disabled>⭐ Vega</option>
+<option disabled>⭐ Capella</option>
+<option disabled>⭐ Altair</option>
+</select>
+<label>Position Source</label>
+<select id="positionSource" class="full" onchange="togglePositionSource()">
+<option value="manual">Manual</option>
+<option value="gps">GPS</option>
+</select>
+
+<button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">
+Get GPS Position
+</button>
 <label>Date UTC</label>
 <input id="dateUTC" class="full" type="date">
 
 <label>Time UTC</label>
-<input id="timeUTC" class="full" type="time" step="1">
 
+<div class="row">
+<input id="utcHour" class="boxDeg" type="number" min="0" max="23" placeholder="HH">
+
+<span>:</span>
+
+<input id="utcMin" class="boxDeg" type="number" min="0" max="59" placeholder="MM">
+
+<span>:</span>
+
+<input id="utcSec" class="boxDeg" type="number" min="0" max="59" placeholder="SS">
+</div>
 <label>Latitude</label>
 <div class="row">
 <input id="latDeg" class="boxDeg" type="number" placeholder="08">
@@ -88,13 +131,14 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 
 <div id="observation" class="section">
 <div class="card">
-<h3>Sun Compass Observation</h3>
+<h3>Compass Observation</h3>
 
 <p class="small">
-This page automatically uses the last Zn calculated in Almanac.
+This page automatically uses the last celestial calculation.
 </p>
 
 <div class="resultBox">
+Object: <span id="obsObject">Sun</span><br>
 True Bearing / Zn: <span id="obsZn">--</span>
 </div>
 
@@ -113,48 +157,19 @@ True Bearing / Zn: <span id="obsZn">--</span>
 </select>
 </div>
 
-<button class="main" onclick="calculateObservation()">Calculate Observation</button>
+<button class="main" onclick="calculateObservation()">
+Calculate Observation
+</button>
+
+<button class="main" onclick="copyObservation()">
+Copy Observation
+</button>
 
 <div class="result" id="observationResult">Calculate Sun in Almanac first.</div>
 </div>
 </div>
 
-<div id="calculator" class="section">
-<div class="card">
-<h3>Gyro Error</h3>
 
-<label>True Bearing</label>
-<input id="trueB" class="full" type="number">
-
-<label>Gyro Bearing</label>
-<input id="gyroB" class="full" type="number">
-
-<button class="main" onclick="calcGyro()">Calculate Gyro Error</button>
-<div class="result" id="gyroResult">--</div>
-
-<hr>
-
-<h3>Compass Error</h3>
-
-<label>True Bearing</label>
-<input id="trueCompass" class="full" type="number">
-
-<label>Compass Bearing</label>
-<input id="compassB" class="full" type="number">
-
-<label>Variation</label>
-<div class="row">
-<input id="variationValue" class="boxMin" type="number" step="0.1">
-<select id="variationDir" class="boxDir">
-<option>E</option>
-<option>W</option>
-</select>
-</div>
-
-<button class="main" onclick="calcCompass()">Calculate Compass Error</button>
-<div class="result" id="compassResult">--</div>
-</div>
-</div>
 
 <div id="notes" class="section">
 <div class="card">
@@ -176,9 +191,21 @@ btn.classList.add("active");
 }
 
 function setNowUTC(){
+
 let now=new Date();
-document.getElementById("dateUTC").value=now.toISOString().substring(0,10);
-document.getElementById("timeUTC").value=now.toISOString().substring(11,19);
+
+document.getElementById("dateUTC").value=
+now.toISOString().substring(0,10);
+
+document.getElementById("utcHour").value=
+String(now.getUTCHours()).padStart(2,"0");
+
+document.getElementById("utcMin").value=
+String(now.getUTCMinutes()).padStart(2,"0");
+
+document.getElementById("utcSec").value=
+String(now.getUTCSeconds()).padStart(2,"0");
+
 }
 
 function degToRad(d){return d*Math.PI/180}
@@ -287,8 +314,12 @@ return {JD:JD,GHA:GHA,Dec:Dec};
 
 function calculateSun(){
 let date=document.getElementById("dateUTC").value;
-let time=document.getElementById("timeUTC").value;
-
+let time =
+document.getElementById("utcHour").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcMin").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcSec").value.padStart(2,"0");
 if(!date||!time){
 document.getElementById("sunResult").innerHTML="Enter Date and UTC";
 return;
@@ -320,8 +351,10 @@ let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
 lastSunData={date:date,time:time,lat:lat,lon:lon,GHA:sun.GHA,Dec:sun.Dec,LHA:LHA,Hc:Hc,Zn:Zn};
 
 document.getElementById("obsZn").innerText=formatBearing(Zn);
-
+document.getElementById("obsObject").innerText=
+document.getElementById("celestialObject").value;
 document.getElementById("sunResult").innerHTML=
+
 "<b>SUN</b><br><br>"+
 "<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
 "<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
@@ -355,7 +388,17 @@ let compassError=normalizeError(trueBearing-compass);
 let deviation=normalizeError(compassError-variation);
 
 document.getElementById("observationResult").innerHTML=
-"<b>SUN COMPASS OBSERVATION</b><br><br>"+
+"<b>COMPASS OBSERVATION</b><br><br>"+
+"Date UTC: "+lastSunData.date+"<br>"+
+"Time UTC: "+lastSunData.time+"<br><br>"+
+"Object: "+document.getElementById("celestialObject").value+"<br><br>"+
+"Position:<br>"+
+"Lat: "+document.getElementById("latDeg").value+"° "+
+document.getElementById("latMin").value+"' "+
+document.getElementById("latDir").value+"<br>"+
+"Lon: "+document.getElementById("lonDeg").value+"° "+
+document.getElementById("lonMin").value+"' "+
+document.getElementById("lonDir").value+"<br><br>"+
 "True Bearing / Zn: "+formatBearing(trueBearing)+"<br><br>"+
 "Gyro Bearing: "+gyro.toFixed(1)+"°<br>"+
 "Gyro Error: "+formatError(gyroError)+"<br><br>"+
@@ -396,8 +439,117 @@ document.getElementById("compassResult").innerHTML=
 "Compass Error: "+formatError(compassError)+"<br>"+
 "Deviation: "+formatError(deviation);
 }
+function togglePositionSource(){
 
+let mode =
+document.getElementById("positionSource").value;
+
+let disabled = (mode === "gps");
+
+document.getElementById("latDeg").disabled = disabled;
+document.getElementById("latMin").disabled = disabled;
+document.getElementById("latDir").disabled = disabled;
+
+document.getElementById("lonDeg").disabled = disabled;
+document.getElementById("lonMin").disabled = disabled;
+document.getElementById("lonDir").disabled = disabled;
+
+document.getElementById("gpsButton").style.display =
+disabled ? "block" : "none";
+}
+
+function getGPSPosition(){
+
+if(!navigator.geolocation){
+alert("GPS not supported.");
+return;
+}
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+let lat = position.coords.latitude;
+let lon = position.coords.longitude;
+
+let latDir = lat >= 0 ? "N" : "S";
+let lonDir = lon >= 0 ? "E" : "W";
+
+lat = Math.abs(lat);
+lon = Math.abs(lon);
+
+let latDeg = Math.floor(lat);
+let latMin = (lat - latDeg) * 60;
+
+let lonDeg = Math.floor(lon);
+let lonMin = (lon - lonDeg) * 60;
+
+document.getElementById("latDeg").value = latDeg;
+document.getElementById("latMin").value = latMin.toFixed(1);
+document.getElementById("latDir").value = latDir;
+
+document.getElementById("lonDeg").value = lonDeg;
+document.getElementById("lonMin").value = lonMin.toFixed(1);
+document.getElementById("lonDir").value = lonDir;
+
+let now = new Date();
+
+document.getElementById("dateUTC").value =
+now.toISOString().substring(0,10);
+
+document.getElementById("utcHour").value =
+String(now.getUTCHours()).padStart(2,"0");
+
+document.getElementById("utcMin").value =
+String(now.getUTCMinutes()).padStart(2,"0");
+
+document.getElementById("utcSec").value =
+String(now.getUTCSeconds()).padStart(2,"0");
+calculateSun();
+},
+
+function(error){
+
+alert(
+"GPS Error Code: " +
+error.code +
+"\n" +
+error.message
+);
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:30000,
+maximumAge:0
+}
+
+);
+
+}
+ function copyObservation(){
+
+let text =
+document.getElementById("observationResult").innerText;
+
+if(!text || text.includes("Calculate Sun")){
+alert("No observation to copy.");
+return;
+}
+
+navigator.clipboard.writeText(text).then(
+function(){
+alert("Observation copied.");
+},
+function(){
+alert("Copy failed.");
+}
+);
+
+}
 setNowUTC();
+togglePositionSource();
 </script>
 
 </body>
