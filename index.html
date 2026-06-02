@@ -86,8 +86,18 @@ Get GPS Position
 <input id="dateUTC" class="full" type="date">
 
 <label>Time UTC</label>
-<input id="timeUTC" class="full" type="time" step="1" value="00:00:00">
 
+<div class="row">
+<input id="utcHour" class="boxDeg" type="number" min="0" max="23" placeholder="HH">
+
+<span>:</span>
+
+<input id="utcMin" class="boxDeg" type="number" min="0" max="59" placeholder="MM">
+
+<span>:</span>
+
+<input id="utcSec" class="boxDeg" type="number" min="0" max="59" placeholder="SS">
+</div>
 <label>Latitude</label>
 <div class="row">
 <input id="latDeg" class="boxDeg" type="number" placeholder="08">
@@ -175,9 +185,21 @@ btn.classList.add("active");
 }
 
 function setNowUTC(){
+
 let now=new Date();
-document.getElementById("dateUTC").value=now.toISOString().substring(0,10);
-document.getElementById("timeUTC").value=now.toISOString().substring(11,19);
+
+document.getElementById("dateUTC").value=
+now.toISOString().substring(0,10);
+
+document.getElementById("utcHour").value=
+String(now.getUTCHours()).padStart(2,"0");
+
+document.getElementById("utcMin").value=
+String(now.getUTCMinutes()).padStart(2,"0");
+
+document.getElementById("utcSec").value=
+String(now.getUTCSeconds()).padStart(2,"0");
+
 }
 
 function degToRad(d){return d*Math.PI/180}
@@ -286,8 +308,12 @@ return {JD:JD,GHA:GHA,Dec:Dec};
 
 function calculateSun(){
 let date=document.getElementById("dateUTC").value;
-let time=document.getElementById("timeUTC").value;
-
+let time =
+document.getElementById("utcHour").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcMin").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcSec").value.padStart(2,"0");
 if(!date||!time){
 document.getElementById("sunResult").innerHTML="Enter Date and UTC";
 return;
@@ -455,9 +481,14 @@ let now = new Date();
 document.getElementById("dateUTC").value =
 now.toISOString().substring(0,10);
 
-document.getElementById("timeUTC").value =
-now.toISOString().substring(11,19);
+document.getElementById("utcHour").value =
+String(now.getUTCHours()).padStart(2,"0");
 
+document.getElementById("utcMin").value =
+String(now.getUTCMinutes()).padStart(2,"0");
+
+document.getElementById("utcSec").value =
+String(now.getUTCSeconds()).padStart(2,"0");
 calculateSun();
 alert("GPS position loaded and Sun calculated.");
 
