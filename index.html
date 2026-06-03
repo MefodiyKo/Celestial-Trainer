@@ -900,16 +900,30 @@ output+="No catalogue stars above 5° altitude.";
 visibleStars.forEach(star=>{
 
 output +=
+"<button class='main' onclick=\"selectStarFromFinder('"+star.name+"')\">"+
 "⭐ "+star.name+
 " — Hc "+
 star.hc.toFixed(1)+
 "° / Zn "+
 star.zn.toFixed(1)+
-"°<br>";
+"°"+
+"</button>";
 
 });
 
 document.getElementById("starFinderResult").innerHTML=output;
+
+}
+function selectStarFromFinder(starName){
+
+document.getElementById("celestialObject").value=starName;
+
+calculateSun();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 setNowUTC();
