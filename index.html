@@ -899,6 +899,14 @@ output+="No catalogue stars above 5° altitude.";
 
 visibleStars.forEach(star=>{
 
+let quality="LOW";
+
+if(star.hc>=20){
+quality="EXCELLENT";
+}else if(star.hc>=10){
+quality="GOOD";
+}
+
 output +=
 "<button class='main' onclick=\"selectStarFromFinder('"+star.name+"')\">"+
 "⭐ "+star.name+
@@ -906,7 +914,8 @@ output +=
 star.hc.toFixed(1)+
 "° / Zn "+
 star.zn.toFixed(1)+
-"°"+
+"° — "+
+quality+
 "</button>";
 
 });
