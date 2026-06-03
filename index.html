@@ -675,7 +675,11 @@ return;
 }
 
 let Hs=hsDeg+(hsMin/60);
-let Ho=Hs+(ie/60)+(dip/60);
+let ref=parseFloat(document.getElementById("refractionValue").value);
+let sd=parseFloat(document.getElementById("sdValue").value);
+let pa=parseFloat(document.getElementById("parallaxValue").value);
+
+let Ho=Hs+(ie/60)+(dip/60)+(ref/60)+(sd/60)+(pa/60);
 
 let intercept=(Ho-lastSunData.Hc)*60;
 let direction=intercept>=0?"TOWARD":"AWAY";
@@ -685,9 +689,31 @@ document.getElementById("sightResult").innerHTML=
 "Date UTC: "+lastSunData.date+"<br>"+
 "Time UTC: "+lastSunData.time+"<br><br>"+
 "Object: "+lastSunData.object+"<br><br>"+
-"Hs: "+hsDeg+"° "+hsMin.toFixed(1)+"'<br>"+
-"IE: "+ie.toFixed(1)+"'<br>"+
-"Dip: "+dip.toFixed(1)+"'<br><br>"+
+"Hs: "+
+hsDeg+
+"° "+
+hsMin.toFixed(1)+
+"'<br>"+
+
+"IE: "+
+ie.toFixed(1)+
+"'<br>"+
+
+"Dip: "+
+dip.toFixed(1)+
+"'<br>"+
+
+"Refraction: "+
+ref.toFixed(1)+
+"'<br>"+
+
+"SD: "+
+sd.toFixed(1)+
+"'<br>"+
+
+"Parallax: "+
+pa.toFixed(1)+
+"'<br><br>"+
 "Ho: "+formatAlt(Ho)+"<br>"+
 "Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
 "Intercept: "+Math.abs(intercept).toFixed(1)+" NM "+direction+"<br>"+
