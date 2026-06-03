@@ -124,8 +124,11 @@ Get GPS Position
 
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
 <button class="main" onclick="calculateSun()">Calculate Object</button>
-
+<button class="main" onclick="findVisibleStars()">
+Find Visible Stars
+</button>
 <div class="result" id="sunResult">Waiting for calculation...</div>
+<div class="result" id="starFinderResult"></div>
 </div>
 </div>
 
@@ -822,6 +825,62 @@ function(){
 alert("Copy failed.");
 }
 );
+
+}
+function findVisibleStars(){
+
+let date=document.getElementById("dateUTC").value;
+
+let time =
+document.getElementById("utcHour").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcMin").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcSec").value.padStart(2,"0");
+
+let lat=getCoord("latDeg","latMin","latDir");
+let lon=getCoord("lonDeg","lonMin","lonDir");
+
+if(lat===null||lon===null){
+document.getElementById("starFinderResult").innerHTML=
+"Enter Latitude and Longitude";
+return;
+}
+
+let sun=sunAlmanac(date,time);
+
+let output="<b>VISIBLE STARS</b><br><br>";
+
+for(let starName in STAR_CATALOG){
+
+let star=STAR_CATALOG[starName];
+
+let GHA=norm360(sun.GHA+star.SHA);
+let LHA=norm360(GHA+lon);
+
+let sinHc=
+Math.sin(degToRad(lat))*Math.sin(degToRad(star.Dec))
++
+Math.cos(degToRad(lat))*Math.cos(degToRad(star.Dec))
+*
+Math.cos(degToRad(LHA));
+
+let Hc=radToDeg(Math.asin(sinHc));
+
+if(Hc>0){
+
+output +=
+"⭐ "+starName+
+" — Hc "+
+Hc.toFixed(1)+
+"°<br>";
+
+}
+
+}
+
+document.getElementById("starFinderResult").innerHTML=
+output;
 
 }
 setNowUTC();
