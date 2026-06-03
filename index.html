@@ -841,6 +841,12 @@ document.getElementById("utcHour").value.padStart(2,"0")
 let lat=getCoord("latDeg","latMin","latDir");
 let lon=getCoord("lonDeg","lonMin","lonDir");
 
+if(!date){
+document.getElementById("starFinderResult").innerHTML=
+"Enter Date UTC";
+return;
+}
+
 if(lat===null||lon===null){
 document.getElementById("starFinderResult").innerHTML=
 "Enter Latitude and Longitude";
@@ -848,8 +854,7 @@ return;
 }
 
 let sun=sunAlmanac(date,time);
-
-let output="<b>VISIBLE STARS</b><br><br>";
+let visibleStars=[];
 
 for(let starName in STAR_CATALOG){
 
@@ -859,28 +864,52 @@ let GHA=norm360(sun.GHA+star.SHA);
 let LHA=norm360(GHA+lon);
 
 let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(star.Dec))
-+
-Math.cos(degToRad(lat))*Math.cos(degToRad(star.Dec))
-*
-Math.cos(degToRad(LHA));
+Math.sin(degToRad(lat))*Math.sin(degToRad(star.Dec))+
+Math.cos(degToRad(lat))*Math.cos(degToRad(star.Dec))*Math.cos(degToRad(LHA));
 
 let Hc=radToDeg(Math.asin(sinHc));
 
-if(Hc>0){
+let y=Math.sin(degToRad(LHA));
+
+let x=
+Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
+Math.tan(degToRad(star.Dec))*Math.cos(degToRad(lat));
+
+let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
+
+if(Hc>5){
+
+visibleStars.push({
+name:starName,
+hc:Hc,
+zn:Zn
+});
+
+}
+
+}
+
+visibleStars.sort((a,b)=>b.hc-a.hc);
+
+let output="<b>VISIBLE STARS</b><br><br>";
+
+if(visibleStars.length===0){
+output+="No catalogue stars above 5° altitude.";
+}
+
+visibleStars.forEach(star=>{
 
 output +=
-"⭐ "+starName+
+"⭐ "+star.name+
 " — Hc "+
-Hc.toFixed(1)+
+star.hc.toFixed(1)+
+"° / Zn "+
+star.zn.toFixed(1)+
 "°<br>";
 
-}
+});
 
-}
-
-document.getElementById("starFinderResult").innerHTML=
-output;
+document.getElementById("starFinderResult").innerHTML=output;
 
 }
 setNowUTC();
