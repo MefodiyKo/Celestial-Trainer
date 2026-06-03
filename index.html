@@ -207,7 +207,9 @@ Refresh Log
 <button class="main" onclick="clearObservationLog()">
 Clear Log
 </button>
-
+<button class="main" onclick="exportObservationLog()">
+Export Log
+</button>
 <div class="result" id="logResult">
 No saved observations.
 </div>
@@ -849,6 +851,52 @@ localStorage.removeItem("celestialLog");
 
 document.getElementById("logResult").innerHTML =
 "No saved observations.";
+
+}
+function exportObservationLog(){
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+if(log.length===0){
+alert("No observations to export.");
+return;
+}
+
+let text =
+"==================================\n"+
+"CELESTIAL TRAINER OBSERVATION LOG\n"+
+"==================================\n\n";
+
+log.forEach(item=>{
+
+text += item;
+text += "\n\n----------------------------------\n\n";
+
+});
+
+let blob =
+new Blob(
+[text],
+{type:"text/plain"}
+);
+
+let link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"Celestial_Observations.txt";
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
 
 }
 setNowUTC();
