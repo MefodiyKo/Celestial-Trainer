@@ -311,14 +311,76 @@ let GHA=norm360(GMST-RA);
 
 return {JD:JD,GHA:GHA,Dec:Dec};
 }
+function moonAlmanac(date,time){
 
+let JD=julianDate(date,time);
+let D=JD-2451545.0;
+
+let L=norm360(218.316+13.176396*D);
+let M=norm360(134.963+13.064993*D);
+let F=norm360(93.272+13.229350*D);
+
+let lon=L+6.289*Math.sin(degToRad(M));
+let lat=5.128*Math.sin(degToRad(F));
+
+let eps=23.439-0.0000004*D;
+
+let RA=radToDeg(Math.atan2(
+Math.sin(degToRad(lon))*Math.cos(degToRad(eps))-
+Math.tan(degToRad(lat))*Math.sin(degToRad(eps)),
+Math.cos(degToRad(lon))
+));
+
+RA=norm360(RA);
+
+let Dec=radToDeg(Math.asin(
+Math.sin(degToRad(lat))*Math.cos(degToRad(eps))+
+Math.cos(degToRad(lat))*Math.sin(degToRad(eps))*Math.sin(degToRad(lon))
+));
+
+let T=(JD-2451545.0)/36525.0;
+
+let GMST=norm360(
+280.46061837+
+360.98564736629*(JD-2451545.0)+
+0.000387933*T*T-
+T*T*T/38710000
+);
+
+let GHA=norm360(GMST-RA);
+
+let HP=0.9508;
+
+return {JD:JD,GHA:GHA,Dec:Dec,HP:HP};
+}
 function calculateSun(){
 let object=document.getElementById("celestialObject").value;
 
 if(object==="Moon"){
+
+let date=document.getElementById("dateUTC").value;
+
+let time =
+document.getElementById("utcHour").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcMin").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcSec").value.padStart(2,"0");
+
+if(!date||!time){
+document.getElementById("sunResult").innerHTML="Enter Date and UTC";
+return;
+}
+
+let moon=moonAlmanac(date,time);
+
 document.getElementById("sunResult").innerHTML=
 "<b>MOON</b><br><br>"+
-"Moon engine will be added in v2.4.";
+"<div class='resultBox'>GHA: "+formatDM(moon.GHA)+"</div>"+
+"<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
+"<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
+"<br><span class='small'>Moon calculation test module v2.4</span>";
+
 return;
 }
 let date=document.getElementById("dateUTC").value;
