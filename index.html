@@ -43,6 +43,9 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
+<button class="tab" onclick="openTab('log',this)">
+Observation Log
+</button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
 </div>
 
@@ -185,12 +188,32 @@ Zn: <span id="sightZn">--</span>
 <input id="dip" class="full" type="number" step="0.1" value="-3">
 
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
-
+<button class="main" onclick="saveObservation()">
+Save Observation
+</button>
 <div class="result" id="sightResult">Calculate object in Almanac first.</div>
 
 </div>
 </div>
+<div id="log" class="section">
+<div class="card">
 
+<h3>Observation Log</h3>
+
+<button class="main" onclick="loadObservationLog()">
+Refresh Log
+</button>
+
+<button class="main" onclick="clearObservationLog()">
+Clear Log
+</button>
+
+<div class="result" id="logResult">
+No saved observations.
+</div>
+
+</div>
+</div>
 <div id="notes" class="section">
 <div class="card">
 <h3>Notes</h3>
@@ -754,7 +777,80 @@ top:0,
 behavior:"smooth"
 });
 }
+function saveObservation(){
 
+if(!lastSunData){
+alert("No observation.");
+return;
+}
+
+let text =
+document.getElementById("sightResult").innerText;
+
+if(!text || text.includes("Calculate object")){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+log.unshift(text);
+
+localStorage.setItem(
+"celestialLog",
+JSON.stringify(log)
+);
+
+alert("Observation saved.");
+
+}
+
+function loadObservationLog(){
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+if(log.length===0){
+
+document.getElementById("logResult").innerHTML =
+"No saved observations.";
+
+return;
+}
+
+let output="";
+
+log.forEach(item=>{
+
+output +=
+"<div class='resultBox'>"+
+item.replace(/\n/g,"<br>")+
+"</div>";
+
+});
+
+document.getElementById("logResult").innerHTML =
+output;
+
+}
+
+function clearObservationLog(){
+
+if(!confirm("Delete all observations?")){
+return;
+}
+
+localStorage.removeItem("celestialLog");
+
+document.getElementById("logResult").innerHTML =
+"No saved observations.";
+
+}
 setNowUTC();
 togglePositionSource();
 </script>
