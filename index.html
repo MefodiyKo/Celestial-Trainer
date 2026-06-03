@@ -349,9 +349,17 @@ T*T*T/38710000
 
 let GHA=norm360(GMST-RA);
 
-let HP=0.9508;
+let distance =
+385001 -
+20905 * Math.cos(degToRad(M));
 
-return {JD:JD,GHA:GHA,Dec:Dec,HP:HP};
+let HP =
+radToDeg(Math.asin(6378.14 / distance));
+
+let SD =
+0.2725 * HP;
+
+return {JD:JD,GHA:GHA,Dec:Dec,HP:HP,SD:SD};
 }
 function calculateSun(){
 let object=document.getElementById("celestialObject").value;
@@ -415,6 +423,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>GHA: "+formatDM(moon.GHA)+"</div>"+
 "<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
 "<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
+ "<div class='resultBox'>SD: "+moon.SD.toFixed(3)+"°</div>"+
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>"+
