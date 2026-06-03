@@ -656,6 +656,20 @@ document.getElementById("sdValue").value=sd;
 document.getElementById("parallaxValue").value=pa;
 
 }
+function calculateRefraction(ha){
+
+if(ha<=0){
+return 0;
+}
+
+return -0.97 /
+Math.tan(
+degToRad(
+ha + 7.31/(ha+4.4)
+)
+);
+
+}
 function calculateSightReduction(){
 if(!lastSunData){
 document.getElementById("sightResult").innerHTML=
@@ -675,7 +689,18 @@ return;
 }
 
 let Hs=hsDeg+(hsMin/60);
-let ref=parseFloat(document.getElementById("refractionValue").value);
+let Ha =
+Hs +
+(ie/60) +
+(dip/60);
+
+let ref =
+calculateRefraction(Ha);
+
+document.getElementById(
+"refractionValue"
+).value =
+ref.toFixed(1);
 let sd=parseFloat(document.getElementById("sdValue").value);
 let pa=parseFloat(document.getElementById("parallaxValue").value);
 
