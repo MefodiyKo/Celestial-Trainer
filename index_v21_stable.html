@@ -54,7 +54,7 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 
 <option disabled>──────────</option>
 
-<option disabled>🌙 Moon (v2.4)</option>
+<option value="Moon">🌙 Moon</option>
 
 <option disabled>──────────</option>
 
@@ -313,6 +313,14 @@ return {JD:JD,GHA:GHA,Dec:Dec};
 }
 
 function calculateSun(){
+let object=document.getElementById("celestialObject").value;
+
+if(object==="Moon"){
+document.getElementById("sunResult").innerHTML=
+"<b>MOON</b><br><br>"+
+"Moon engine will be added in v2.4.";
+return;
+}
 let date=document.getElementById("dateUTC").value;
 let time =
 document.getElementById("utcHour").value.padStart(2,"0")
