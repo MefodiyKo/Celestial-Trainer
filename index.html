@@ -180,13 +180,36 @@ Zn: <span id="sightZn">--</span>
 
 <label>Hs Minutes</label>
 <input id="hsMin" class="full" type="number" step="0.1">
+<label>Body</label>
 
+<select id="sightBody"
+class="full"
+onchange="updateSightCorrections()">
+<option value="star">Star / Planet</option>
+<option value="sunLL">Sun Lower Limb</option>
+<option value="sunUL">Sun Upper Limb</option>
+<option value="moonLL">Moon Lower Limb</option>
+<option value="moonUL">Moon Upper Limb</option>
+</select>
 <label>Index Error, minutes (+ / -)</label>
 <input id="indexError" class="full" type="number" step="0.1" value="0">
 
 <label>Dip, minutes (-)</label>
 <input id="dip" class="full" type="number" step="0.1" value="-3">
+<label>Refraction</label>
+<input id="refractionValue"
+class="full"
+readonly>
 
+<label>Semi-Diameter</label>
+<input id="sdValue"
+class="full"
+readonly>
+
+<label>Parallax</label>
+<input id="parallaxValue"
+class="full"
+readonly>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
 <button class="main" onclick="saveObservation()">
 Save Observation
@@ -601,7 +624,38 @@ document.getElementById("lonDir").value+"<br><br>"+
 "Variation: "+formatError(variation)+"<br>"+
 "Deviation: "+formatError(deviation);
 }
+function updateSightCorrections(){
 
+let body =
+document.getElementById("sightBody").value;
+
+let ref = "-1.0";
+let sd = "0.0";
+let pa = "0.0";
+
+if(body==="sunLL"){
+sd="+16.0";
+}
+
+if(body==="sunUL"){
+sd="-16.0";
+}
+
+if(body==="moonLL"){
+sd="+15.0";
+pa="+57.0";
+}
+
+if(body==="moonUL"){
+sd="-15.0";
+pa="+57.0";
+}
+
+document.getElementById("refractionValue").value=ref;
+document.getElementById("sdValue").value=sd;
+document.getElementById("parallaxValue").value=pa;
+
+}
 function calculateSightReduction(){
 if(!lastSunData){
 document.getElementById("sightResult").innerHTML=
