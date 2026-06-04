@@ -1232,7 +1232,7 @@ link.click();
 document.body.removeChild(link);
 
 }
-function drawRunningFixDiagram(zn1,zn2){
+function drawRunningFixDiagram(zn1,zn2,course,distance){
 
 let canvas=document.getElementById("runningFixCanvas");
 
@@ -1249,6 +1249,59 @@ ctx.font="14px Arial";
 
 let cx=175;
 let cy=150;
+
+let scale=5;
+
+function drawLine(angleDeg,label,shiftX,shiftY){
+
+let ang=degToRad(angleDeg-90);
+
+let x1=cx+shiftX-Math.cos(ang)*150;
+let y1=cy+shiftY-Math.sin(ang)*150;
+
+let x2=cx+shiftX+Math.cos(ang)*150;
+let y2=cy+shiftY+Math.sin(ang)*150;
+
+ctx.beginPath();
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
+ctx.stroke();
+
+ctx.fillText(label,x2,y2);
+
+}
+
+let courseRad=degToRad(course);
+
+let shiftX=Math.sin(courseRad)*distance*scale;
+let shiftY=-Math.cos(courseRad)*distance*scale;
+
+ctx.strokeStyle="#6f9fb8";
+drawLine(zn1+90,"LOP1 old",0,0);
+
+ctx.strokeStyle="#9ee7ff";
+drawLine(zn1+90,"LOP1 transferred",shiftX,shiftY);
+
+ctx.strokeStyle="#ffffff";
+drawLine(zn2+90,"LOP2",0,0);
+
+ctx.strokeStyle="#ffd966";
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(cx+shiftX,cy+shiftY);
+ctx.stroke();
+
+ctx.fillStyle="#ffd966";
+ctx.fillText("DR Track",cx+shiftX+5,cy+shiftY);
+
+ctx.fillStyle="#9ee7ff";
+ctx.beginPath();
+ctx.arc(cx+shiftX,cy+shiftY,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("Running Fix",cx+shiftX+10,cy+shiftY-10);
+
+}
 
 function drawLine(angleDeg,label){
 
@@ -1351,7 +1404,9 @@ transferredIntercept.toFixed(1)+
 "<span class='small'>Training geometry only. Plot confirmation required.</span>";
 drawRunningFixDiagram(
 zn1,
-zn2
+zn2,
+course,
+distance
 );
 }
 setNowUTC();
