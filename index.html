@@ -1244,16 +1244,46 @@ return;
 }
 
 let distance=speed*time;
+let angle=Math.abs(zn1-zn2);
+
+if(angle>180){
+angle=360-angle;
+}
+
+let quality="POOR";
+
+if(angle>=60 && angle<=120){
+quality="GOOD";
+}
+
+if(angle>=80 && angle<=100){
+quality="EXCELLENT";
+}
+
+let transferEffect =
+distance *
+Math.cos(degToRad(course-zn1));
+
+let transferredIntercept =
+int1 + transferEffect;
 
 document.getElementById("runningFixResult").innerHTML=
-"<b>RUNNING FIX (TRAINING MODE)</b><br><br>"+
+"<b>RUNNING FIX GEOMETRY</b><br><br>"+
 "Distance Run: "+distance.toFixed(1)+" NM<br>"+
 "Course Made Good: "+course.toFixed(1)+"°<br><br>"+
+
 "LOP1 Zn: "+zn1.toFixed(1)+"°<br>"+
-"LOP1 Intercept: "+int1.toFixed(1)+" NM<br><br>"+
+"LOP1 Intercept: "+int1.toFixed(1)+" NM<br>"+
+"Transferred LOP1 Intercept: "+
+transferredIntercept.toFixed(1)+
+" NM<br><br>"+
+
 "LOP2 Zn: "+zn2.toFixed(1)+"°<br>"+
 "LOP2 Intercept: "+int2.toFixed(1)+" NM<br><br>"+
-"Running Fix geometry module ready.";
+
+"Angle Between LOPs: "+angle.toFixed(0)+"°<br>"+
+"Fix Quality: "+quality+"<br><br>"+
+"<span class='small'>Training geometry only. Plot confirmation required.</span>";
 }
 setNowUTC();
 togglePositionSource();
