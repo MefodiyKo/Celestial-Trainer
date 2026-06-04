@@ -704,7 +704,7 @@ ref.toFixed(1);
 let sd=parseFloat(document.getElementById("sdValue").value);
 let pa=parseFloat(document.getElementById("parallaxValue").value);
 
-let Ho=Hs+(ie/60)+(dip/60)+(ref/60)+(sd/60)+(pa/60);
+let Ho=Ha+(ref/60)+(sd/60)+(pa/60);
 
 let intercept=(Ho-lastSunData.Hc)*60;
 let direction=intercept>=0?"TOWARD":"AWAY";
