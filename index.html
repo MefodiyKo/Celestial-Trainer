@@ -169,6 +169,15 @@ Observation Log
 
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
 <button class="main" onclick="calculateObject()">Calculate Object</button>
+
+<label>Minimum Star Altitude</label>
+<select id="minStarAltitude" class="full">
+<option value="5">5°</option>
+<option value="10">10°</option>
+<option value="15">15°</option>
+<option value="20">20°</option>
+</select>
+
 <button class="main" onclick="findVisibleStars()">Find Visible Stars</button>
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
@@ -938,7 +947,9 @@ let GHA=norm360(sun.GHAAries+star.SHA);
 let LHA=norm360(GHA+data.lon);
 let r=calculateHcZn(data.lat,star.Dec,LHA);
 
-if(r.Hc>5){
+let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+
+if(r.Hc>minAlt){
 visibleStars.push({
 name:starName,
 hc:r.Hc,
@@ -949,8 +960,8 @@ zn:r.Zn
 
 visibleStars.sort((a,b)=>b.hc-a.hc);
 
-let output="<b>VISIBLE STARS</b><br><br>";
-
+let output="<b>VISIBLE STARS</b><br>"+
+"Minimum altitude: "+minAlt+"°<br><br>";
 if(visibleStars.length===0){
 output+="No catalogue stars above 5° altitude.";
 }
