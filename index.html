@@ -1303,42 +1303,7 @@ ctx.fillText("Running Fix",cx+shiftX+10,cy+shiftY-10);
 
 }
 
-function drawLine(angleDeg,label){
 
-let ang=degToRad(angleDeg-90);
-
-let x1=cx-Math.cos(ang)*150;
-let y1=cy-Math.sin(ang)*150;
-
-let x2=cx+Math.cos(ang)*150;
-let y2=cy+Math.sin(ang)*150;
-
-ctx.beginPath();
-ctx.moveTo(x1,y1);
-ctx.lineTo(x2,y2);
-ctx.stroke();
-
-ctx.fillText(label,x2,y2);
-
-}
-
-/* LOPs are perpendicular to azimuth */
-
-drawLine(zn1+90,"LOP1");
-
-drawLine(zn2+90,"LOP2");
-
-ctx.beginPath();
-ctx.arc(cx,cy,5,0,Math.PI*2);
-ctx.fill();
-
-ctx.fillText(
-"Running Fix",
-cx+10,
-cy-10
-);
-
-}
 function calculateRunningFix(){
 
 let zn1=parseFloat(document.getElementById("rfZn1").value);
