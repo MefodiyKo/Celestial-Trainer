@@ -1249,7 +1249,22 @@ ctx.font="14px Arial";
 
 let cx=175;
 let cy=150;
+let fixX=cx;
+let fixY=cy;
 
+let courseRad=degToRad(course);
+
+fixX =
+cx +
+Math.sin(courseRad) *
+distance *
+5;
+
+fixY =
+cy -
+Math.cos(courseRad) *
+distance *
+5;
 let scale=5;
 
 function drawLine(angleDeg,label,shiftX,shiftY){
@@ -1271,10 +1286,8 @@ ctx.fillText(label,x2,y2);
 
 }
 
-let courseRad=degToRad(course);
-
-let shiftX=Math.sin(courseRad)*distance*scale;
-let shiftY=-Math.cos(courseRad)*distance*scale;
+let shiftX=fixX-cx;
+let shiftY=fixY-cy;
 
 ctx.strokeStyle="#6f9fb8";
 drawLine(zn1+90,"LOP1 old",0,0);
@@ -1296,10 +1309,14 @@ ctx.fillText("DR Track",cx+shiftX+5,cy+shiftY);
 
 ctx.fillStyle="#9ee7ff";
 ctx.beginPath();
-ctx.arc(cx+shiftX,cy+shiftY,5,0,Math.PI*2);
+ctx.arc(fixX,fixY,5,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText("Running Fix",cx+shiftX+10,cy+shiftY-10);
+ctx.fillText(
+"Running Fix",
+fixX+10,
+fixY-10
+);
 
 }
 
