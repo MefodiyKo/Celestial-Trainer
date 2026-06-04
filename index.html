@@ -58,19 +58,69 @@ Observation Log
 <select id="celestialObject" class="full">
 <option value="Sun">☀️ Sun</option>
 <option value="Moon">🌙 Moon</option>
+
 <option disabled>──────────</option>
-<option disabled>♀ Venus</option>
-<option disabled>♂ Mars</option>
-<option disabled>♃ Jupiter</option>
-<option disabled>♄ Saturn</option>
+
+<option value="Alpheratz">⭐ Alpheratz</option>
+<option value="Ankaa">⭐ Ankaa</option>
+<option value="Schedar">⭐ Schedar</option>
+<option value="Diphda">⭐ Diphda</option>
+<option value="Achernar">⭐ Achernar</option>
+<option value="Hamal">⭐ Hamal</option>
+<option value="Acamar">⭐ Acamar</option>
+<option value="Menkar">⭐ Menkar</option>
+<option value="Mirfak">⭐ Mirfak</option>
+<option value="Aldebaran">⭐ Aldebaran</option>
+<option value="Rigel">⭐ Rigel</option>
+<option value="Capella">⭐ Capella</option>
+<option value="Bellatrix">⭐ Bellatrix</option>
+<option value="Elnath">⭐ Elnath</option>
+<option value="Alnilam">⭐ Alnilam</option>
+<option value="Betelgeuse">⭐ Betelgeuse</option>
+<option value="Canopus">⭐ Canopus</option>
+<option value="Sirius">⭐ Sirius</option>
+<option value="Adhara">⭐ Adhara</option>
+<option value="Procyon">⭐ Procyon</option>
+<option value="Pollux">⭐ Pollux</option>
+<option value="Avior">⭐ Avior</option>
+<option value="Suhail">⭐ Suhail</option>
+<option value="Miaplacidus">⭐ Miaplacidus</option>
+<option value="Alphard">⭐ Alphard</option>
+<option value="Regulus">⭐ Regulus</option>
+<option value="Dubhe">⭐ Dubhe</option>
+<option value="Denebola">⭐ Denebola</option>
+<option value="Gienah">⭐ Gienah</option>
+<option value="Acrux">⭐ Acrux</option>
+<option value="Gacrux">⭐ Gacrux</option>
+<option value="Alioth">⭐ Alioth</option>
+<option value="Spica">⭐ Spica</option>
+<option value="Alkaid">⭐ Alkaid</option>
+<option value="Hadar">⭐ Hadar</option>
+<option value="Menkent">⭐ Menkent</option>
+<option value="Arcturus">⭐ Arcturus</option>
+<option value="Rigil Kentaurus">⭐ Rigil Kentaurus</option>
+<option value="Zubenelgenubi">⭐ Zubenelgenubi</option>
+<option value="Kochab">⭐ Kochab</option>
+<option value="Alphecca">⭐ Alphecca</option>
+<option value="Antares">⭐ Antares</option>
+<option value="Atria">⭐ Atria</option>
+<option value="Sabik">⭐ Sabik</option>
+<option value="Shaula">⭐ Shaula</option>
+<option value="Rasalhague">⭐ Rasalhague</option>
+<option value="Eltanin">⭐ Eltanin</option>
+<option value="Kaus Australis">⭐ Kaus Australis</option>
+<option value="Vega">⭐ Vega</option>
+<option value="Nunki">⭐ Nunki</option>
+<option value="Altair">⭐ Altair</option>
+<option value="Peacock">⭐ Peacock</option>
+<option value="Deneb">⭐ Deneb</option>
+<option value="Enif">⭐ Enif</option>
+<option value="Alnair">⭐ Alnair</option>
+<option value="Fomalhaut">⭐ Fomalhaut</option>
+<option value="Markab">⭐ Markab</option>
+
 <option disabled>──────────</option>
 <option value="Polaris">⭐ Polaris</option>
-<option value="Sirius">⭐ Sirius</option>
-<option value="Canopus">⭐ Canopus</option>
-<option value="Arcturus">⭐ Arcturus</option>
-<option value="Vega">⭐ Vega</option>
-<option value="Capella">⭐ Capella</option>
-<option value="Altair">⭐ Altair</option>
 </select>
 
 <label>Position Source</label>
@@ -253,13 +303,64 @@ No saved observations.
 let lastSunData=null;
 
 const STAR_CATALOG = {
-Polaris:{SHA:316.7,Dec:89.3},
-Sirius:{SHA:258.6,Dec:-16.7},
-Canopus:{SHA:264.1,Dec:-52.7},
-Arcturus:{SHA:146.2,Dec:19.1},
-Vega:{SHA:80.9,Dec:38.8},
-Capella:{SHA:280.5,Dec:46.0},
-Altair:{SHA:62.1,Dec:8.9}
+Alpheratz:{SHA:358,Dec:29},
+Ankaa:{SHA:354,Dec:-42},
+Schedar:{SHA:350,Dec:56},
+Diphda:{SHA:349,Dec:-18},
+Achernar:{SHA:336,Dec:-57},
+Hamal:{SHA:328,Dec:23},
+Acamar:{SHA:316,Dec:-40},
+Menkar:{SHA:315,Dec:4},
+Mirfak:{SHA:309,Dec:50},
+Aldebaran:{SHA:291,Dec:16},
+Rigel:{SHA:282,Dec:-8},
+Capella:{SHA:281,Dec:46},
+Bellatrix:{SHA:279,Dec:6},
+Elnath:{SHA:279,Dec:29},
+Alnilam:{SHA:276,Dec:-1},
+Betelgeuse:{SHA:271,Dec:7},
+Canopus:{SHA:264,Dec:-53},
+Sirius:{SHA:259,Dec:-17},
+Adhara:{SHA:256,Dec:-29},
+Procyon:{SHA:245,Dec:5},
+Pollux:{SHA:244,Dec:28},
+Avior:{SHA:234,Dec:-59},
+Suhail:{SHA:223,Dec:-43},
+Miaplacidus:{SHA:222,Dec:-70},
+Alphard:{SHA:218,Dec:-8},
+Regulus:{SHA:208,Dec:12},
+Dubhe:{SHA:194,Dec:62},
+Denebola:{SHA:183,Dec:15},
+Gienah:{SHA:176,Dec:-17},
+Acrux:{SHA:174,Dec:-63},
+Gacrux:{SHA:172,Dec:-57},
+Alioth:{SHA:167,Dec:56},
+Spica:{SHA:159,Dec:-11},
+Alkaid:{SHA:153,Dec:49},
+Hadar:{SHA:149,Dec:-60},
+Menkent:{SHA:149,Dec:-36},
+Arcturus:{SHA:146,Dec:19},
+"Rigil Kentaurus":{SHA:140,Dec:-61},
+Zubenelgenubi:{SHA:138,Dec:-16},
+Kochab:{SHA:137,Dec:74},
+Alphecca:{SHA:126,Dec:27},
+Antares:{SHA:113,Dec:-26},
+Atria:{SHA:108,Dec:-69},
+Sabik:{SHA:102,Dec:-16},
+Shaula:{SHA:97,Dec:-37},
+Rasalhague:{SHA:96,Dec:13},
+Eltanin:{SHA:91,Dec:51},
+"Kaus Australis":{SHA:84,Dec:-34},
+Vega:{SHA:81,Dec:39},
+Nunki:{SHA:76,Dec:-26},
+Altair:{SHA:62,Dec:9},
+Peacock:{SHA:54,Dec:-57},
+Deneb:{SHA:50,Dec:45},
+Enif:{SHA:34,Dec:10},
+Alnair:{SHA:28,Dec:-47},
+Fomalhaut:{SHA:16,Dec:-30},
+Markab:{SHA:14,Dec:15},
+Polaris:{SHA:319,Dec:89}
 };
 
 function openTab(id,btn){
