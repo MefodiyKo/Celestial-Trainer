@@ -182,7 +182,7 @@ Observation Log
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
-
+<div class="result" id="pairAdvisorResult"></div>
 </div>
 </div>
 
@@ -985,8 +985,74 @@ output+=
 });
 
 document.getElementById("starFinderResult").innerHTML=output;
+showRecommendedPairs(visibleStars);
+}
+function showRecommendedPairs(stars){
+
+let output="<b>⭐ RECOMMENDED STAR PAIRS</b><br><br>";
+
+let found=0;
+
+for(let i=0;i<stars.length;i++){
+
+for(let j=i+1;j<stars.length;j++){
+
+let diff=Math.abs(
+stars[i].zn-stars[j].zn
+);
+
+if(diff>180){
+diff=360-diff;
 }
 
+if(diff>=60 && diff<=120){
+
+let quality="GOOD";
+
+if(diff>=80 && diff<=100){
+quality="EXCELLENT";
+}
+
+output +=
+stars[i].name+
+" ("+
+stars[i].zn.toFixed(0)+
+"°) × "+
+stars[j].name+
+" ("+
+stars[j].zn.toFixed(0)+
+"°)<br>"+
+"Difference: "+
+diff.toFixed(0)+
+"° — "+
+quality+
+"<br><br>";
+
+found++;
+
+if(found>=5){
+break;
+}
+
+}
+
+}
+
+if(found>=5){
+break;
+}
+
+}
+
+if(found===0){
+output+="No suitable star pairs found.";
+}
+
+document.getElementById(
+"pairAdvisorResult"
+).innerHTML=output;
+
+}
 function selectStarFromFinder(starName){
 document.getElementById("celestialObject").value=starName;
 calculateObject();
