@@ -1300,21 +1300,29 @@ ctx.moveTo(x1,y1);
 ctx.lineTo(x2,y2);
 ctx.stroke();
 
-let offsetY=0;
+let labelX=x2+8;
+let labelY=y2;
 
 if(label==="LOP1 old"){
-offsetY=-12;
+labelX-=80;
+labelY-=15;
 }
 
 if(label==="LOP1 transferred"){
-offsetY=14;
+labelX-=140;
+labelY+=15;
 }
 
 if(label==="LOP2"){
-offsetY=30;
+labelX+=10;
+labelY+=25;
 }
 
-ctx.fillText(label,x2+8,y2+offsetY);
+ctx.fillText(
+label,
+labelX,
+labelY
+);
 
 }
 
