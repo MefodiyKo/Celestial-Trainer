@@ -47,6 +47,9 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 Observation Log
 </button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
+<button class="tab" onclick="openTab('runningfix',this)">
+Running Fix
+</button>
 </div>
 
 <div id="almanac" class="section active">
@@ -294,6 +297,42 @@ Export Log
 </button>
 <div class="result" id="logResult">
 No saved observations.
+</div>
+
+</div>
+</div>
+<div id="runningfix" class="section">
+<div class="card">
+
+<h3>Running Fix</h3>
+
+<label>LOP 1 Bearing (Zn)</label>
+<input id="rfZn1" class="full" type="number" step="0.1">
+
+<label>LOP 1 Intercept (NM)</label>
+<input id="rfInt1" class="full" type="number" step="0.1">
+
+<label>Course Made Good</label>
+<input id="rfCourse" class="full" type="number" step="0.1">
+
+<label>Speed (knots)</label>
+<input id="rfSpeed" class="full" type="number" step="0.1">
+
+<label>Time Interval (hours)</label>
+<input id="rfTime" class="full" type="number" step="0.01">
+
+<label>LOP 2 Bearing (Zn)</label>
+<input id="rfZn2" class="full" type="number" step="0.1">
+
+<label>LOP 2 Intercept (NM)</label>
+<input id="rfInt2" class="full" type="number" step="0.1">
+
+<button class="main" onclick="calculateRunningFix()">
+Calculate Running Fix
+</button>
+
+<div class="result" id="runningFixResult">
+Waiting for calculation...
 </div>
 
 </div>
@@ -1181,6 +1220,40 @@ link.click();
 
 document.body.removeChild(link);
 
+}
+function calculateRunningFix(){
+
+let zn1=parseFloat(document.getElementById("rfZn1").value);
+let int1=parseFloat(document.getElementById("rfInt1").value);
+
+let course=parseFloat(document.getElementById("rfCourse").value);
+let speed=parseFloat(document.getElementById("rfSpeed").value);
+let time=parseFloat(document.getElementById("rfTime").value);
+
+let zn2=parseFloat(document.getElementById("rfZn2").value);
+let int2=parseFloat(document.getElementById("rfInt2").value);
+
+if(
+isNaN(zn1)||isNaN(int1)||
+isNaN(course)||isNaN(speed)||isNaN(time)||
+isNaN(zn2)||isNaN(int2)
+){
+document.getElementById("runningFixResult").innerHTML=
+"Enter all values.";
+return;
+}
+
+let distance=speed*time;
+
+document.getElementById("runningFixResult").innerHTML=
+"<b>RUNNING FIX (TRAINING MODE)</b><br><br>"+
+"Distance Run: "+distance.toFixed(1)+" NM<br>"+
+"Course Made Good: "+course.toFixed(1)+"°<br><br>"+
+"LOP1 Zn: "+zn1.toFixed(1)+"°<br>"+
+"LOP1 Intercept: "+int1.toFixed(1)+" NM<br><br>"+
+"LOP2 Zn: "+zn2.toFixed(1)+"°<br>"+
+"LOP2 Intercept: "+int2.toFixed(1)+" NM<br><br>"+
+"Running Fix geometry module ready.";
 }
 setNowUTC();
 togglePositionSource();
