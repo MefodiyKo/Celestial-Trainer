@@ -334,7 +334,18 @@ Calculate Running Fix
 <div class="result" id="runningFixResult">
 Waiting for calculation...
 </div>
-
+<canvas
+id="runningFixCanvas"
+width="350"
+height="300"
+style="
+margin-top:15px;
+background:#0b1b2b;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
 </div>
 </div>
 <div id="notes" class="section">
@@ -1221,6 +1232,85 @@ link.click();
 document.body.removeChild(link);
 
 }
+function drawRunningFixDiagram(){
+
+let canvas =
+document.getElementById("runningFixCanvas");
+
+if(!canvas)return;
+
+let ctx =
+canvas.getContext("2d");
+
+ctx.clearRect(
+0,0,
+canvas.width,
+canvas.height
+);
+
+ctx.lineWidth=2;
+ctx.strokeStyle="#9ee7ff";
+ctx.fillStyle="#9ee7ff";
+ctx.font="14px Arial";
+
+/* LOP1 */
+
+ctx.beginPath();
+ctx.moveTo(60,60);
+ctx.lineTo(290,100);
+ctx.stroke();
+
+ctx.fillText(
+"LOP1",
+40,
+55
+);
+
+/* Transferred LOP1 */
+
+ctx.beginPath();
+ctx.moveTo(60,110);
+ctx.lineTo(290,150);
+ctx.stroke();
+
+ctx.fillText(
+"Transferred LOP1",
+20,
+105
+);
+
+/* LOP2 */
+
+ctx.beginPath();
+ctx.moveTo(180,40);
+ctx.lineTo(140,260);
+ctx.stroke();
+
+ctx.fillText(
+"LOP2",
+185,
+35
+);
+
+/* Fix point */
+
+ctx.beginPath();
+ctx.arc(
+160,
+135,
+5,
+0,
+Math.PI*2
+);
+ctx.fill();
+
+ctx.fillText(
+"Running Fix",
+170,
+140
+);
+
+}
 function calculateRunningFix(){
 
 let zn1=parseFloat(document.getElementById("rfZn1").value);
@@ -1284,6 +1374,7 @@ transferredIntercept.toFixed(1)+
 "Angle Between LOPs: "+angle.toFixed(0)+"°<br>"+
 "Fix Quality: "+quality+"<br><br>"+
 "<span class='small'>Training geometry only. Plot confirmation required.</span>";
+drawRunningFixDiagram();
 }
 setNowUTC();
 togglePositionSource();
