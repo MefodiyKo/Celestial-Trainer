@@ -939,6 +939,7 @@ return;
 
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
+let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
 
 for(let starName in STAR_CATALOG){
 let star=STAR_CATALOG[starName];
@@ -946,8 +947,6 @@ let star=STAR_CATALOG[starName];
 let GHA=norm360(sun.GHAAries+star.SHA);
 let LHA=norm360(GHA+data.lon);
 let r=calculateHcZn(data.lat,star.Dec,LHA);
-
-let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
 
 if(r.Hc>minAlt){
 visibleStars.push({
@@ -962,8 +961,9 @@ visibleStars.sort((a,b)=>b.hc-a.hc);
 
 let output="<b>VISIBLE STARS</b><br>"+
 "Minimum altitude: "+minAlt+"°<br><br>";
+
 if(visibleStars.length===0){
-output+="No catalogue stars above 5° altitude.";
+output+="No catalogue stars above "+minAlt+"° altitude.";
 }
 
 visibleStars.forEach(star=>{
