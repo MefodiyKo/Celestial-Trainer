@@ -27,6 +27,42 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 .resultBox{border:1px solid #31506a;border-radius:8px;padding:10px;margin-top:8px}
 .small{font-size:13px;color:#ccc}
 hr{border:0;border-top:1px solid #31506a;margin:20px 0}
+.inputBox{
+background:#173b5c;
+border:1px solid #2f78a8;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
+.calcBox{
+background:#10283d;
+border:1px solid #31506a;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
+.twoCol{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.fieldTitle{
+font-size:13px;
+color:#ccc;
+margin-bottom:4px;
+}
+
+.inputBox input,
+.inputBox select{
+background:#eaf6ff;
+}
+
+.calcBox input{
+background:#d9d9d9;
+}
 </style>
 </head>
 
@@ -241,78 +277,77 @@ Hc: <span id="sightHc">--</span><br>
 Zn: <span id="sightZn">--</span>
 </div>
 
+<div class="inputBox">
+<p class="small"><b>Manual input:</b> Fill in these blue fields before calculation.</p>
+
 <label>Hs</label>
-
 <div class="row">
-
-<input
-id="hsDeg"
-class="boxDeg"
-type="number"
-placeholder="45">
-
+<input id="hsDeg" class="boxDeg" type="number" placeholder="71">
 <span>°</span>
-
-<input
-id="hsMin"
-class="boxMin"
-type="number"
-step="0.1"
-placeholder="23.4">
-
+<input id="hsMin" class="boxMin" type="number" step="0.1" placeholder="23.4">
 <span>'</span>
-
 </div>
-<label>Body</label>
 
-<select id="sightBody"
-class="full"
-onchange="updateSightCorrections()">
+<label>Body</label>
+<select id="sightBody" class="full" onchange="updateSightCorrections()">
 <option value="star">Star / Planet</option>
 <option value="sunLL">Sun Lower Limb</option>
 <option value="sunUL">Sun Upper Limb</option>
 <option value="moonLL">Moon Lower Limb</option>
 <option value="moonUL">Moon Upper Limb</option>
 </select>
-<label>Index Error, minutes (+ / -)</label>
+
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Index Error (')</div>
 <input id="indexError" class="full" type="number" step="0.1" value="0">
+</div>
 
-<label>Height of Eye (m)</label>
+<div>
+<div class="fieldTitle">Height of Eye (m)</div>
 <input id="heightOfEye" class="full" type="number" step="0.1" value="15">
-<label>Calculated Dip</label>
-<input id="dipValue" class="full" readonly>   
- <label>Pressure (hPa)</label>
+</div>
+</div>
+
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Pressure (hPa)</div>
 <input id="pressure" class="full" type="number" step="1" value="1010">
+</div>
 
-<label>Temperature (°C)</label>
-<input id="temperature" class="full" type="number" step="0.1" value="10">    
-<label>Refraction</label>
-<input id="refractionValue"
-class="full"
-readonly>
+<div>
+<div class="fieldTitle">Temperature (°C)</div>
+<input id="temperature" class="full" type="number" step="0.1" value="10">
+</div>
+</div>
+</div>
 
+<div class="calcBox">
+<p class="small"><b>Calculated corrections:</b> Checked automatically by the app.</p>
+
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Dip</div>
+<input id="dipValue" class="full" readonly>
+</div>
+
+<div>
+<div class="fieldTitle">Refraction</div>
+<input id="refractionValue" class="full" readonly>
+</div>
+</div>
+
+<div class="twoCol">
 <div id="sdBlock">
-
-<label>Semi-Diameter</label>
-
-<input
-id="sdValue"
-class="full"
-type="number"
-step="0.1">
-
+<div class="fieldTitle">Semi-Diameter</div>
+<input id="sdValue" class="full" type="number" step="0.1">
 </div>
 
 <div id="parallaxBlock">
-
-<label>Parallax</label>
-
-<input
-id="parallaxValue"
-class="full"
-type="number"
-step="0.1">
-
+<div class="fieldTitle">Parallax</div>
+<input id="parallaxValue" class="full" type="number" step="0.1">
+</div>
+</div>
 </div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
 <button class="main" onclick="saveAsLOP1()">
@@ -400,6 +435,9 @@ width:100%;
 <div id="notes" class="section">
 <div class="card">
 <h3>Notes</h3>
+<p><b>Sight Reduction input fields:</b> Blue fields are manual inputs: Hs, Body, Index Error, Height of Eye, Pressure and Temperature.</p>
+<p><b>Calculated fields:</b> Dip, Refraction, Semi-Diameter and Parallax are correction fields used to calculate Ho.</p>
+<p>For stars: SD and Parallax are zero. For Sun and Moon: select the correct limb before calculation.</p>
 <p>This app is for training and educational purposes only.</p>
 <p>Not for official navigation.</p>
 <p>Current Sight Reduction v1 uses only Hs + IE + Dip. Refraction, SD, HP and parallax will be added later.</p>
