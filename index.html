@@ -889,8 +889,10 @@ document.getElementById(
 ).value =
 ref.toFixed(1);
 let sd=parseFloat(document.getElementById("sdValue").value);
-let pa=parseFloat(document.getElementById("parallaxValue").value);
+if(isNaN(sd)){sd=0;}
 
+let pa=parseFloat(document.getElementById("parallaxValue").value);
+if(isNaN(pa)){pa=0;}
 let Ho=Ha+(ref/60)+(sd/60)+(pa/60);
 
 let intercept=(Ho-lastSunData.Hc)*60;
@@ -1557,13 +1559,24 @@ show ? "block" : "none";
 
 if(!show){
 
-document.getElementById(
-"sdValue"
-).value=0;
+document.getElementById("sightBody").value="star";
 
-document.getElementById(
-"parallaxValue"
-).value=0;
+document.getElementById("sdValue").value=0;
+document.getElementById("parallaxValue").value=0;
+
+}
+
+if(obj==="Sun"){
+
+document.getElementById("sightBody").value="sunLL";
+updateSightCorrections();
+
+}
+
+if(obj==="Moon"){
+
+document.getElementById("sightBody").value="moonLL";
+updateSightCorrections();
 
 }
 
