@@ -1602,52 +1602,35 @@ distance
 }
 function updateBodyFields(){
 
-let obj=
-document.getElementById(
-"celestialObject"
-).value;
+let obj=document.getElementById("celestialObject").value;
+let show=(obj==="Sun" || obj==="Moon");
 
-let show=
-(obj==="Sun" || obj==="Moon");
-
-document.getElementById(
-"sdBlock"
-).style.display=
-show ? "block" : "none";
-
-document.getElementById(
-"parallaxBlock"
-).style.display=
-show ? "block" : "none";
-
-if(!show){
-
-document.getElementById("sightBody").value="star";
-
-document.getElementById("sdValue").value=0;
-document.getElementById("parallaxValue").value=0;
-
-}
+document.getElementById("sdBlock").style.display=show ? "block" : "none";
+document.getElementById("parallaxBlock").style.display=show ? "block" : "none";
 
 if(obj==="Sun"){
-
 document.getElementById("sightBody").value="sunLL";
-updateSightCorrections();
-
+document.getElementById("sdValue").value="+16.0";
+document.getElementById("parallaxValue").value="0.0";
 }
 
-if(obj==="Moon"){
-
+else if(obj==="Moon"){
 document.getElementById("sightBody").value="moonLL";
-updateSightCorrections();
+document.getElementById("sdValue").value="+15.0";
+document.getElementById("parallaxValue").value="+57.0";
+}
 
+else{
+document.getElementById("sightBody").value="star";
+document.getElementById("sdValue").value="0.0";
+document.getElementById("parallaxValue").value="0.0";
 }
 
 }
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
-updateSightCorrections();
+
 </script>
 
 </body>
