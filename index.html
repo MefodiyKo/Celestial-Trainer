@@ -475,6 +475,7 @@ width:100%;
 <script>
 let lastSunData=null;
 let runningFixLOP1=null;
+let lastVisibleStars=[];
 let runningFixLOP2=null;
 
 const STAR_CATALOG = {
@@ -1188,7 +1189,8 @@ zn:r.Zn
 }
 
 visibleStars.sort((a,b)=>b.hc-a.hc);
-
+lastVisibleStars=visibleStars;
+drawSkyView();
 let output="<b>VISIBLE STARS</b><br>"+
 "Minimum altitude: "+minAlt+"°<br><br>";
 
@@ -1717,54 +1719,93 @@ let canvas=document.getElementById("skyCanvas");
 if(!canvas)return;
 
 let ctx=canvas.getContext("2d");
-
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-ctx.fillStyle="#06152a";
+let grd=ctx.createLinearGradient(0,0,0,canvas.height);
+grd.addColorStop(0,"#020814");
+grd.addColorStop(1,"#0b2b4a");
+
+ctx.fillStyle=grd;
 ctx.fillRect(0,0,canvas.width,canvas.height);
+
+let horizonY=190;
+let left=25;
+let right=340;
+let width=right-left;
 
 ctx.strokeStyle="#31506a";
 ctx.fillStyle="#9ee7ff";
-ctx.font="12px Arial";
-
-let horizonY=190;
-
-ctx.beginPath();
-ctx.moveTo(20,horizonY);
-ctx.lineTo(340,horizonY);
-ctx.stroke();
-
-ctx.fillText("E",35,208);
-ctx.fillText("S",170,208);
-ctx.fillText("W",305,208);
+ctx.font="11px Arial";
 
 for(let h=15;h<=75;h+=15){
 let y=horizonY-(h*2);
 ctx.beginPath();
-ctx.moveTo(20,y);
-ctx.lineTo(340,y);
+ctx.moveTo(left,y);
+ctx.lineTo(right,y);
 ctx.stroke();
-ctx.fillText(h+"°",5,y+4);
+ctx.fillText(h+"°",3,y+4);
 }
+
+ctx.strokeStyle="#9ee7ff";
+ctx.beginPath();
+ctx.moveTo(left,horizonY);
+ctx.lineTo(right,horizonY);
+ctx.stroke();
+
+for(let az=0;az<=360;az+=30){
+let x=left+(az/360)*width;
+
+ctx.beginPath();
+ctx.moveTo(x,horizonY);
+ctx.lineTo(x,horizonY+5);
+ctx.stroke();
+
+ctx.fillText(az+"°",x-10,horizonY+18);
+}
+
+ctx.fillStyle="#ffffff";
+ctx.fillText("E",left+70,horizonY+35);
+ctx.fillText("S",left+155,horizonY+35);
+ctx.fillText("W",left+235,horizonY+35);
+ctx.fillText("N",right-5,horizonY+35);
+
+lastVisibleStars.forEach(star=>{
+
+let x=left+(star.zn/360)*width;
+let y=horizonY-(star.hc*2);
+
+if(y<15)y=15;
+if(y>horizonY)y=horizonY;
+
+ctx.fillStyle="#ffd966";
+ctx.beginPath();
+ctx.arc(x,y,4,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#ffffff";
+ctx.fillText(star.name,x+6,y+4);
+
+});
 
 if(lastSunData){
 
-let x=(lastSunData.Zn/360)*320+20;
+let x=left+(lastSunData.Zn/360)*width;
 let y=horizonY-(lastSunData.Hc*2);
 
-if(y<20)y=20;
+if(y<15)y=15;
 if(y>horizonY)y=horizonY;
 
 ctx.fillStyle=
 lastSunData.object==="Sun" ? "#ffd966" :
 lastSunData.object==="Moon" ? "#dddddd" :
-"#9ee7ff";
+"#4db8ff";
 
 ctx.beginPath();
 ctx.arc(x,y,8,0,Math.PI*2);
 ctx.fill();
 
 ctx.fillStyle="#ffffff";
+ctx.font="12px Arial";
 ctx.fillText(lastSunData.object,x+10,y+4);
 ctx.fillText(
 "Hc "+lastSunData.Hc.toFixed(1)+"° / Zn "+lastSunData.Zn.toFixed(1)+"°",
