@@ -826,7 +826,7 @@ let sd="0.0";
 let pa="0.0";
 
 if(body==="sunLL"){
-sd="+16.0";
+sd="16.0";
 pa="0.0";
 }
 
@@ -836,13 +836,13 @@ pa="0.0";
 }
 
 if(body==="moonLL"){
-sd="+15.0";
-pa="+57.0";
+sd="15.0";
+pa="57.0";
 }
 
 if(body==="moonUL"){
 sd="-15.0";
-pa="+57.0";
+pa="57.0";
 }
 
 document.getElementById("sdValue").value=sd;
@@ -1609,14 +1609,14 @@ document.getElementById("parallaxBlock").style.display=show ? "block" : "none";
 
 if(obj==="Sun"){
 document.getElementById("sightBody").value="sunLL";
-document.getElementById("sdValue").value="+16.0";
+document.getElementById("sdValue").value="16.0";
 document.getElementById("parallaxValue").value="0.0";
 }
 
 else if(obj==="Moon"){
 document.getElementById("sightBody").value="moonLL";
-document.getElementById("sdValue").value="+15.0";
-document.getElementById("parallaxValue").value="+57.0";
+document.getElementById("sdValue").value="15.0";
+document.getElementById("parallaxValue").value="57.0";
 }
 
 else{
