@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Celestial Trainer v2.3</title>
+<title>Celestial Trainer v2.5</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{margin:0;font-family:Arial;background:#0b1b2b;color:white}
 header{padding:15px;background:#102f4a;text-align:center}
 .warning{background:#8b0000;padding:10px;text-align:center;font-weight:bold}
 .tabs{display:flex;overflow-x:auto;background:#173b5c}
-.tabs button{min-width:110px;flex:1;padding:12px;border:0;background:#173b5c;color:white;font-weight:bold}
+.tabs button{min-width:120px;flex:1;padding:12px;border:0;background:#173b5c;color:white;font-weight:bold}
 .tabs button.active{background:#1f6fa8}
 .section{display:none;padding:15px}
 .section.active{display:block}
@@ -32,7 +33,7 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <body>
 
 <header>
-<h2>Celestial Trainer v2.3</h2>
+<h2>Celestial Trainer v2.5</h2>
 <p>Nautical Almanac Style</p>
 </header>
 
@@ -41,63 +42,110 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
+<button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
+<button class="tab" onclick="openTab('log',this)">
+Observation Log
+</button>
 <button class="tab" onclick="openTab('notes',this)">Notes</button>
+<button class="tab" onclick="openTab('runningfix',this)">
+Running Fix
+</button>
 </div>
 
 <div id="almanac" class="section active">
 <div class="card">
+
 <h3>Celestial Almanac</h3>
 
 <label>Object</label>
 <select id="celestialObject" class="full">
 <option value="Sun">☀️ Sun</option>
-
-<option disabled>──────────</option>
-
 <option value="Moon">🌙 Moon</option>
 
 <option disabled>──────────</option>
 
-<option disabled>♀ Venus</option>
-<option disabled>♂ Mars</option>
-<option disabled>♃ Jupiter</option>
-<option disabled>♄ Saturn</option>
+<option value="Alpheratz">⭐ Alpheratz</option>
+<option value="Ankaa">⭐ Ankaa</option>
+<option value="Schedar">⭐ Schedar</option>
+<option value="Diphda">⭐ Diphda</option>
+<option value="Achernar">⭐ Achernar</option>
+<option value="Hamal">⭐ Hamal</option>
+<option value="Acamar">⭐ Acamar</option>
+<option value="Menkar">⭐ Menkar</option>
+<option value="Mirfak">⭐ Mirfak</option>
+<option value="Aldebaran">⭐ Aldebaran</option>
+<option value="Rigel">⭐ Rigel</option>
+<option value="Capella">⭐ Capella</option>
+<option value="Bellatrix">⭐ Bellatrix</option>
+<option value="Elnath">⭐ Elnath</option>
+<option value="Alnilam">⭐ Alnilam</option>
+<option value="Betelgeuse">⭐ Betelgeuse</option>
+<option value="Canopus">⭐ Canopus</option>
+<option value="Sirius">⭐ Sirius</option>
+<option value="Adhara">⭐ Adhara</option>
+<option value="Procyon">⭐ Procyon</option>
+<option value="Pollux">⭐ Pollux</option>
+<option value="Avior">⭐ Avior</option>
+<option value="Suhail">⭐ Suhail</option>
+<option value="Miaplacidus">⭐ Miaplacidus</option>
+<option value="Alphard">⭐ Alphard</option>
+<option value="Regulus">⭐ Regulus</option>
+<option value="Dubhe">⭐ Dubhe</option>
+<option value="Denebola">⭐ Denebola</option>
+<option value="Gienah">⭐ Gienah</option>
+<option value="Acrux">⭐ Acrux</option>
+<option value="Gacrux">⭐ Gacrux</option>
+<option value="Alioth">⭐ Alioth</option>
+<option value="Spica">⭐ Spica</option>
+<option value="Alkaid">⭐ Alkaid</option>
+<option value="Hadar">⭐ Hadar</option>
+<option value="Menkent">⭐ Menkent</option>
+<option value="Arcturus">⭐ Arcturus</option>
+<option value="Rigil Kentaurus">⭐ Rigil Kentaurus</option>
+<option value="Zubenelgenubi">⭐ Zubenelgenubi</option>
+<option value="Kochab">⭐ Kochab</option>
+<option value="Alphecca">⭐ Alphecca</option>
+<option value="Antares">⭐ Antares</option>
+<option value="Atria">⭐ Atria</option>
+<option value="Sabik">⭐ Sabik</option>
+<option value="Shaula">⭐ Shaula</option>
+<option value="Rasalhague">⭐ Rasalhague</option>
+<option value="Eltanin">⭐ Eltanin</option>
+<option value="Kaus Australis">⭐ Kaus Australis</option>
+<option value="Vega">⭐ Vega</option>
+<option value="Nunki">⭐ Nunki</option>
+<option value="Altair">⭐ Altair</option>
+<option value="Peacock">⭐ Peacock</option>
+<option value="Deneb">⭐ Deneb</option>
+<option value="Enif">⭐ Enif</option>
+<option value="Alnair">⭐ Alnair</option>
+<option value="Fomalhaut">⭐ Fomalhaut</option>
+<option value="Markab">⭐ Markab</option>
 
 <option disabled>──────────</option>
-
 <option value="Polaris">⭐ Polaris</option>
-<option value="Sirius">⭐ Sirius</option>
-<option value="Canopus">⭐ Canopus</option>
-<option value="Arcturus">⭐ Arcturus</option>
-<option value="Vega">⭐ Vega</option>
-<option value="Capella">⭐ Capella</option>
-<option value="Altair">⭐ Altair</option>
 </select>
+
 <label>Position Source</label>
 <select id="positionSource" class="full" onchange="togglePositionSource()">
 <option value="manual">Manual</option>
 <option value="gps">GPS</option>
 </select>
 
-<button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">
-Get GPS Position
-</button>
+<button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">Get GPS Position</button>
+
 <label>Date UTC</label>
 <input id="dateUTC" class="full" type="date">
 
 <label>Time UTC</label>
-
 <div class="row">
 <input id="utcHour" class="boxDeg" type="number" min="0" max="23" placeholder="HH">
-
 <span>:</span>
-
 <input id="utcMin" class="boxDeg" type="number" min="0" max="59" placeholder="MM">
-
 <span>:</span>
-
 <input id="utcSec" class="boxDeg" type="number" min="0" max="59" placeholder="SS">
 </div>
+
 <label>Latitude</label>
 <div class="row">
 <input id="latDeg" class="boxDeg" type="number" placeholder="08">
@@ -123,25 +171,33 @@ Get GPS Position
 </div>
 
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
-<button class="main" onclick="calculateSun()">Calculate Object</button>
-<button class="main" onclick="findVisibleStars()">
-Find Visible Stars
-</button>
+<button class="main" onclick="calculateObject()">Calculate Object</button>
+
+<label>Minimum Star Altitude</label>
+<select id="minStarAltitude" class="full">
+<option value="5">5°</option>
+<option value="10">10°</option>
+<option value="15">15°</option>
+<option value="20">20°</option>
+</select>
+
+<button class="main" onclick="findVisibleStars()">Find Visible Stars</button>
+
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
+<div class="result" id="pairAdvisorResult"></div>
 </div>
 </div>
 
 <div id="observation" class="section">
 <div class="card">
+
 <h3>Compass Observation</h3>
 
-<p class="small">
-This page automatically uses the last celestial calculation.
-</p>
+<p class="small">Uses last calculated celestial object.</p>
 
 <div class="resultBox">
-Object: <span id="obsObject">Sun</span><br>
+Object: <span id="obsObject">--</span><br>
 True Bearing / Zn: <span id="obsZn">--</span>
 </div>
 
@@ -160,31 +216,211 @@ True Bearing / Zn: <span id="obsZn">--</span>
 </select>
 </div>
 
-<button class="main" onclick="calculateObservation()">
-Calculate Observation
-</button>
+<button class="main" onclick="calculateObservation()">Calculate Observation</button>
+<button class="main" onclick="copyObservation()">Copy Observation</button>
 
-<button class="main" onclick="copyObservation()">
-Copy Observation
-</button>
+<div class="result" id="observationResult">Calculate object in Almanac first.</div>
 
-<div class="result" id="observationResult">Calculate Sun in Almanac first.</div>
 </div>
 </div>
 
+<div id="sight" class="section">
+<div class="card">
 
+<h3>Sight Reduction</h3>
 
+<p class="small">Basic training version. Uses last calculated object from Almanac.</p>
+
+<div class="resultBox">
+Object: <span id="sightObject">--</span><br>
+Hc: <span id="sightHc">--</span><br>
+Zn: <span id="sightZn">--</span>
+</div>
+
+<label>Hs Degrees</label>
+<input id="hsDeg" class="full" type="number">
+
+<label>Hs Minutes</label>
+<input id="hsMin" class="full" type="number" step="0.1">
+<label>Body</label>
+
+<select id="sightBody"
+class="full"
+onchange="updateSightCorrections()">
+<option value="star">Star / Planet</option>
+<option value="sunLL">Sun Lower Limb</option>
+<option value="sunUL">Sun Upper Limb</option>
+<option value="moonLL">Moon Lower Limb</option>
+<option value="moonUL">Moon Upper Limb</option>
+</select>
+<label>Index Error, minutes (+ / -)</label>
+<input id="indexError" class="full" type="number" step="0.1" value="0">
+
+<label>Dip, minutes (-)</label>
+<input id="dip" class="full" type="number" step="0.1" value="-3">
+<label>Refraction</label>
+<input id="refractionValue"
+class="full"
+readonly>
+
+<label>Semi-Diameter</label>
+<input id="sdValue"
+class="full"
+readonly>
+
+<label>Parallax</label>
+<input id="parallaxValue"
+class="full"
+readonly>
+<button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="saveObservation()">
+Save Observation
+</button>
+<div class="result" id="sightResult">Calculate object in Almanac first.</div>
+
+</div>
+</div>
+<div id="log" class="section">
+<div class="card">
+
+<h3>Observation Log</h3>
+
+<button class="main" onclick="loadObservationLog()">
+Refresh Log
+</button>
+
+<button class="main" onclick="clearObservationLog()">
+Clear Log
+</button>
+<button class="main" onclick="exportObservationLog()">
+Export Log
+</button>
+<div class="result" id="logResult">
+No saved observations.
+</div>
+
+</div>
+</div>
+<div id="runningfix" class="section">
+<div class="card">
+
+<h3>Running Fix</h3>
+
+<label>LOP 1 Bearing (Zn)</label>
+<input id="rfZn1" class="full" type="number" step="0.1">
+
+<label>LOP 1 Intercept (NM)</label>
+<input id="rfInt1" class="full" type="number" step="0.1">
+
+<label>Course Made Good</label>
+<input id="rfCourse" class="full" type="number" step="0.1">
+
+<label>Speed (knots)</label>
+<input id="rfSpeed" class="full" type="number" step="0.1">
+
+<label>Time Interval (hours)</label>
+<input id="rfTime" class="full" type="number" step="0.01">
+
+<label>LOP 2 Bearing (Zn)</label>
+<input id="rfZn2" class="full" type="number" step="0.1">
+
+<label>LOP 2 Intercept (NM)</label>
+<input id="rfInt2" class="full" type="number" step="0.1">
+
+<button class="main" onclick="calculateRunningFix()">
+Calculate Running Fix
+</button>
+
+<div class="result" id="runningFixResult">
+Waiting for calculation...
+</div>
+<canvas
+id="runningFixCanvas"
+width="350"
+height="300"
+style="
+margin-top:15px;
+background:#0b1b2b;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
+</div>
+</div>
 <div id="notes" class="section">
 <div class="card">
 <h3>Notes</h3>
 <p>This app is for training and educational purposes only.</p>
 <p>Not for official navigation.</p>
+<p>Current Sight Reduction v1 uses only Hs + IE + Dip. Refraction, SD, HP and parallax will be added later.</p>
 <p>East error = positive. West error = negative.</p>
 </div>
 </div>
 
 <script>
 let lastSunData=null;
+
+const STAR_CATALOG = {
+Alpheratz:{SHA:358,Dec:29},
+Ankaa:{SHA:354,Dec:-42},
+Schedar:{SHA:350,Dec:56},
+Diphda:{SHA:349,Dec:-18},
+Achernar:{SHA:336,Dec:-57},
+Hamal:{SHA:328,Dec:23},
+Acamar:{SHA:316,Dec:-40},
+Menkar:{SHA:315,Dec:4},
+Mirfak:{SHA:309,Dec:50},
+Aldebaran:{SHA:291,Dec:16},
+Rigel:{SHA:282,Dec:-8},
+Capella:{SHA:281,Dec:46},
+Bellatrix:{SHA:279,Dec:6},
+Elnath:{SHA:279,Dec:29},
+Alnilam:{SHA:276,Dec:-1},
+Betelgeuse:{SHA:271,Dec:7},
+Canopus:{SHA:264,Dec:-53},
+Sirius:{SHA:259,Dec:-17},
+Adhara:{SHA:256,Dec:-29},
+Procyon:{SHA:245,Dec:5},
+Pollux:{SHA:244,Dec:28},
+Avior:{SHA:234,Dec:-59},
+Suhail:{SHA:223,Dec:-43},
+Miaplacidus:{SHA:222,Dec:-70},
+Alphard:{SHA:218,Dec:-8},
+Regulus:{SHA:208,Dec:12},
+Dubhe:{SHA:194,Dec:62},
+Denebola:{SHA:183,Dec:15},
+Gienah:{SHA:176,Dec:-17},
+Acrux:{SHA:174,Dec:-63},
+Gacrux:{SHA:172,Dec:-57},
+Alioth:{SHA:167,Dec:56},
+Spica:{SHA:159,Dec:-11},
+Alkaid:{SHA:153,Dec:49},
+Hadar:{SHA:149,Dec:-60},
+Menkent:{SHA:149,Dec:-36},
+Arcturus:{SHA:146,Dec:19},
+"Rigil Kentaurus":{SHA:140,Dec:-61},
+Zubenelgenubi:{SHA:138,Dec:-16},
+Kochab:{SHA:137,Dec:74},
+Alphecca:{SHA:126,Dec:27},
+Antares:{SHA:113,Dec:-26},
+Atria:{SHA:108,Dec:-69},
+Sabik:{SHA:102,Dec:-16},
+Shaula:{SHA:97,Dec:-37},
+Rasalhague:{SHA:96,Dec:13},
+Eltanin:{SHA:91,Dec:51},
+"Kaus Australis":{SHA:84,Dec:-34},
+Vega:{SHA:81,Dec:39},
+Nunki:{SHA:76,Dec:-26},
+Altair:{SHA:62,Dec:9},
+Peacock:{SHA:54,Dec:-57},
+Deneb:{SHA:50,Dec:45},
+Enif:{SHA:34,Dec:10},
+Alnair:{SHA:28,Dec:-47},
+Fomalhaut:{SHA:16,Dec:-30},
+Markab:{SHA:14,Dec:15},
+Polaris:{SHA:319,Dec:89}
+};
 
 function openTab(id,btn){
 document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -194,7 +430,6 @@ btn.classList.add("active");
 }
 
 function setNowUTC(){
-
 let now=new Date();
 
 document.getElementById("dateUTC").value=
@@ -208,7 +443,6 @@ String(now.getUTCMinutes()).padStart(2,"0");
 
 document.getElementById("utcSec").value=
 String(now.getUTCSeconds()).padStart(2,"0");
-
 }
 
 function degToRad(d){return d*Math.PI/180}
@@ -265,14 +499,54 @@ let d=new Date(dateStr+"T"+timeStr+"Z");
 return d.getTime()/86400000+2440587.5;
 }
 
+function getTimeUTC(){
+return document.getElementById("utcHour").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcMin").value.padStart(2,"0")
++ ":"
++ document.getElementById("utcSec").value.padStart(2,"0");
+}
+
 function getCoord(degId,minId,dirId){
 let d=parseFloat(document.getElementById(degId).value);
 let m=parseFloat(document.getElementById(minId).value);
 let dir=document.getElementById(dirId).value;
+
 if(isNaN(d)||isNaN(m)) return null;
+
 let value=d+m/60;
+
 if(dir==="S"||dir==="W") value=-value;
+
 return value;
+}
+
+function getInputData(){
+let date=document.getElementById("dateUTC").value;
+let time=getTimeUTC();
+let lat=getCoord("latDeg","latMin","latDir");
+let lon=getCoord("lonDeg","lonMin","lonDir");
+
+if(!date){
+return {error:"Enter Date UTC"};
+}
+
+if(lat===null||lon===null){
+return {error:"Enter Latitude and Longitude"};
+}
+
+return {date:date,time:time,lat:lat,lon:lon};
+}
+
+function gmstFromJD(JD){
+let T=(JD-2451545.0)/36525.0;
+
+return norm360(
+280.46061837+
+360.98564736629*(JD-2451545.0)+
+0.000387933*T*T-
+T*T*T/38710000
+);
 }
 
 function sunAlmanac(date,time){
@@ -303,19 +577,13 @@ let Dec=radToDeg(Math.asin(
 Math.sin(degToRad(eps))*Math.sin(degToRad(lambda))
 ));
 
-let GMST=norm360(
-280.46061837+
-360.98564736629*(JD-2451545.0)+
-0.000387933*T*T-
-T*T*T/38710000
-);
-
+let GMST=gmstFromJD(JD);
 let GHA=norm360(GMST-RA);
 
-return {JD:JD,GHA:GHA,Dec:Dec};
+return {JD:JD,GHA:GHA,Dec:Dec,GHAAries:GMST};
 }
-function moonAlmanac(date,time){
 
+function moonAlmanac(date,time){
 let JD=julianDate(date,time);
 let D=JD-2451545.0;
 
@@ -333,7 +601,6 @@ Math.sin(degToRad(lon))*Math.cos(degToRad(eps))-
 Math.tan(degToRad(lat))*Math.sin(degToRad(eps)),
 Math.cos(degToRad(lon))
 ));
-
 RA=norm360(RA);
 
 let Dec=radToDeg(Math.asin(
@@ -341,15 +608,7 @@ Math.sin(degToRad(lat))*Math.cos(degToRad(eps))+
 Math.cos(degToRad(lat))*Math.sin(degToRad(eps))*Math.sin(degToRad(lon))
 ));
 
-let T=(JD-2451545.0)/36525.0;
-
-let GMST=norm360(
-280.46061837+
-360.98564736629*(JD-2451545.0)+
-0.000387933*T*T-
-T*T*T/38710000
-);
-
+let GMST=gmstFromJD(JD);
 let GHA=norm360(GMST-RA);
 
 let distance =
@@ -364,222 +623,110 @@ let SD =
 
 return {JD:JD,GHA:GHA,Dec:Dec,HP:HP,SD:SD};
 }
-function polarisAlmanac(){
 
-let SHA = 316.7;
-let Dec = 89.3;
-
-return {
-SHA:SHA,
-Dec:Dec
-};
-
-}
-const STAR_CATALOG = {
-Polaris:{SHA:316.7,Dec:89.3},
-Sirius:{SHA:258.6,Dec:-16.7},
-Canopus:{SHA:264.1,Dec:-52.7},
-Arcturus:{SHA:146.2,Dec:19.1},
-Vega:{SHA:80.9,Dec:38.8},
-Capella:{SHA:280.5,Dec:46.0},
-Altair:{SHA:62.1,Dec:8.9}
-};
-function calculateSun(){
-let object=document.getElementById("celestialObject").value;
-
-if(object==="Moon"){
-
-let date=document.getElementById("dateUTC").value;
-
-let time =
-document.getElementById("utcHour").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcMin").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcSec").value.padStart(2,"0");
-
-if(!date||!time){
-document.getElementById("sunResult").innerHTML="Enter Date and UTC";
-return;
-}
-
-let moon=moonAlmanac(date,time);
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
-
-if(lat===null||lon===null){
-document.getElementById("sunResult").innerHTML="Enter Latitude and Longitude";
-return;
-}
-
-let LHA=norm360(moon.GHA+lon);
-
+function calculateHcZn(lat,dec,LHA){
 let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(moon.Dec))+
-Math.cos(degToRad(lat))*Math.cos(degToRad(moon.Dec))*Math.cos(degToRad(LHA));
-
-let Hc=radToDeg(Math.asin(sinHc));
-
-let y=Math.sin(degToRad(LHA));
-let x=Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
-Math.tan(degToRad(moon.Dec))*Math.cos(degToRad(lat));
-
-let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
-
-lastSunData={
-date:date,
-time:time,
-lat:lat,
-lon:lon,
-GHA:moon.GHA,
-Dec:moon.Dec,
-LHA:LHA,
-Hc:Hc,
-Zn:Zn
-};
-
-document.getElementById("obsZn").innerText=formatBearing(Zn);
-document.getElementById("obsObject").innerText="Moon";
-
-document.getElementById("sunResult").innerHTML=
-"<b>MOON</b><br><br>"+
-"<div class='resultBox'>GHA: "+formatDM(moon.GHA)+"</div>"+
-"<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
-"<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
- "<div class='resultBox'>SD: "+moon.SD.toFixed(3)+"°</div>"+
-"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
-"<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
-"<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>"+
-"<br><span class='small'>Moon calculation test module v2.4</span>";
-
-return;
-}
-if(object==="Polaris"){
-
-let date=document.getElementById("dateUTC").value;
-
-let time =
-document.getElementById("utcHour").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcMin").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcSec").value.padStart(2,"0");
-
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
-
-if(lat===null||lon===null){
-document.getElementById("sunResult").innerHTML=
-"Enter Latitude and Longitude";
-return;
-}
-
-let polaris=polarisAlmanac();
-
-let sun=sunAlmanac(date,time);
-
-let GHA=norm360(sun.GHA + polaris.SHA);
-
-let LHA=norm360(GHA + lon);
-
-let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(polaris.Dec))+
-Math.cos(degToRad(lat))*Math.cos(degToRad(polaris.Dec))*Math.cos(degToRad(LHA));
+Math.sin(degToRad(lat))*Math.sin(degToRad(dec))+
+Math.cos(degToRad(lat))*Math.cos(degToRad(dec))*Math.cos(degToRad(LHA));
 
 let Hc=radToDeg(Math.asin(sinHc));
 
 let y=Math.sin(degToRad(LHA));
 
 let x=
-Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))
--
-Math.tan(degToRad(polaris.Dec))*Math.cos(degToRad(lat));
-
-let Zn=norm360(
-radToDeg(Math.atan2(y,x))
-+180
-);
-
-lastSunData={
-date:date,
-time:time,
-lat:lat,
-lon:lon,
-GHA:GHA,
-Dec:polaris.Dec,
-LHA:LHA,
-Hc:Hc,
-Zn:Zn
-};
-
-document.getElementById("obsZn").innerText=
-formatBearing(Zn);
-
-document.getElementById("obsObject").innerText=
-"Polaris";
-
-document.getElementById("sunResult").innerHTML=
-"<b>POLARIS</b><br><br>"+
-"<div class='resultBox'>SHA: 316° 42.0'</div>"+
-"<div class='resultBox'>Dec: 89° 18.0' N</div>"+
-"<div class='resultBox'>GHA: "+formatDM(GHA)+"</div>"+
-"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
-"<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
-"<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>";
-
-return;
-}
-if(STAR_CATALOG[object]){
-
-let date=document.getElementById("dateUTC").value;
-
-let time =
-document.getElementById("utcHour").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcMin").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcSec").value.padStart(2,"0");
-
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
-
-if(lat===null||lon===null){
-document.getElementById("sunResult").innerHTML="Enter Latitude and Longitude";
-return;
-}
-
-let star=STAR_CATALOG[object];
-let sun=sunAlmanac(date,time);
-
-let GHA=norm360(sun.GHA+star.SHA);
-let LHA=norm360(GHA+lon);
-
-let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(star.Dec))+
-Math.cos(degToRad(lat))*Math.cos(degToRad(star.Dec))*Math.cos(degToRad(LHA));
-
-let Hc=radToDeg(Math.asin(sinHc));
-
-let y=Math.sin(degToRad(LHA));
-let x=Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
-Math.tan(degToRad(star.Dec))*Math.cos(degToRad(lat));
+Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
+Math.tan(degToRad(dec))*Math.cos(degToRad(lat));
 
 let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
 
+return {Hc:Hc,Zn:Zn};
+}
+
+function updateLastData(object,date,time,lat,lon,GHA,Dec,LHA,Hc,Zn){
 lastSunData={
+object:object,
 date:date,
 time:time,
 lat:lat,
 lon:lon,
 GHA:GHA,
-Dec:star.Dec,
+Dec:Dec,
 LHA:LHA,
 Hc:Hc,
 Zn:Zn
 };
 
-document.getElementById("obsZn").innerText=formatBearing(Zn);
 document.getElementById("obsObject").innerText=object;
+document.getElementById("obsZn").innerText=formatBearing(Zn);
+
+document.getElementById("sightObject").innerText=object;
+document.getElementById("sightHc").innerText=formatAlt(Hc);
+document.getElementById("sightZn").innerText=formatBearing(Zn);
+}
+
+function calculateObject(){
+let object=document.getElementById("celestialObject").value;
+let data=getInputData();
+
+if(data.error){
+document.getElementById("sunResult").innerHTML=data.error;
+return;
+}
+
+let date=data.date;
+let time=data.time;
+let lat=data.lat;
+let lon=data.lon;
+
+if(object==="Sun"){
+let sun=sunAlmanac(date,time);
+let LHA=norm360(sun.GHA+lon);
+let r=calculateHcZn(lat,sun.Dec,LHA);
+
+updateLastData("Sun",date,time,lat,lon,sun.GHA,sun.Dec,LHA,r.Hc,r.Zn);
+
+document.getElementById("sunResult").innerHTML=
+"<b>SUN</b><br><br>"+
+"<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
+"<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
+"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
+"<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
+"<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
+"<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
+
+return;
+}
+
+if(object==="Moon"){
+let moon=moonAlmanac(date,time);
+let LHA=norm360(moon.GHA+lon);
+let r=calculateHcZn(lat,moon.Dec,LHA);
+
+updateLastData("Moon",date,time,lat,lon,moon.GHA,moon.Dec,LHA,r.Hc,r.Zn);
+
+document.getElementById("sunResult").innerHTML=
+"<b>MOON</b><br><br>"+
+"<div class='resultBox'>GHA: "+formatDM(moon.GHA)+"</div>"+
+"<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
+"<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
+"<div class='resultBox'>SD: "+moon.SD.toFixed(3)+"°</div>"+
+"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
+"<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
+"<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
+"<br><span class='small'>Moon calculation test module v2.4</span>";
+
+return;
+}
+
+if(STAR_CATALOG[object]){
+let star=STAR_CATALOG[object];
+let sun=sunAlmanac(date,time);
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+lon);
+let r=calculateHcZn(lat,star.Dec,LHA);
+
+updateLastData(object,date,time,lat,lon,GHA,star.Dec,LHA,r.Hc,r.Zn);
 
 document.getElementById("sunResult").innerHTML=
 "<b>"+object.toUpperCase()+"</b><br><br>"+
@@ -587,65 +734,16 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Dec: "+formatDec(star.Dec)+"</div>"+
 "<div class='resultBox'>GHA: "+formatDM(GHA)+"</div>"+
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
-"<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
-"<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>";
+"<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
+"<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>";
 
 return;
 }
-let date=document.getElementById("dateUTC").value;
-let time =
-document.getElementById("utcHour").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcMin").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcSec").value.padStart(2,"0");
-if(!date||!time){
-document.getElementById("sunResult").innerHTML="Enter Date and UTC";
-return;
-}
-
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
-
-if(lat===null||lon===null){
-document.getElementById("sunResult").innerHTML="Enter Latitude and Longitude";
-return;
-}
-
-let sun=sunAlmanac(date,time);
-let LHA=norm360(sun.GHA+lon);
-
-let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(sun.Dec))+
-Math.cos(degToRad(lat))*Math.cos(degToRad(sun.Dec))*Math.cos(degToRad(LHA));
-
-let Hc=radToDeg(Math.asin(sinHc));
-
-let y=Math.sin(degToRad(LHA));
-let x=Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
-Math.tan(degToRad(sun.Dec))*Math.cos(degToRad(lat));
-
-let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
-
-lastSunData={date:date,time:time,lat:lat,lon:lon,GHA:sun.GHA,Dec:sun.Dec,LHA:LHA,Hc:Hc,Zn:Zn};
-
-document.getElementById("obsZn").innerText=formatBearing(Zn);
-document.getElementById("obsObject").innerText=
-document.getElementById("celestialObject").value;
-document.getElementById("sunResult").innerHTML=
-
-"<b>SUN</b><br><br>"+
-"<div class='resultBox'>GHA: "+formatDM(sun.GHA)+"</div>"+
-"<div class='resultBox'>Dec: "+formatDec(sun.Dec)+"</div>"+
-"<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
-"<div class='resultBox'>Hc: "+formatAlt(Hc)+"</div>"+
-"<div class='resultBox'>Zn: "+formatBearing(Zn)+"</div>"+
-"<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
 }
 
 function calculateObservation(){
 if(!lastSunData){
-document.getElementById("observationResult").innerHTML="Calculate Sun in Almanac first.";
+document.getElementById("observationResult").innerHTML="Calculate object in Almanac first.";
 return;
 }
 
@@ -670,7 +768,7 @@ document.getElementById("observationResult").innerHTML=
 "<b>COMPASS OBSERVATION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
 "Time UTC: "+lastSunData.time+"<br><br>"+
-"Object: "+document.getElementById("celestialObject").value+"<br><br>"+
+"Object: "+lastSunData.object+"<br><br>"+
 "Position:<br>"+
 "Lat: "+document.getElementById("latDeg").value+"° "+
 document.getElementById("latMin").value+"' "+
@@ -686,219 +784,239 @@ document.getElementById("lonDir").value+"<br><br>"+
 "Variation: "+formatError(variation)+"<br>"+
 "Deviation: "+formatError(deviation);
 }
+function updateSightCorrections(){
 
-function calcGyro(){
-let t=parseFloat(document.getElementById("trueB").value);
-let g=parseFloat(document.getElementById("gyroB").value);
-if(isNaN(t)||isNaN(g)){
-document.getElementById("gyroResult").innerText="Enter both values";
+let body =
+document.getElementById("sightBody").value;
+
+let ref = "-1.0";
+let sd = "0.0";
+let pa = "0.0";
+
+if(body==="sunLL"){
+sd="+16.0";
+}
+
+if(body==="sunUL"){
+sd="-16.0";
+}
+
+if(body==="moonLL"){
+sd="+15.0";
+pa="+57.0";
+}
+
+if(body==="moonUL"){
+sd="-15.0";
+pa="+57.0";
+}
+
+document.getElementById("refractionValue").value=ref;
+document.getElementById("sdValue").value=sd;
+document.getElementById("parallaxValue").value=pa;
+
+}
+function calculateRefraction(ha){
+
+if(ha<=0){
+return 0;
+}
+
+return -0.97 /
+Math.tan(
+degToRad(
+ha + 7.31/(ha+4.4)
+)
+);
+
+}
+function calculateSightReduction(){
+if(!lastSunData){
+document.getElementById("sightResult").innerHTML=
+"Calculate object in Almanac first.";
 return;
 }
-let err=normalizeError(t-g);
-document.getElementById("gyroResult").innerText="Gyro Error: "+formatError(err);
-}
 
-function calcCompass(){
-let t=parseFloat(document.getElementById("trueCompass").value);
-let c=parseFloat(document.getElementById("compassB").value);
-let v=parseFloat(document.getElementById("variationValue").value);
-let vDir=document.getElementById("variationDir").value;
+let hsDeg=parseFloat(document.getElementById("hsDeg").value);
+let hsMin=parseFloat(document.getElementById("hsMin").value);
+let ie=parseFloat(document.getElementById("indexError").value);
+let dip=parseFloat(document.getElementById("dip").value);
 
-if(isNaN(t)||isNaN(c)||isNaN(v)){
-document.getElementById("compassResult").innerText="Enter True, Compass and Variation";
+if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)||isNaN(dip)){
+document.getElementById("sightResult").innerHTML=
+"Enter Hs, IE and Dip.";
 return;
 }
 
-if(vDir==="W") v=-v;
+let Hs=hsDeg+(hsMin/60);
+let Ha =
+Hs +
+(ie/60) +
+(dip/60);
 
-let compassError=normalizeError(t-c);
-let deviation=normalizeError(compassError-v);
+let ref =
+calculateRefraction(Ha);
 
-document.getElementById("compassResult").innerHTML=
-"Compass Error: "+formatError(compassError)+"<br>"+
-"Deviation: "+formatError(deviation);
+document.getElementById(
+"refractionValue"
+).value =
+ref.toFixed(1);
+let sd=parseFloat(document.getElementById("sdValue").value);
+let pa=parseFloat(document.getElementById("parallaxValue").value);
+
+let Ho=Ha+(ref/60)+(sd/60)+(pa/60);
+
+let intercept=(Ho-lastSunData.Hc)*60;
+let direction=intercept>=0?"TOWARD":"AWAY";
+
+document.getElementById("sightResult").innerHTML=
+"<b>SIGHT REDUCTION</b><br><br>"+
+"Date UTC: "+lastSunData.date+"<br>"+
+"Time UTC: "+lastSunData.time+"<br><br>"+
+"Object: "+lastSunData.object+"<br><br>"+
+"Hs: "+
+hsDeg+
+"° "+
+hsMin.toFixed(1)+
+"'<br>"+
+
+"IE: "+
+ie.toFixed(1)+
+"'<br>"+
+
+"Dip: "+
+dip.toFixed(1)+
+"'<br>"+
+
+"Refraction: "+
+ref.toFixed(1)+
+"'<br>"+
+
+"SD: "+
+sd.toFixed(1)+
+"'<br>"+
+
+"Parallax: "+
+pa.toFixed(1)+
+"'<br><br>"+
+"Ho: "+formatAlt(Ho)+"<br>"+
+"Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
+"Intercept: "+Math.abs(intercept).toFixed(1)+" NM "+direction+"<br>"+
+"Zn: "+formatBearing(lastSunData.Zn);
 }
+
+function copyObservation(){
+let text=document.getElementById("observationResult").innerText;
+
+if(!text || text.includes("Calculate object")){
+alert("No observation to copy.");
+return;
+}
+
+navigator.clipboard.writeText(text).then(
+function(){alert("Observation copied.");},
+function(){alert("Copy failed.");}
+);
+}
+
 function togglePositionSource(){
+let mode=document.getElementById("positionSource").value;
+let disabled=(mode==="gps");
 
-let mode =
-document.getElementById("positionSource").value;
+document.getElementById("latDeg").disabled=disabled;
+document.getElementById("latMin").disabled=disabled;
+document.getElementById("latDir").disabled=disabled;
 
-let disabled = (mode === "gps");
+document.getElementById("lonDeg").disabled=disabled;
+document.getElementById("lonMin").disabled=disabled;
+document.getElementById("lonDir").disabled=disabled;
 
-document.getElementById("latDeg").disabled = disabled;
-document.getElementById("latMin").disabled = disabled;
-document.getElementById("latDir").disabled = disabled;
-
-document.getElementById("lonDeg").disabled = disabled;
-document.getElementById("lonMin").disabled = disabled;
-document.getElementById("lonDir").disabled = disabled;
-
-document.getElementById("gpsButton").style.display =
-disabled ? "block" : "none";
+document.getElementById("gpsButton").style.display=disabled?"block":"none";
 }
 
 function getGPSPosition(){
-
 if(!navigator.geolocation){
 alert("GPS not supported.");
 return;
 }
 
 navigator.geolocation.getCurrentPosition(
-
 function(position){
+let lat=position.coords.latitude;
+let lon=position.coords.longitude;
 
-let lat = position.coords.latitude;
-let lon = position.coords.longitude;
+let latDir=lat>=0?"N":"S";
+let lonDir=lon>=0?"E":"W";
 
-let latDir = lat >= 0 ? "N" : "S";
-let lonDir = lon >= 0 ? "E" : "W";
+lat=Math.abs(lat);
+lon=Math.abs(lon);
 
-lat = Math.abs(lat);
-lon = Math.abs(lon);
+let latDeg=Math.floor(lat);
+let latMin=(lat-latDeg)*60;
 
-let latDeg = Math.floor(lat);
-let latMin = (lat - latDeg) * 60;
+let lonDeg=Math.floor(lon);
+let lonMin=(lon-lonDeg)*60;
 
-let lonDeg = Math.floor(lon);
-let lonMin = (lon - lonDeg) * 60;
+document.getElementById("latDeg").value=latDeg;
+document.getElementById("latMin").value=latMin.toFixed(1);
+document.getElementById("latDir").value=latDir;
 
-document.getElementById("latDeg").value = latDeg;
-document.getElementById("latMin").value = latMin.toFixed(1);
-document.getElementById("latDir").value = latDir;
+document.getElementById("lonDeg").value=lonDeg;
+document.getElementById("lonMin").value=lonMin.toFixed(1);
+document.getElementById("lonDir").value=lonDir;
 
-document.getElementById("lonDeg").value = lonDeg;
-document.getElementById("lonMin").value = lonMin.toFixed(1);
-document.getElementById("lonDir").value = lonDir;
-
-let now = new Date();
-
-document.getElementById("dateUTC").value =
-now.toISOString().substring(0,10);
-
-document.getElementById("utcHour").value =
-String(now.getUTCHours()).padStart(2,"0");
-
-document.getElementById("utcMin").value =
-String(now.getUTCMinutes()).padStart(2,"0");
-
-document.getElementById("utcSec").value =
-String(now.getUTCSeconds()).padStart(2,"0");
-calculateSun();
+setNowUTC();
+calculateObject();
 },
-
 function(error){
-
-alert(
-"GPS Error Code: " +
-error.code +
-"\n" +
-error.message
-);
-
+alert("GPS Error Code: "+error.code+"\n"+error.message);
 },
-
 {
 enableHighAccuracy:true,
 timeout:30000,
 maximumAge:0
 }
-
 );
-
-}
- function copyObservation(){
-
-let text =
-document.getElementById("observationResult").innerText;
-
-if(!text || text.includes("Calculate Sun")){
-alert("No observation to copy.");
-return;
 }
 
-navigator.clipboard.writeText(text).then(
-function(){
-alert("Observation copied.");
-},
-function(){
-alert("Copy failed.");
-}
-);
-
-}
 function findVisibleStars(){
+let data=getInputData();
 
-let date=document.getElementById("dateUTC").value;
-
-let time =
-document.getElementById("utcHour").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcMin").value.padStart(2,"0")
-+ ":"
-+ document.getElementById("utcSec").value.padStart(2,"0");
-
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
-
-if(!date){
-document.getElementById("starFinderResult").innerHTML=
-"Enter Date UTC";
+if(data.error){
+document.getElementById("starFinderResult").innerHTML=data.error;
 return;
 }
 
-if(lat===null||lon===null){
-document.getElementById("starFinderResult").innerHTML=
-"Enter Latitude and Longitude";
-return;
-}
-
-let sun=sunAlmanac(date,time);
+let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
+let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
 
 for(let starName in STAR_CATALOG){
-
 let star=STAR_CATALOG[starName];
 
-let GHA=norm360(sun.GHA+star.SHA);
-let LHA=norm360(GHA+lon);
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+data.lon);
+let r=calculateHcZn(data.lat,star.Dec,LHA);
 
-let sinHc=
-Math.sin(degToRad(lat))*Math.sin(degToRad(star.Dec))+
-Math.cos(degToRad(lat))*Math.cos(degToRad(star.Dec))*Math.cos(degToRad(LHA));
-
-let Hc=radToDeg(Math.asin(sinHc));
-
-let y=Math.sin(degToRad(LHA));
-
-let x=
-Math.cos(degToRad(LHA))*Math.sin(degToRad(lat))-
-Math.tan(degToRad(star.Dec))*Math.cos(degToRad(lat));
-
-let Zn=norm360(radToDeg(Math.atan2(y,x))+180);
-
-if(Hc>5){
-
+if(r.Hc>minAlt){
 visibleStars.push({
 name:starName,
-hc:Hc,
-zn:Zn
+hc:r.Hc,
+zn:r.Zn
 });
-
 }
-
 }
 
 visibleStars.sort((a,b)=>b.hc-a.hc);
 
-let output="<b>VISIBLE STARS</b><br><br>";
+let output="<b>VISIBLE STARS</b><br>"+
+"Minimum altitude: "+minAlt+"°<br><br>";
 
 if(visibleStars.length===0){
-output+="No catalogue stars above 5° altitude.";
+output+="No catalogue stars above "+minAlt+"° altitude.";
 }
 
 visibleStars.forEach(star=>{
-
 let quality="LOW";
 
 if(star.hc>=20){
@@ -907,33 +1025,436 @@ quality="EXCELLENT";
 quality="GOOD";
 }
 
-output +=
+output+=
 "<button class='main' onclick=\"selectStarFromFinder('"+star.name+"')\">"+
 "⭐ "+star.name+
-" — Hc "+
-star.hc.toFixed(1)+
-"° / Zn "+
-star.zn.toFixed(1)+
-"° — "+
-quality+
+" — Hc "+star.hc.toFixed(1)+
+"° / Zn "+star.zn.toFixed(1)+
+"° — "+quality+
 "</button>";
-
 });
 
 document.getElementById("starFinderResult").innerHTML=output;
+showRecommendedPairs(visibleStars);
+}
+function showRecommendedPairs(stars){
+
+let output="<b>⭐ RECOMMENDED STAR PAIRS</b><br><br>";
+
+let found=0;
+
+for(let i=0;i<stars.length;i++){
+
+for(let j=i+1;j<stars.length;j++){
+
+let diff=Math.abs(
+stars[i].zn-stars[j].zn
+);
+
+if(diff>180){
+diff=360-diff;
+}
+
+if(diff>=60 && diff<=120){
+
+let quality="GOOD";
+
+if(diff>=80 && diff<=100){
+quality="EXCELLENT";
+}
+
+output +=
+stars[i].name+
+" ("+
+stars[i].zn.toFixed(0)+
+"°) × "+
+stars[j].name+
+" ("+
+stars[j].zn.toFixed(0)+
+"°)<br>"+
+"Difference: "+
+diff.toFixed(0)+
+"° — "+
+quality+
+"<br><br>";
+
+found++;
+
+if(found>=5){
+break;
+}
+
+}
+
+}
+
+if(found>=5){
+break;
+}
+
+}
+
+if(found===0){
+output+="No suitable star pairs found.";
+}
+
+document.getElementById(
+"pairAdvisorResult"
+).innerHTML=output;
 
 }
 function selectStarFromFinder(starName){
-
 document.getElementById("celestialObject").value=starName;
-
-calculateSun();
+calculateObject();
 
 window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+}
+function saveObservation(){
 
+if(!lastSunData){
+alert("No observation.");
+return;
+}
+
+let text =
+document.getElementById("sightResult").innerText;
+
+if(!text || text.includes("Calculate object")){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+log.unshift(text);
+
+localStorage.setItem(
+"celestialLog",
+JSON.stringify(log)
+);
+
+alert("Observation saved.");
+
+}
+
+function loadObservationLog(){
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+if(log.length===0){
+
+document.getElementById("logResult").innerHTML =
+"No saved observations.";
+
+return;
+}
+
+let output="";
+
+log.forEach(item=>{
+
+output +=
+"<div class='resultBox'>"+
+item.replace(/\n/g,"<br>")+
+"</div>";
+
+});
+
+document.getElementById("logResult").innerHTML =
+output;
+
+}
+
+function clearObservationLog(){
+
+if(!confirm("Delete all observations?")){
+return;
+}
+
+localStorage.removeItem("celestialLog");
+
+document.getElementById("logResult").innerHTML =
+"No saved observations.";
+
+}
+function exportObservationLog(){
+
+let log =
+JSON.parse(
+localStorage.getItem("celestialLog") || "[]"
+);
+
+if(log.length===0){
+alert("No observations to export.");
+return;
+}
+
+let text =
+"==================================\n"+
+"CELESTIAL TRAINER OBSERVATION LOG\n"+
+"==================================\n\n";
+
+log.forEach(item=>{
+
+text += item;
+text += "\n\n----------------------------------\n\n";
+
+});
+
+let blob =
+new Blob(
+[text],
+{type:"text/plain"}
+);
+
+let link =
+document.createElement("a");
+
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
+"Celestial_Observations.txt";
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+
+}
+function lineIntersection(p1,p2,p3,p4){
+
+let x1=p1.x, y1=p1.y;
+let x2=p2.x, y2=p2.y;
+let x3=p3.x, y3=p3.y;
+let x4=p4.x, y4=p4.y;
+
+let den=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+
+if(Math.abs(den)<0.0001){
+return null;
+}
+
+let px=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/den;
+let py=((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/den;
+
+return {x:px,y:py};
+}
+function drawRunningFixDiagram(zn1,zn2,course,distance){
+
+let canvas=document.getElementById("runningFixCanvas");
+
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.lineWidth=2;
+ctx.strokeStyle="#9ee7ff";
+ctx.fillStyle="#9ee7ff";
+ctx.font="14px Arial";
+
+let cx=175;
+let cy=150;
+let fixX=cx;
+let fixY=cy;
+
+let courseRad=degToRad(course);
+
+fixX =
+cx +
+Math.sin(courseRad) *
+distance *
+5;
+
+fixY =
+cy -
+Math.cos(courseRad) *
+distance *
+5;
+let scale=5;
+
+function drawLine(angleDeg,label,shiftX,shiftY){
+
+let ang=degToRad(angleDeg-90);
+
+let x1=cx+shiftX-Math.cos(ang)*150;
+let y1=cy+shiftY-Math.sin(ang)*150;
+
+let x2=cx+shiftX+Math.cos(ang)*150;
+let y2=cy+shiftY+Math.sin(ang)*150;
+
+ctx.beginPath();
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
+ctx.stroke();
+
+let labelX=x2+8;
+let labelY=y2;
+
+if(label==="LOP1 old"){
+labelX-=80;
+labelY-=15;
+}
+
+if(label==="LOP1 transferred"){
+labelX-=140;
+labelY+=15;
+}
+
+if(label==="LOP2"){
+labelX+=10;
+labelY+=25;
+}
+
+ctx.fillText(
+label,
+labelX,
+labelY
+);
+
+}
+
+let shiftX=fixX-cx;
+let shiftY=fixY-cy;
+
+ctx.strokeStyle="#6f9fb8";
+drawLine(zn1+90,"LOP1 old",0,0);
+
+ctx.strokeStyle="#9ee7ff";
+drawLine(zn1+90,"LOP1 transferred",shiftX,shiftY);
+function getLinePoints(angleDeg,shiftX,shiftY){
+
+let ang=degToRad(angleDeg-90);
+
+return {
+p1:{
+x:cx+shiftX-Math.cos(ang)*150,
+y:cy+shiftY-Math.sin(ang)*150
+},
+p2:{
+x:cx+shiftX+Math.cos(ang)*150,
+y:cy+shiftY+Math.sin(ang)*150
+}
+};
+
+}
+
+let l1=getLinePoints(zn1+90,shiftX,shiftY);
+let l2=getLinePoints(zn2+90,0,0);
+
+let rf=lineIntersection(l1.p1,l1.p2,l2.p1,l2.p2);
+
+if(rf){
+fixX=rf.x;
+fixY=rf.y;
+}
+ctx.strokeStyle="#ffffff";
+drawLine(zn2+90,"LOP2",0,0);
+
+ctx.strokeStyle="#ffd966";
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(cx+shiftX,cy+shiftY);
+ctx.stroke();
+
+ctx.fillStyle="#ffd966";
+ctx.fillText("DR Track",cx+shiftX+5,cy+shiftY);
+
+ctx.fillStyle="#9ee7ff";
+ctx.beginPath();
+ctx.arc(fixX,fixY,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+"Running Fix",
+fixX+10,
+fixY-10
+);
+
+}
+
+
+function calculateRunningFix(){
+
+let zn1=parseFloat(document.getElementById("rfZn1").value);
+let int1=parseFloat(document.getElementById("rfInt1").value);
+
+let course=parseFloat(document.getElementById("rfCourse").value);
+let speed=parseFloat(document.getElementById("rfSpeed").value);
+let time=parseFloat(document.getElementById("rfTime").value);
+
+let zn2=parseFloat(document.getElementById("rfZn2").value);
+let int2=parseFloat(document.getElementById("rfInt2").value);
+
+if(
+isNaN(zn1)||isNaN(int1)||
+isNaN(course)||isNaN(speed)||isNaN(time)||
+isNaN(zn2)||isNaN(int2)
+){
+document.getElementById("runningFixResult").innerHTML=
+"Enter all values.";
+return;
+}
+
+let distance=speed*time;
+let angle=Math.abs(zn1-zn2);
+
+if(angle>180){
+angle=360-angle;
+}
+
+let quality="POOR";
+
+if(angle>=60 && angle<=120){
+quality="GOOD";
+}
+
+if(angle>=80 && angle<=100){
+quality="EXCELLENT";
+}
+
+let transferEffect =
+distance *
+Math.cos(degToRad(course-zn1));
+
+let transferredIntercept =
+int1 + transferEffect;
+
+document.getElementById("runningFixResult").innerHTML=
+"<b>RUNNING FIX GEOMETRY</b><br><br>"+
+"Distance Run: "+distance.toFixed(1)+" NM<br>"+
+"Course Made Good: "+course.toFixed(1)+"°<br><br>"+
+
+"LOP1 Zn: "+zn1.toFixed(1)+"°<br>"+
+"LOP1 Intercept: "+int1.toFixed(1)+" NM<br>"+
+"Transferred LOP1 Intercept: "+
+transferredIntercept.toFixed(1)+
+" NM<br><br>"+
+
+"LOP2 Zn: "+zn2.toFixed(1)+"°<br>"+
+"LOP2 Intercept: "+int2.toFixed(1)+" NM<br><br>"+
+
+"Angle Between LOPs: "+angle.toFixed(0)+"°<br>"+
+"Fix Quality: "+quality+"<br><br>"+
+"<span class='small'>Training geometry only. Plot confirmation required.</span>";
+drawRunningFixDiagram(
+zn1,
+zn2,
+course,
+distance
+);
 }
 setNowUTC();
 togglePositionSource();
