@@ -263,8 +263,17 @@ onchange="updateSightCorrections()">
 <label>Height of Eye (m)</label>
 <input id="heightOfEye" class="full" type="number" step="0.1" value="15">
 <label>Calculated Dip</label>
-<input id="dipValue" class="full" readonly>    
-<label>Refraction</label>
+<input id="dipValue" class="full" readonly>   
+ <label>Pressure (hPa)</label>
+<input id="pressure" class="full" type="number" step="1" value="1010">
+
+<label>Temperature (°C)</label>
+<input id="temperature" class="full" type="number" step="0.1" value="10">    
+<<label>Pressure (hPa)</label>
+<input id="pressure" class="full" type="number" step="1" value="1010">
+
+<label>Temperature (°C)</label>
+<input id="temperature" class="full" type="number" step="0.1" value="10">label>Refraction</label>
 <input id="refractionValue"
 class="full"
 readonly>
@@ -854,18 +863,27 @@ return 0;
 return -1.76*Math.sqrt(height);
 
 }
-function calculateRefraction(ha){
+function calculateRefraction(ha,pressure,temperature){
 
 if(ha<=0){
 return 0;
 }
 
-return -0.97 /
+let base =
+-0.97 /
 Math.tan(
 degToRad(
 ha + 7.31/(ha+4.4)
 )
 );
+
+let pressureFactor =
+pressure / 1010;
+
+let temperatureFactor =
+283 / (273 + temperature);
+
+return base * pressureFactor * temperatureFactor;
 
 }
 function calculateSightReduction(){
@@ -907,8 +925,19 @@ Hs +
 (ie/60) +
 (dip/60);
 
+let pressure=parseFloat(document.getElementById("pressure").value);
+let temperature=parseFloat(document.getElementById("temperature").value);
+
+if(isNaN(pressure)){
+pressure=1010;
+}
+
+if(isNaN(temperature)){
+temperature=10;
+}
+
 let ref =
-calculateRefraction(Ha);
+calculateRefraction(Ha,pressure,temperature);
 
 document.getElementById(
 "refractionValue"
@@ -950,6 +979,14 @@ heightOfEye.toFixed(1)+
 "Dip: "+
 dip.toFixed(1)+
 "'<br>"+
+
+"Pressure: "+
+pressure.toFixed(0)+
+" hPa<br>"+
+
+"Temperature: "+
+temperature.toFixed(1)+
+" °C<br>"+
 
 "Refraction: "+
 ref.toFixed(1)+
