@@ -58,7 +58,11 @@ Running Fix
 <h3>Celestial Almanac</h3>
 
 <label>Object</label>
-<select id="celestialObject" class="full">
+<select
+id="celestialObject"
+class="full"
+onchange="updateBodyFields()"
+>
 <option value="Sun">☀️ Sun</option>
 <option value="Moon">🌙 Moon</option>
 
@@ -263,15 +267,29 @@ onchange="updateSightCorrections()">
 class="full"
 readonly>
 
+<div id="sdBlock">
+
 <label>Semi-Diameter</label>
-<input id="sdValue"
+
+<input
+id="sdValue"
 class="full"
-readonly>
+type="number"
+step="0.1">
+
+</div>
+
+<div id="parallaxBlock">
 
 <label>Parallax</label>
-<input id="parallaxValue"
+
+<input
+id="parallaxValue"
 class="full"
-readonly>
+type="number"
+step="0.1">
+
+</div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
 <button class="main" onclick="saveAsLOP1()">
 Save as Running Fix LOP1
@@ -1517,8 +1535,42 @@ course,
 distance
 );
 }
+function updateBodyFields(){
+
+let obj=
+document.getElementById(
+"celestialObject"
+).value;
+
+let show=
+(obj==="Sun" || obj==="Moon");
+
+document.getElementById(
+"sdBlock"
+).style.display=
+show ? "block" : "none";
+
+document.getElementById(
+"parallaxBlock"
+).style.display=
+show ? "block" : "none";
+
+if(!show){
+
+document.getElementById(
+"sdValue"
+).value=0;
+
+document.getElementById(
+"parallaxValue"
+).value=0;
+
+}
+
+}
 setNowUTC();
 togglePositionSource();
+updateBodyFields();
 </script>
 
 </body>
