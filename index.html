@@ -1772,9 +1772,15 @@ ctx.fillText("N",right-5,horizonY+35);
 
 lastVisibleStars.forEach(star=>{
 
+let x=left+(star.zn/360)*width;
+let y=horizonY-(star.hc*2);
+
+if(y<15)y=15;
+if(y>horizonY)y=horizonY;
+
 let mag=star.mag;
 
-if(mag===undefined){
+if(mag===undefined || isNaN(mag)){
 mag=2.0;
 }
 
@@ -1794,6 +1800,7 @@ ctx.fill();
 ctx.shadowBlur=0;
 
 ctx.fillStyle="#ffffff";
+ctx.font="11px Arial";
 ctx.fillText(star.name,x+7,y+4);
 
 });
