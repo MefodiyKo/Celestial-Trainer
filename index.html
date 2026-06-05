@@ -820,19 +820,19 @@ document.getElementById("lonDir").value+"<br><br>"+
 }
 function updateSightCorrections(){
 
-let body =
-document.getElementById("sightBody").value;
+let body=document.getElementById("sightBody").value;
 
-let ref = "-1.0";
-let sd = "0.0";
-let pa = "0.0";
+let sd="0.0";
+let pa="0.0";
 
 if(body==="sunLL"){
 sd="+16.0";
+pa="0.0";
 }
 
 if(body==="sunUL"){
 sd="-16.0";
+pa="0.0";
 }
 
 if(body==="moonLL"){
@@ -845,7 +845,6 @@ sd="-15.0";
 pa="+57.0";
 }
 
-document.getElementById("refractionValue").value=ref;
 document.getElementById("sdValue").value=sd;
 document.getElementById("parallaxValue").value=pa;
 
@@ -1630,6 +1629,7 @@ document.getElementById("parallaxValue").value="0.0";
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
+updateSightCorrections();
 
 </script>
 
