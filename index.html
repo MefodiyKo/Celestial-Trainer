@@ -273,6 +273,13 @@ readonly>
 class="full"
 readonly>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="saveAsLOP1()">
+Save as Running Fix LOP1
+</button>
+
+<button class="main" onclick="saveAsLOP2()">
+Save as Running Fix LOP2
+</button>
 <button class="main" onclick="saveObservation()">
 Save Observation
 </button>
@@ -360,6 +367,8 @@ width:100%;
 
 <script>
 let lastSunData=null;
+let runningFixLOP1=null;
+let runningFixLOP2=null;
 
 const STAR_CATALOG = {
 Alpheratz:{SHA:358,Dec:29},
@@ -868,7 +877,11 @@ let Ho=Ha+(ref/60)+(sd/60)+(pa/60);
 
 let intercept=(Ho-lastSunData.Hc)*60;
 let direction=intercept>=0?"TOWARD":"AWAY";
+lastSunData.intercept=
+Math.abs(intercept);
 
+lastSunData.direction=
+direction;
 document.getElementById("sightResult").innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
@@ -1385,9 +1398,57 @@ fixY-10
 
 }
 
+function saveAsLOP1(){
 
+if(!lastSunData){
+alert("No sight available.");
+return;
+}
+
+runningFixLOP1={
+zn:lastSunData.Zn,
+intercept:lastSunData.intercept
+};
+
+alert("Saved as LOP1");
+
+}
+
+function saveAsLOP2(){
+
+if(!lastSunData){
+alert("No sight available.");
+return;
+}
+
+runningFixLOP2={
+zn:lastSunData.Zn,
+intercept:lastSunData.intercept
+};
+
+alert("Saved as LOP2");
+
+}
 function calculateRunningFix(){
+if(runningFixLOP1){
 
+document.getElementById("rfZn1").value=
+runningFixLOP1.zn.toFixed(1);
+
+document.getElementById("rfInt1").value=
+runningFixLOP1.intercept.toFixed(1);
+
+}
+
+if(runningFixLOP2){
+
+document.getElementById("rfZn2").value=
+runningFixLOP2.zn.toFixed(1);
+
+document.getElementById("rfInt2").value=
+runningFixLOP2.intercept.toFixed(1);
+
+}
 let zn1=parseFloat(document.getElementById("rfZn1").value);
 let int1=parseFloat(document.getElementById("rfInt1").value);
 
