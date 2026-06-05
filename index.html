@@ -260,8 +260,10 @@ onchange="updateSightCorrections()">
 <label>Index Error, minutes (+ / -)</label>
 <input id="indexError" class="full" type="number" step="0.1" value="0">
 
-<label>Dip, minutes (-)</label>
-<input id="dip" class="full" type="number" step="0.1" value="-3">
+<label>Height of Eye (m)</label>
+<input id="heightOfEye" class="full" type="number" step="0.1" value="15">
+<label>Calculated Dip</label>
+<input id="dipValue" class="full" readonly>    
 <label>Refraction</label>
 <input id="refractionValue"
 class="full"
@@ -843,6 +845,15 @@ document.getElementById("sdValue").value=sd;
 document.getElementById("parallaxValue").value=pa;
 
 }
+function calculateDip(height){
+
+if(height<=0){
+return 0;
+}
+
+return -1.76*Math.sqrt(height);
+
+}
 function calculateRefraction(ha){
 
 if(ha<=0){
@@ -867,9 +878,24 @@ return;
 let hsDeg=parseFloat(document.getElementById("hsDeg").value);
 let hsMin=parseFloat(document.getElementById("hsMin").value);
 let ie=parseFloat(document.getElementById("indexError").value);
-let dip=parseFloat(document.getElementById("dip").value);
+let heightOfEye=
+parseFloat(
+document.getElementById("heightOfEye").value
+);
 
-if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)||isNaN(dip)){
+if(isNaN(heightOfEye)){
+heightOfEye=0;
+}
+
+let dip=
+calculateDip(heightOfEye);
+
+document.getElementById(
+"dipValue"
+).value=
+dip.toFixed(1)+"'";
+
+if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)){
 document.getElementById("sightResult").innerHTML=
 "Enter Hs, IE and Dip.";
 return;
@@ -916,6 +942,10 @@ hsMin.toFixed(1)+
 "IE: "+
 ie.toFixed(1)+
 "'<br>"+
+
+"Height of Eye: "+
+heightOfEye.toFixed(1)+
+" m<br>"+
 
 "Dip: "+
 dip.toFixed(1)+
