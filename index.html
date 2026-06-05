@@ -63,6 +63,21 @@ background:#eaf6ff;
 .calcBox input{
 background:#d9d9d9;
 }
+.skyCard{
+background:linear-gradient(#06152a,#0b2b4a);
+border:1px solid #31506a;
+border-radius:10px;
+padding:10px;
+margin:15px;
+}
+
+#skyCanvas{
+width:100%;
+height:220px;
+background:#06152a;
+border-radius:8px;
+border:1px solid #31506a;
+}
 </style>
 </head>
 
@@ -74,7 +89,19 @@ background:#d9d9d9;
 </header>
 
 <div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
+<div class="skyCard">
+<h3>Sky View</h3>
 
+<canvas
+id="skyCanvas"
+width="360"
+height="220">
+</canvas>
+
+<p class="small">
+Visual training sky view. Shows last calculated object and visible stars.
+</p>
+</div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
@@ -759,6 +786,7 @@ let data=getInputData();
 
 if(data.error){
 document.getElementById("sunResult").innerHTML=data.error;
+drawSkyView();
 return;
 }
 
@@ -782,7 +810,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
-
+drawSkyView();
 return;
 }
 
@@ -803,7 +831,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Moon calculation test module v2.4</span>";
-
+drawSkyView();
 return;
 }
 
@@ -825,7 +853,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>";
-
+drawSkyView();
 return;
 }
 }
@@ -833,6 +861,7 @@ return;
 function calculateObservation(){
 if(!lastSunData){
 document.getElementById("observationResult").innerHTML="Calculate object in Almanac first.";
+
 return;
 }
 
@@ -843,6 +872,7 @@ let vDir=document.getElementById("obsVariationDir").value;
 
 if(isNaN(gyro)||isNaN(compass)||isNaN(variation)){
 document.getElementById("observationResult").innerHTML="Enter Gyro Bearing, Compass Bearing and Variation.";
+
 return;
 }
 
@@ -1681,10 +1711,75 @@ document.getElementById("parallaxValue").value="0.0";
 }
 
 }
+function drawSkyView(){
+
+let canvas=document.getElementById("skyCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#06152a";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="#31506a";
+ctx.fillStyle="#9ee7ff";
+ctx.font="12px Arial";
+
+let horizonY=190;
+
+ctx.beginPath();
+ctx.moveTo(20,horizonY);
+ctx.lineTo(340,horizonY);
+ctx.stroke();
+
+ctx.fillText("E",35,208);
+ctx.fillText("S",170,208);
+ctx.fillText("W",305,208);
+
+for(let h=15;h<=75;h+=15){
+let y=horizonY-(h*2);
+ctx.beginPath();
+ctx.moveTo(20,y);
+ctx.lineTo(340,y);
+ctx.stroke();
+ctx.fillText(h+"°",5,y+4);
+}
+
+if(lastSunData){
+
+let x=(lastSunData.Zn/360)*320+20;
+let y=horizonY-(lastSunData.Hc*2);
+
+if(y<20)y=20;
+if(y>horizonY)y=horizonY;
+
+ctx.fillStyle=
+lastSunData.object==="Sun" ? "#ffd966" :
+lastSunData.object==="Moon" ? "#dddddd" :
+"#9ee7ff";
+
+ctx.beginPath();
+ctx.arc(x,y,8,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#ffffff";
+ctx.fillText(lastSunData.object,x+10,y+4);
+ctx.fillText(
+"Hc "+lastSunData.Hc.toFixed(1)+"° / Zn "+lastSunData.Zn.toFixed(1)+"°",
+x+10,
+y+20
+);
+
+}
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
 updateSightCorrections();
+drawSkyView();
 
 </script>
 
