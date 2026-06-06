@@ -1209,7 +1209,24 @@ return;
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
 let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
 
+if(sunPos.Hc>-6){
+lastVisibleStars=[];
+drawSkyView();
+
+document.getElementById("starFinderResult").innerHTML=
+"<b>VISIBLE STARS</b><br><br>"+
+"Sky too bright for stars. Sun altitude: "+
+sunPos.Hc.toFixed(1)+"°";
+
+document.getElementById("pairAdvisorResult").innerHTML="";
+
+updateObjectListWithVisibleStars([]);
+
+return;
+}
 for(let starName in STAR_CATALOG){
 let star=STAR_CATALOG[starName];
 
