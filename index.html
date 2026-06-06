@@ -789,6 +789,7 @@ let data=getInputData();
 
 if(data.error){
 document.getElementById("sunResult").innerHTML=data.error;
+autoUpdateVisibleStars();
 drawSkyView();
 return;
 }
@@ -813,6 +814,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
+autoUpdateVisibleStars();
 drawSkyView();
 return;
 }
@@ -834,6 +836,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Moon calculation test module v2.4</span>";
+autoUpdateVisibleStars();
 drawSkyView();
 return;
 }
@@ -856,6 +859,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>";
+autoUpdateVisibleStars();
 drawSkyView();
 return;
 }
@@ -1951,8 +1955,6 @@ el.addEventListener("change",autoUpdateVisibleStars);
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
-setupAutoSkyUpdate();
-autoUpdateVisibleStars();
 drawSkyView();
 
 </script>
