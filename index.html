@@ -791,7 +791,7 @@ let data=getInputData();
 
 if(data.error){
 document.getElementById("sunResult").innerHTML=data.error;
-autoUpdateVisibleStars();
+
 drawSkyView();
 return;
 }
@@ -816,7 +816,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
-autoUpdateVisibleStars();
+
 drawSkyView();
 return;
 }
@@ -838,7 +838,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Moon calculation test module v2.4</span>";
-autoUpdateVisibleStars();
+
 drawSkyView();
 return;
 }
@@ -861,7 +861,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>";
-autoUpdateVisibleStars();
+
 drawSkyView();
 return;
 }
@@ -1230,7 +1230,7 @@ mag:star.Mag
 visibleStars.sort((a,b)=>b.hc-a.hc);
 lastVisibleStars=visibleStars;
 drawSkyView();
-updateObjectListWithVisibleStars(visibleStars);
+
 let output="<b>VISIBLE STARS</b><br>"+
 "Minimum altitude: "+minAlt+"°<br><br>";
 
