@@ -105,6 +105,9 @@ Visual training sky view. Shows last calculated object and visible stars.
 </div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
+<button class="tab" onclick="openTab('starguide',this)">
+Star Guide
+</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('log',this)">
@@ -258,7 +261,51 @@ Find Visible Stars
 <div class="result" id="pairAdvisorResult"></div>
 </div>
 </div>
+<div id="starguide" class="section">
+<div class="card">
 
+<h3>Star Guide</h3>
+
+<p class="small">
+Learn how to identify navigational stars by constellation and sky pattern.
+</p>
+
+<label>Select Star</label>
+<select id="guideStar" class="full" onchange="showStarGuide()">
+<option value="Sirius">Sirius</option>
+<option value="Canopus">Canopus</option>
+<option value="Arcturus">Arcturus</option>
+<option value="Vega">Vega</option>
+<option value="Capella">Capella</option>
+<option value="Rigel">Rigel</option>
+<option value="Aldebaran">Aldebaran</option>
+<option value="Betelgeuse">Betelgeuse</option>
+<option value="Altair">Altair</option>
+<option value="Fomalhaut">Fomalhaut</option>
+<option value="Polaris">Polaris</option>
+</select>
+
+<button class="main" onclick="showStarGuide()">
+Show Guide
+</button>
+
+<div class="result" id="starGuideResult">
+Select a star and press Show Guide.
+</div>
+<canvas
+id="constellationCanvas"
+width="350"
+height="260"
+style="
+margin-top:15px;
+background:#06152a;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
+</div>
+</div>
 <div id="observation" class="section">
 <div class="card">
 
@@ -2003,10 +2050,186 @@ el.addEventListener("change",autoUpdateVisibleStars);
 });
 
 }
+const STAR_GUIDE = {
+Sirius:{
+constellation:"Canis Major",
+mag:-1.46,
+season:"Winter",
+find:"Locate Orion. Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",
+diagram:[
+{x:110,y:55,label:"Betelgeuse"},
+{x:80,y:100,label:"Orion Belt"},
+{x:120,y:100},
+{x:160,y:100},
+{x:125,y:145,label:"Rigel"},
+{x:250,y:190,label:"Sirius",main:true}
+]
+},
+
+Canopus:{
+constellation:"Carina",
+mag:-0.74,
+season:"Winter / Southern sky",
+find:"Look low in the southern sky. Canopus is the second brightest star and is located well below Sirius for northern observers.",
+diagram:[
+{x:170,y:55,label:"Sirius"},
+{x:145,y:115},
+{x:190,y:115},
+{x:170,y:180,label:"Canopus",main:true}
+]
+},
+
+Arcturus:{
+constellation:"Boötes",
+mag:-0.05,
+season:"Spring / Summer",
+find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",
+diagram:[
+{x:70,y:80,label:"Big Dipper"},
+{x:105,y:100},
+{x:140,y:125},
+{x:185,y:160},
+{x:250,y:200,label:"Arcturus",main:true}
+]
+},
+
+Vega:{
+constellation:"Lyra",
+mag:0.03,
+season:"Summer",
+find:"Find the bright blue-white star of the Summer Triangle. Vega is usually the highest and brightest of the three.",
+diagram:[
+{x:160,y:70,label:"Vega",main:true},
+{x:80,y:180,label:"Deneb"},
+{x:255,y:190,label:"Altair"},
+{x:160,y:70},
+{x:80,y:180},
+{x:255,y:190}
+]
+},
+
+Polaris:{
+constellation:"Ursa Minor",
+mag:1.97,
+season:"All year Northern Hemisphere",
+find:"Find the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
+diagram:[
+{x:70,y:190,label:"Pointer"},
+{x:115,y:170,label:"Pointer"},
+{x:250,y:80,label:"Polaris",main:true}
+]
+}
+};
+
+function showStarGuide(){
+
+let name=document.getElementById("guideStar").value;
+let g=STAR_GUIDE[name];
+
+if(!g){
+document.getElementById("starGuideResult").innerHTML=
+"No guide available for this star yet.";
+return;
+}
+
+let positionText="";
+
+if(STAR_CATALOG[name]){
+
+let data=getInputData();
+
+if(!data.error){
+
+let sun=sunAlmanac(data.date,data.time);
+let star=STAR_CATALOG[name];
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+data.lon);
+let r=calculateHcZn(data.lat,star.Dec,LHA);
+
+let visibility="Not visible";
+
+if(r.Hc>=30){
+visibility="Excellent";
+}else if(r.Hc>=15){
+visibility="Good";
+}else if(r.Hc>=5){
+visibility="Low";
+}
+
+positionText=
+"<br><hr>"+
+"<b>Expected Position Now</b><br>"+
+"Bearing / Zn: "+r.Zn.toFixed(1)+"°<br>"+
+"Altitude / Hc: "+r.Hc.toFixed(1)+"°<br>"+
+"Visibility: "+visibility+"<br>";
+
+}
+
+}
+
+document.getElementById("starGuideResult").innerHTML=
+"<b>⭐ "+name+"</b><br><br>"+
+"Constellation: "+g.constellation+"<br>"+
+"Magnitude: "+g.mag+"<br>"+
+"Navigation Star: YES<br>"+
+"Best Season: "+g.season+"<br><br>"+
+"<b>How to Find:</b><br>"+
+g.find+
+positionText;
+
+drawConstellationGuide(g);
+
+}
+function drawConstellationGuide(g){
+
+let canvas=document.getElementById("constellationCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#06152a";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="#31506a";
+ctx.fillStyle="#ffffff";
+ctx.font="12px Arial";
+
+for(let i=0;i<g.diagram.length-1;i++){
+
+let a=g.diagram[i];
+let b=g.diagram[i+1];
+
+ctx.beginPath();
+ctx.moveTo(a.x,a.y);
+ctx.lineTo(b.x,b.y);
+ctx.stroke();
+
+}
+
+g.diagram.forEach(p=>{
+
+ctx.fillStyle=p.main ? "#ffd966" : "#ffffff";
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.main ? 6 : 4,0,Math.PI*2);
+ctx.fill();
+
+if(p.label){
+ctx.fillStyle="#ffffff";
+ctx.fillText(p.label,p.x+8,p.y+4);
+}
+
+});
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
 drawSkyView();
+showStarGuide();
 
 </script>
 
