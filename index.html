@@ -258,7 +258,10 @@ onchange="updateBodyFields()"
 <button class="main" onclick="findVisibleStars()">
 Find Visible Stars
 </button>
-
+<button class="main" onclick="calculateTwilight()">
+Calculate Twilight
+</button>
+<div class="result" id="twilightResult"></div>
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
 <div class="result" id="pairAdvisorResult"></div>
@@ -1955,6 +1958,126 @@ visibleStars.sort((a,b)=>b.hc-a.hc);
 
 lastVisibleStars=visibleStars;
 drawSkyView();
+
+}
+function calculateTwilight(){
+
+let data=getInputData();
+
+if(data.error){
+document.getElementById("twilightResult").innerHTML=data.error;
+return;
+}
+
+let date=data.date;
+let lat=data.lat;
+let lon=data.lon;
+
+let results=[];
+
+function sunAltAt(hour){
+
+let h=Math.floor(hour);
+let m=Math.floor((hour-h)*60);
+let s=Math.floor((((hour-h)*60)-m)*60);
+
+let time=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+let sun=sunAlmanac(date,time);
+let LHA=norm360(sun.GHA+lon);
+let r=calculateHcZn(lat,sun.Dec,LHA);
+
+return r.Hc;
+}
+
+function findCrossing(target, rising){
+
+let lastAlt=sunAltAt(0)-target;
+
+for(let t=0.1;t<=24;t+=0.1){
+
+let alt=sunAltAt(t)-target;
+
+if(rising){
+if(lastAlt<0 && alt>=0){
+return refineTime(t-0.1,t,target);
+}
+}else{
+if(lastAlt>0 && alt<=0){
+return refineTime(t-0.1,t,target);
+}
+}
+
+lastAlt=alt;
+}
+
+return null;
+}
+
+function refineTime(t1,t2,target){
+
+for(let i=0;i<12;i++){
+
+let mid=(t1+t2)/2;
+let alt1=sunAltAt(t1)-target;
+let altMid=sunAltAt(mid)-target;
+
+if((alt1<=0 && altMid>=0)||(alt1>=0 && altMid<=0)){
+t2=mid;
+}else{
+t1=mid;
+}
+
+}
+
+return (t1+t2)/2;
+}
+
+function formatHour(hour){
+
+if(hour===null){
+return "--";
+}
+
+let h=Math.floor(hour);
+let m=Math.round((hour-h)*60);
+
+if(m>=60){
+h++;
+m-=60;
+}
+
+h=h%24;
+
+return String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+" UTC";
+}
+
+let rise=findCrossing(-0.833,true);
+let set=findCrossing(-0.833,false);
+
+let civilStart=findCrossing(-6,true);
+let civilEnd=findCrossing(-6,false);
+
+let nauticalStart=findCrossing(-12,true);
+let nauticalEnd=findCrossing(-12,false);
+
+let astroStart=findCrossing(-18,true);
+let astroEnd=findCrossing(-18,false);
+
+document.getElementById("twilightResult").innerHTML=
+"<b>SUN & TWILIGHT</b><br><br>"+
+"Sunrise: "+formatHour(rise)+"<br>"+
+"Sunset: "+formatHour(set)+"<br><br>"+
+"Civil Twilight Start: "+formatHour(civilStart)+"<br>"+
+"Civil Twilight End: "+formatHour(civilEnd)+"<br><br>"+
+"Nautical Twilight Start: "+formatHour(nauticalStart)+"<br>"+
+"Nautical Twilight End: "+formatHour(nauticalEnd)+"<br><br>"+
+"Astronomical Twilight Start: "+formatHour(astroStart)+"<br>"+
+"Astronomical Twilight End: "+formatHour(astroEnd);
 
 }
 function drawSkyView(){
