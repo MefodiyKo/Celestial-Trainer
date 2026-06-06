@@ -27,6 +27,57 @@ button.main{width:100%;padding:14px;margin-top:15px;border:0;border-radius:8px;b
 .resultBox{border:1px solid #31506a;border-radius:8px;padding:10px;margin-top:8px}
 .small{font-size:13px;color:#ccc}
 hr{border:0;border-top:1px solid #31506a;margin:20px 0}
+.inputBox{
+background:#173b5c;
+border:1px solid #2f78a8;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
+.calcBox{
+background:#10283d;
+border:1px solid #31506a;
+border-radius:8px;
+padding:10px;
+margin-top:10px;
+}
+
+.twoCol{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.fieldTitle{
+font-size:13px;
+color:#ccc;
+margin-bottom:4px;
+}
+
+.inputBox input,
+.inputBox select{
+background:#eaf6ff;
+}
+
+.calcBox input{
+background:#d9d9d9;
+}
+.skyCard{
+background:linear-gradient(#06152a,#0b2b4a);
+border:1px solid #31506a;
+border-radius:10px;
+padding:10px;
+margin:15px;
+}
+
+#skyCanvas{
+width:100%;
+height:220px;
+background:#06152a;
+border-radius:8px;
+border:1px solid #31506a;
+}
 </style>
 </head>
 
@@ -38,7 +89,20 @@ hr{border:0;border-top:1px solid #31506a;margin:20px 0}
 </header>
 
 <div class="warning">FOR TRAINING ONLY — NOT FOR OFFICIAL NAVIGATION</div>
+<div class="skyCard">
+<h3>Sky View</h3>
 
+<canvas
+id="skyCanvas"
+width="360"
+height="220"
+onclick="skyCanvasClick(event)">
+</canvas>
+
+<p class="small">
+Visual training sky view. Shows last calculated object and visible stars.
+</p>
+</div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
@@ -58,7 +122,11 @@ Running Fix
 <h3>Celestial Almanac</h3>
 
 <label>Object</label>
-<select id="celestialObject" class="full">
+<select
+id="celestialObject"
+class="full"
+onchange="updateBodyFields()"
+>
 <option value="Sun">☀️ Sun</option>
 <option value="Moon">🌙 Moon</option>
 
@@ -181,7 +249,9 @@ Running Fix
 <option value="20">20°</option>
 </select>
 
-<button class="main" onclick="findVisibleStars()">Find Visible Stars</button>
+<button class="main" onclick="findVisibleStars()">
+Find Visible Stars
+</button>
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
@@ -237,42 +307,86 @@ Hc: <span id="sightHc">--</span><br>
 Zn: <span id="sightZn">--</span>
 </div>
 
-<label>Hs Degrees</label>
-<input id="hsDeg" class="full" type="number">
+<div class="inputBox">
+<p class="small"><b>Manual input:</b> Fill in these blue fields before calculation.</p>
 
-<label>Hs Minutes</label>
-<input id="hsMin" class="full" type="number" step="0.1">
+<label>Hs</label>
+<div class="row">
+<input id="hsDeg" class="boxDeg" type="number" placeholder="71">
+<span>°</span>
+<input id="hsMin" class="boxMin" type="number" step="0.1" placeholder="23.4">
+<span>'</span>
+</div>
+
 <label>Body</label>
-
-<select id="sightBody"
-class="full"
-onchange="updateSightCorrections()">
+<select id="sightBody" class="full" onchange="updateSightCorrections()">
 <option value="star">Star / Planet</option>
 <option value="sunLL">Sun Lower Limb</option>
 <option value="sunUL">Sun Upper Limb</option>
 <option value="moonLL">Moon Lower Limb</option>
 <option value="moonUL">Moon Upper Limb</option>
 </select>
-<label>Index Error, minutes (+ / -)</label>
+
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Index Error (')</div>
 <input id="indexError" class="full" type="number" step="0.1" value="0">
+</div>
 
-<label>Dip, minutes (-)</label>
-<input id="dip" class="full" type="number" step="0.1" value="-3">
-<label>Refraction</label>
-<input id="refractionValue"
-class="full"
-readonly>
+<div>
+<div class="fieldTitle">Height of Eye (m)</div>
+<input id="heightOfEye" class="full" type="number" step="0.1" value="15">
+</div>
+</div>
 
-<label>Semi-Diameter</label>
-<input id="sdValue"
-class="full"
-readonly>
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Pressure (hPa)</div>
+<input id="pressure" class="full" type="number" step="1" value="1010">
+</div>
 
-<label>Parallax</label>
-<input id="parallaxValue"
-class="full"
-readonly>
+<div>
+<div class="fieldTitle">Temperature (°C)</div>
+<input id="temperature" class="full" type="number" step="0.1" value="10">
+</div>
+</div>
+</div>
+
+<div class="calcBox">
+<p class="small"><b>Calculated corrections:</b> Checked automatically by the app.</p>
+
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Dip</div>
+<input id="dipValue" class="full" readonly>
+</div>
+
+<div>
+<div class="fieldTitle">Refraction</div>
+<input id="refractionValue" class="full" readonly>
+</div>
+</div>
+
+<div class="twoCol">
+<div id="sdBlock">
+<div class="fieldTitle">Semi-Diameter</div>
+<input id="sdValue" class="full" type="number" step="0.1">
+</div>
+
+<div id="parallaxBlock">
+<div class="fieldTitle">Parallax</div>
+<input id="parallaxValue" class="full" type="number" step="0.1">
+</div>
+</div>
+</div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="saveAsLOP1()">
+Save as Running Fix LOP1
+</button>
+
+<button class="main" onclick="saveAsLOP2()">
+Save as Running Fix LOP2
+</button>
 <button class="main" onclick="saveObservation()">
 Save Observation
 </button>
@@ -351,6 +465,9 @@ width:100%;
 <div id="notes" class="section">
 <div class="card">
 <h3>Notes</h3>
+<p><b>Sight Reduction input fields:</b> Blue fields are manual inputs: Hs, Body, Index Error, Height of Eye, Pressure and Temperature.</p>
+<p><b>Calculated fields:</b> Dip, Refraction, Semi-Diameter and Parallax are correction fields used to calculate Ho.</p>
+<p>For stars: SD and Parallax are zero. For Sun and Moon: select the correct limb before calculation.</p>
 <p>This app is for training and educational purposes only.</p>
 <p>Not for official navigation.</p>
 <p>Current Sight Reduction v1 uses only Hs + IE + Dip. Refraction, SD, HP and parallax will be added later.</p>
@@ -360,66 +477,70 @@ width:100%;
 
 <script>
 let lastSunData=null;
+let runningFixLOP1=null;
+let lastVisibleStars=[];
+let skyObjects=[];
+let runningFixLOP2=null;
 
 const STAR_CATALOG = {
-Alpheratz:{SHA:358,Dec:29},
-Ankaa:{SHA:354,Dec:-42},
-Schedar:{SHA:350,Dec:56},
-Diphda:{SHA:349,Dec:-18},
-Achernar:{SHA:336,Dec:-57},
-Hamal:{SHA:328,Dec:23},
-Acamar:{SHA:316,Dec:-40},
-Menkar:{SHA:315,Dec:4},
-Mirfak:{SHA:309,Dec:50},
-Aldebaran:{SHA:291,Dec:16},
-Rigel:{SHA:282,Dec:-8},
-Capella:{SHA:281,Dec:46},
-Bellatrix:{SHA:279,Dec:6},
-Elnath:{SHA:279,Dec:29},
-Alnilam:{SHA:276,Dec:-1},
-Betelgeuse:{SHA:271,Dec:7},
-Canopus:{SHA:264,Dec:-53},
-Sirius:{SHA:259,Dec:-17},
-Adhara:{SHA:256,Dec:-29},
-Procyon:{SHA:245,Dec:5},
-Pollux:{SHA:244,Dec:28},
-Avior:{SHA:234,Dec:-59},
-Suhail:{SHA:223,Dec:-43},
-Miaplacidus:{SHA:222,Dec:-70},
-Alphard:{SHA:218,Dec:-8},
-Regulus:{SHA:208,Dec:12},
-Dubhe:{SHA:194,Dec:62},
-Denebola:{SHA:183,Dec:15},
-Gienah:{SHA:176,Dec:-17},
-Acrux:{SHA:174,Dec:-63},
-Gacrux:{SHA:172,Dec:-57},
-Alioth:{SHA:167,Dec:56},
-Spica:{SHA:159,Dec:-11},
-Alkaid:{SHA:153,Dec:49},
-Hadar:{SHA:149,Dec:-60},
-Menkent:{SHA:149,Dec:-36},
-Arcturus:{SHA:146,Dec:19},
-"Rigil Kentaurus":{SHA:140,Dec:-61},
-Zubenelgenubi:{SHA:138,Dec:-16},
-Kochab:{SHA:137,Dec:74},
-Alphecca:{SHA:126,Dec:27},
-Antares:{SHA:113,Dec:-26},
-Atria:{SHA:108,Dec:-69},
-Sabik:{SHA:102,Dec:-16},
-Shaula:{SHA:97,Dec:-37},
-Rasalhague:{SHA:96,Dec:13},
-Eltanin:{SHA:91,Dec:51},
-"Kaus Australis":{SHA:84,Dec:-34},
-Vega:{SHA:81,Dec:39},
-Nunki:{SHA:76,Dec:-26},
-Altair:{SHA:62,Dec:9},
-Peacock:{SHA:54,Dec:-57},
-Deneb:{SHA:50,Dec:45},
-Enif:{SHA:34,Dec:10},
-Alnair:{SHA:28,Dec:-47},
-Fomalhaut:{SHA:16,Dec:-30},
-Markab:{SHA:14,Dec:15},
-Polaris:{SHA:319,Dec:89}
+Alpheratz:{SHA:358,Dec:29,Mag:2.1},
+Ankaa:{SHA:354,Dec:-42,Mag:2.4},
+Schedar:{SHA:350,Dec:56,Mag:2.2},
+Diphda:{SHA:349,Dec:-18,Mag:2.0},
+Achernar:{SHA:336,Dec:-57,Mag:0.5},
+Hamal:{SHA:328,Dec:23,Mag:2.0},
+Acamar:{SHA:316,Dec:-40,Mag:3.2},
+Menkar:{SHA:315,Dec:4,Mag:2.5},
+Mirfak:{SHA:309,Dec:50,Mag:1.8},
+Aldebaran:{SHA:291,Dec:16,Mag:0.9},
+Rigel:{SHA:282,Dec:-8,Mag:0.1},
+Capella:{SHA:281,Dec:46,Mag:0.1},
+Bellatrix:{SHA:279,Dec:6,Mag:1.6},
+Elnath:{SHA:279,Dec:29,Mag:1.7},
+Alnilam:{SHA:276,Dec:-1,Mag:1.7},
+Betelgeuse:{SHA:271,Dec:7,Mag:0.5},
+Canopus:{SHA:264,Dec:-53,Mag:-0.7},
+Sirius:{SHA:259,Dec:-17,Mag:-1.5},
+Adhara:{SHA:256,Dec:-29,Mag:1.5},
+Procyon:{SHA:245,Dec:5,Mag:0.4},
+Pollux:{SHA:244,Dec:28,Mag:1.1},
+Avior:{SHA:234,Dec:-59,Mag:1.9},
+Suhail:{SHA:223,Dec:-43,Mag:2.2},
+Miaplacidus:{SHA:222,Dec:-70,Mag:1.7},
+Alphard:{SHA:218,Dec:-8,Mag:2.0},
+Regulus:{SHA:208,Dec:12,Mag:1.4},
+Dubhe:{SHA:194,Dec:62,Mag:1.8},
+Denebola:{SHA:183,Dec:15,Mag:2.1},
+Gienah:{SHA:176,Dec:-17,Mag:2.6},
+Acrux:{SHA:174,Dec:-63,Mag:0.8},
+Gacrux:{SHA:172,Dec:-57,Mag:1.6},
+Alioth:{SHA:167,Dec:56,Mag:1.8},
+Spica:{SHA:159,Dec:-11,Mag:1.0},
+Alkaid:{SHA:153,Dec:49,Mag:1.9},
+Hadar:{SHA:149,Dec:-60,Mag:0.6},
+Menkent:{SHA:149,Dec:-36,Mag:2.1},
+Arcturus:{SHA:146,Dec:19,Mag:-0.1},
+"Rigil Kentaurus":{SHA:140,Dec:-61,Mag:-0.3},
+Zubenelgenubi:{SHA:138,Dec:-16,Mag:2.8},
+Kochab:{SHA:137,Dec:74,Mag:2.1},
+Alphecca:{SHA:126,Dec:27,Mag:2.2},
+Antares:{SHA:113,Dec:-26,Mag:1.1},
+Atria:{SHA:108,Dec:-69,Mag:1.9},
+Sabik:{SHA:102,Dec:-16,Mag:2.4},
+Shaula:{SHA:97,Dec:-37,Mag:1.6},
+Rasalhague:{SHA:96,Dec:13,Mag:2.1},
+Eltanin:{SHA:91,Dec:51,Mag:2.2},
+"Kaus Australis":{SHA:84,Dec:-34,Mag:1.8},
+Vega:{SHA:81,Dec:39,Mag:0.0},
+Nunki:{SHA:76,Dec:-26,Mag:2.0},
+Altair:{SHA:62,Dec:9,Mag:0.8},
+Peacock:{SHA:54,Dec:-57,Mag:1.9},
+Deneb:{SHA:50,Dec:45,Mag:1.3},
+Enif:{SHA:34,Dec:10,Mag:2.4},
+Alnair:{SHA:28,Dec:-47,Mag:1.7},
+Fomalhaut:{SHA:16,Dec:-30,Mag:1.2},
+Markab:{SHA:14,Dec:15,Mag:2.5},
+Polaris:{SHA:319,Dec:89,Mag:2.0}
 };
 
 function openTab(id,btn){
@@ -670,6 +791,8 @@ let data=getInputData();
 
 if(data.error){
 document.getElementById("sunResult").innerHTML=data.error;
+
+drawSkyView();
 return;
 }
 
@@ -694,6 +817,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Julian Date: "+sun.JD.toFixed(5)+"</span>";
 
+drawSkyView();
 return;
 }
 
@@ -715,6 +839,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
 "<br><span class='small'>Moon calculation test module v2.4</span>";
 
+drawSkyView();
 return;
 }
 
@@ -737,6 +862,7 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>";
 
+drawSkyView();
 return;
 }
 }
@@ -744,6 +870,7 @@ return;
 function calculateObservation(){
 if(!lastSunData){
 document.getElementById("observationResult").innerHTML="Calculate object in Almanac first.";
+
 return;
 }
 
@@ -754,6 +881,7 @@ let vDir=document.getElementById("obsVariationDir").value;
 
 if(isNaN(gyro)||isNaN(compass)||isNaN(variation)){
 document.getElementById("observationResult").innerHTML="Enter Gyro Bearing, Compass Bearing and Variation.";
+
 return;
 }
 
@@ -786,48 +914,65 @@ document.getElementById("lonDir").value+"<br><br>"+
 }
 function updateSightCorrections(){
 
-let body =
-document.getElementById("sightBody").value;
+let body=document.getElementById("sightBody").value;
 
-let ref = "-1.0";
-let sd = "0.0";
-let pa = "0.0";
+let sd="0.0";
+let pa="0.0";
 
 if(body==="sunLL"){
-sd="+16.0";
+sd="16.0";
+pa="0.0";
 }
 
 if(body==="sunUL"){
 sd="-16.0";
+pa="0.0";
 }
 
 if(body==="moonLL"){
-sd="+15.0";
-pa="+57.0";
+sd="15.0";
+pa="57.0";
 }
 
 if(body==="moonUL"){
 sd="-15.0";
-pa="+57.0";
+pa="57.0";
 }
 
-document.getElementById("refractionValue").value=ref;
 document.getElementById("sdValue").value=sd;
 document.getElementById("parallaxValue").value=pa;
 
 }
-function calculateRefraction(ha){
+function calculateDip(height){
+
+if(height<=0){
+return 0;
+}
+
+return -1.76*Math.sqrt(height);
+
+}
+function calculateRefraction(ha,pressure,temperature){
 
 if(ha<=0){
 return 0;
 }
 
-return -0.97 /
+let base =
+-0.97 /
 Math.tan(
 degToRad(
 ha + 7.31/(ha+4.4)
 )
 );
+
+let pressureFactor =
+pressure / 1010;
+
+let temperatureFactor =
+283 / (273 + temperature);
+
+return base * pressureFactor * temperatureFactor;
 
 }
 function calculateSightReduction(){
@@ -840,9 +985,24 @@ return;
 let hsDeg=parseFloat(document.getElementById("hsDeg").value);
 let hsMin=parseFloat(document.getElementById("hsMin").value);
 let ie=parseFloat(document.getElementById("indexError").value);
-let dip=parseFloat(document.getElementById("dip").value);
+let heightOfEye=
+parseFloat(
+document.getElementById("heightOfEye").value
+);
 
-if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)||isNaN(dip)){
+if(isNaN(heightOfEye)){
+heightOfEye=0;
+}
+
+let dip=
+calculateDip(heightOfEye);
+
+document.getElementById(
+"dipValue"
+).value=
+dip.toFixed(1)+"'";
+
+if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)){
 document.getElementById("sightResult").innerHTML=
 "Enter Hs, IE and Dip.";
 return;
@@ -854,21 +1014,38 @@ Hs +
 (ie/60) +
 (dip/60);
 
+let pressure=parseFloat(document.getElementById("pressure").value);
+let temperature=parseFloat(document.getElementById("temperature").value);
+
+if(isNaN(pressure)){
+pressure=1010;
+}
+
+if(isNaN(temperature)){
+temperature=10;
+}
+
 let ref =
-calculateRefraction(Ha);
+calculateRefraction(Ha,pressure,temperature);
 
 document.getElementById(
 "refractionValue"
 ).value =
 ref.toFixed(1);
 let sd=parseFloat(document.getElementById("sdValue").value);
-let pa=parseFloat(document.getElementById("parallaxValue").value);
+if(isNaN(sd)){sd=0;}
 
+let pa=parseFloat(document.getElementById("parallaxValue").value);
+if(isNaN(pa)){pa=0;}
 let Ho=Ha+(ref/60)+(sd/60)+(pa/60);
 
 let intercept=(Ho-lastSunData.Hc)*60;
 let direction=intercept>=0?"TOWARD":"AWAY";
+lastSunData.intercept=
+Math.abs(intercept);
 
+lastSunData.direction=
+direction;
 document.getElementById("sightResult").innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
@@ -884,9 +1061,21 @@ hsMin.toFixed(1)+
 ie.toFixed(1)+
 "'<br>"+
 
+"Height of Eye: "+
+heightOfEye.toFixed(1)+
+" m<br>"+
+
 "Dip: "+
 dip.toFixed(1)+
 "'<br>"+
+
+"Pressure: "+
+pressure.toFixed(0)+
+" hPa<br>"+
+
+"Temperature: "+
+temperature.toFixed(1)+
+" °C<br>"+
 
 "Refraction: "+
 ref.toFixed(1)+
@@ -978,7 +1167,37 @@ maximumAge:0
 }
 );
 }
+function updateObjectListWithVisibleStars(stars){
 
+let select=document.getElementById("celestialObject");
+
+let current=select.value;
+
+let html=
+"<option value='Sun'>☀️ Sun</option>"+
+"<option value='Moon'>🌙 Moon</option>"+
+"<option disabled>────────── Visible Stars ──────────</option>";
+
+stars.forEach(star=>{
+html+=
+"<option value='"+star.name+"'>⭐ "+star.name+"</option>";
+});
+
+html+=
+"<option disabled>──────────</option>"+
+"<option value='Polaris'>⭐ Polaris</option>";
+
+select.innerHTML=html;
+
+if(current==="Sun" || current==="Moon" || stars.some(s=>s.name===current)){
+select.value=current;
+}else{
+select.value="Sun";
+}
+
+updateBodyFields();
+
+}
 function findVisibleStars(){
 let data=getInputData();
 
@@ -990,7 +1209,24 @@ return;
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
 let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
 
+if(sunPos.Hc>-6){
+lastVisibleStars=[];
+drawSkyView();
+
+document.getElementById("starFinderResult").innerHTML=
+"<b>VISIBLE STARS</b><br><br>"+
+"Sky too bright for stars. Sun altitude: "+
+sunPos.Hc.toFixed(1)+"°";
+
+document.getElementById("pairAdvisorResult").innerHTML="";
+
+updateObjectListWithVisibleStars([]);
+
+return;
+}
 for(let starName in STAR_CATALOG){
 let star=STAR_CATALOG[starName];
 
@@ -1002,12 +1238,15 @@ if(r.Hc>minAlt){
 visibleStars.push({
 name:starName,
 hc:r.Hc,
-zn:r.Zn
+zn:r.Zn,
+mag:star.Mag
 });
 }
 }
 
 visibleStars.sort((a,b)=>b.hc-a.hc);
+lastVisibleStars=visibleStars;
+drawSkyView();
 
 let output="<b>VISIBLE STARS</b><br>"+
 "Minimum altitude: "+minAlt+"°<br><br>";
@@ -1036,6 +1275,7 @@ output+=
 
 document.getElementById("starFinderResult").innerHTML=output;
 showRecommendedPairs(visibleStars);
+updateObjectListWithVisibleStars(visibleStars);
 }
 function showRecommendedPairs(stars){
 
@@ -1385,9 +1625,57 @@ fixY-10
 
 }
 
+function saveAsLOP1(){
 
+if(!lastSunData){
+alert("No sight available.");
+return;
+}
+
+runningFixLOP1={
+zn:lastSunData.Zn,
+intercept:lastSunData.intercept
+};
+
+alert("Saved as LOP1");
+
+}
+
+function saveAsLOP2(){
+
+if(!lastSunData){
+alert("No sight available.");
+return;
+}
+
+runningFixLOP2={
+zn:lastSunData.Zn,
+intercept:lastSunData.intercept
+};
+
+alert("Saved as LOP2");
+
+}
 function calculateRunningFix(){
+if(runningFixLOP1){
 
+document.getElementById("rfZn1").value=
+runningFixLOP1.zn.toFixed(1);
+
+document.getElementById("rfInt1").value=
+runningFixLOP1.intercept.toFixed(1);
+
+}
+
+if(runningFixLOP2){
+
+document.getElementById("rfZn2").value=
+runningFixLOP2.zn.toFixed(1);
+
+document.getElementById("rfInt2").value=
+runningFixLOP2.intercept.toFixed(1);
+
+}
 let zn1=parseFloat(document.getElementById("rfZn1").value);
 let int1=parseFloat(document.getElementById("rfInt1").value);
 
@@ -1456,8 +1744,270 @@ course,
 distance
 );
 }
+function updateBodyFields(){
+
+let obj=document.getElementById("celestialObject").value;
+let show=(obj==="Sun" || obj==="Moon");
+
+document.getElementById("sdBlock").style.display=show ? "block" : "none";
+document.getElementById("parallaxBlock").style.display=show ? "block" : "none";
+
+if(obj==="Sun"){
+document.getElementById("sightBody").value="sunLL";
+document.getElementById("sdValue").value="16.0";
+document.getElementById("parallaxValue").value="0.0";
+}
+
+else if(obj==="Moon"){
+document.getElementById("sightBody").value="moonLL";
+document.getElementById("sdValue").value="15.0";
+document.getElementById("parallaxValue").value="57.0";
+}
+
+else{
+document.getElementById("sightBody").value="star";
+document.getElementById("sdValue").value="0.0";
+document.getElementById("parallaxValue").value="0.0";
+}
+
+}
+function autoUpdateVisibleStars(){
+
+let data=getInputData();
+
+if(data.error){
+lastVisibleStars=[];
+drawSkyView();
+return;
+}
+
+let sun=sunAlmanac(data.date,data.time);
+let visibleStars=[];
+let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+
+for(let starName in STAR_CATALOG){
+let star=STAR_CATALOG[starName];
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+data.lon);
+let r=calculateHcZn(data.lat,star.Dec,LHA);
+
+if(r.Hc>minAlt){
+visibleStars.push({
+name:starName,
+hc:r.Hc,
+zn:r.Zn,
+mag:star.Mag
+});
+}
+}
+
+visibleStars.sort((a,b)=>b.hc-a.hc);
+
+lastVisibleStars=visibleStars;
+drawSkyView();
+
+}
+function drawSkyView(){
+
+let canvas=document.getElementById("skyCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+skyObjects=[];
+let grd=ctx.createLinearGradient(0,0,0,canvas.height);
+grd.addColorStop(0,"#020814");
+grd.addColorStop(1,"#0b2b4a");
+
+ctx.fillStyle=grd;
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+let horizonY=190;
+let left=25;
+let right=340;
+let width=right-left;
+
+ctx.strokeStyle="#31506a";
+ctx.fillStyle="#9ee7ff";
+ctx.font="11px Arial";
+
+for(let h=15;h<=75;h+=15){
+let y=horizonY-(h*2);
+ctx.beginPath();
+ctx.moveTo(left,y);
+ctx.lineTo(right,y);
+ctx.stroke();
+ctx.fillText(h+"°",3,y+4);
+}
+
+ctx.strokeStyle="#9ee7ff";
+ctx.beginPath();
+ctx.moveTo(left,horizonY);
+ctx.lineTo(right,horizonY);
+ctx.stroke();
+
+for(let az=0;az<=360;az+=30){
+let x=left+(az/360)*width;
+
+ctx.beginPath();
+ctx.moveTo(x,horizonY);
+ctx.lineTo(x,horizonY+5);
+ctx.stroke();
+
+ctx.fillText(az+"°",x-10,horizonY+18);
+}
+
+ctx.fillStyle="#ffffff";
+ctx.fillText("E",left+70,horizonY+35);
+ctx.fillText("S",left+155,horizonY+35);
+ctx.fillText("W",left+235,horizonY+35);
+ctx.fillText("N",right-5,horizonY+35);
+
+lastVisibleStars.forEach(star=>{
+
+let x=left+(star.zn/360)*width;
+let y=horizonY-(star.hc*2);
+
+if(y<15)y=15;
+if(y>horizonY)y=horizonY;
+
+let mag=star.mag;
+
+if(mag===undefined || isNaN(mag)){
+mag=2.0;
+}
+
+let size=6-(mag+1);
+
+if(size<2){size=2;}
+if(size>8){size=8;}
+
+ctx.fillStyle="#ffffff";
+ctx.shadowBlur=size*2;
+ctx.shadowColor="#ffffff";
+
+ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fill();
+
+ctx.shadowBlur=0;
+
+ctx.fillStyle="#ffffff";
+ctx.font="11px Arial";
+ctx.fillText(star.name,x+7,y+4);
+skyObjects.push({
+name:star.name,
+x:x,
+y:y,
+radius:size+5
+});
+});
+
+if(lastSunData){
+
+let x=left+(lastSunData.Zn/360)*width;
+let y=horizonY-(lastSunData.Hc*2);
+
+if(y<15)y=15;
+if(y>horizonY)y=horizonY;
+
+ctx.fillStyle=
+lastSunData.object==="Sun" ? "#ffd966" :
+lastSunData.object==="Moon" ? "#dddddd" :
+"#4db8ff";
+
+ctx.beginPath();
+ctx.arc(x,y,8,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#ffffff";
+ctx.font="12px Arial";
+ctx.fillText(lastSunData.object,x+10,y+4);
+ctx.fillText(
+"Hc "+lastSunData.Hc.toFixed(1)+"° / Zn "+lastSunData.Zn.toFixed(1)+"°",
+x+10,
+y+20
+);
+skyObjects.push({
+name:lastSunData.object,
+x:x,
+y:y,
+radius:15
+});
+}
+
+}
+function skyCanvasClick(event){
+
+let canvas=
+document.getElementById("skyCanvas");
+
+let rect=
+canvas.getBoundingClientRect();
+
+let x=
+(event.clientX-rect.left)*
+(canvas.width/rect.width);
+
+let y=
+(event.clientY-rect.top)*
+(canvas.height/rect.height);
+
+for(let obj of skyObjects){
+
+let dx=x-obj.x;
+let dy=y-obj.y;
+
+let dist=
+Math.sqrt(dx*dx+dy*dy);
+
+if(dist<=obj.radius){
+
+if(STAR_CATALOG[obj.name]){
+
+document.getElementById(
+"celestialObject"
+).value=obj.name;
+
+calculateObject();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+return;
+}
+
+}
+
+}
+
+}
+function setupAutoSkyUpdate(){
+
+let ids=[
+"dateUTC","utcHour","utcMin","utcSec",
+"latDeg","latMin","latDir",
+"lonDeg","lonMin","lonDir",
+"minStarAltitude"
+];
+
+ids.forEach(id=>{
+let el=document.getElementById(id);
+if(el){
+el.addEventListener("input",autoUpdateVisibleStars);
+el.addEventListener("change",autoUpdateVisibleStars);
+}
+});
+
+}
 setNowUTC();
 togglePositionSource();
+updateBodyFields();
+drawSkyView();
+
 </script>
 
 </body>
