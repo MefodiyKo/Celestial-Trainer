@@ -419,6 +419,13 @@ Zn: <span id="sightZn">--</span>
 </div>
 </div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="saveAstroFixLOP1()">
+Save as Astro Fix LOP1
+</button>
+
+<button class="main" onclick="saveAstroFixLOP2()">
+Save as Astro Fix LOP2
+</button>
 <button class="main" onclick="saveAsLOP1()">
 Save as Running Fix LOP1
 </button>
@@ -2293,6 +2300,75 @@ let d=Math.floor(value);
 let m=(value-d)*60;
 
 return d+"° "+m.toFixed(1)+"' "+dir;
+
+}
+function saveAstroFixLOP1(){
+
+if(!lastSunData || lastSunData.intercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+document.getElementById("fixZn1").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("fixInt1").value=
+lastSunData.intercept.toFixed(1);
+
+document.getElementById("fixLatDeg").value=
+document.getElementById("latDeg").value;
+
+document.getElementById("fixLatMin").value=
+document.getElementById("latMin").value;
+
+document.getElementById("fixLatDir").value=
+document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=
+document.getElementById("lonDeg").value;
+
+document.getElementById("fixLonMin").value=
+document.getElementById("lonMin").value;
+
+document.getElementById("fixLonDir").value=
+document.getElementById("lonDir").value;
+
+alert("Saved as Astro Fix LOP1");
+
+}
+
+function saveAstroFixLOP2(){
+
+if(!lastSunData || lastSunData.intercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+document.getElementById("fixZn2").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("fixInt2").value=
+lastSunData.intercept.toFixed(1);
+
+document.getElementById("fixLatDeg").value=
+document.getElementById("latDeg").value;
+
+document.getElementById("fixLatMin").value=
+document.getElementById("latMin").value;
+
+document.getElementById("fixLatDir").value=
+document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=
+document.getElementById("lonDeg").value;
+
+document.getElementById("fixLonMin").value=
+document.getElementById("lonMin").value;
+
+document.getElementById("fixLonDir").value=
+document.getElementById("lonDir").value;
+
+alert("Saved as Astro Fix LOP2");
 
 }
 function calculateAstroFix(){
