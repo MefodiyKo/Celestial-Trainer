@@ -272,17 +272,6 @@ Learn how to identify navigational stars by constellation and sky pattern.
 
 <label>Select Star</label>
 <select id="guideStar" class="full" onchange="showStarGuide()">
-<option value="Sirius">Sirius</option>
-<option value="Canopus">Canopus</option>
-<option value="Arcturus">Arcturus</option>
-<option value="Vega">Vega</option>
-<option value="Capella">Capella</option>
-<option value="Rigel">Rigel</option>
-<option value="Aldebaran">Aldebaran</option>
-<option value="Betelgeuse">Betelgeuse</option>
-<option value="Altair">Altair</option>
-<option value="Fomalhaut">Fomalhaut</option>
-<option value="Polaris">Polaris</option>
 </select>
 
 <button class="main" onclick="showStarGuide()">
@@ -2051,76 +2040,79 @@ el.addEventListener("change",autoUpdateVisibleStars);
 
 }
 const STAR_GUIDE = {
-Sirius:{
-constellation:"Canis Major",
-mag:-1.46,
-season:"Winter",
-find:"Locate Orion. Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",
-diagram:[
-{x:110,y:55,label:"Betelgeuse"},
-{x:80,y:100,label:"Orion Belt"},
-{x:120,y:100},
-{x:160,y:100},
-{x:125,y:145,label:"Rigel"},
-{x:250,y:190,label:"Sirius",main:true}
-]
-},
-
-Canopus:{
-constellation:"Carina",
-mag:-0.74,
-season:"Winter / Southern sky",
-find:"Look low in the southern sky. Canopus is the second brightest star and is located well below Sirius for northern observers.",
-diagram:[
-{x:170,y:55,label:"Sirius"},
-{x:145,y:115},
-{x:190,y:115},
-{x:170,y:180,label:"Canopus",main:true}
-]
-},
-
-Arcturus:{
-constellation:"Boötes",
-mag:-0.05,
-season:"Spring / Summer",
-find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",
-diagram:[
-{x:70,y:80,label:"Big Dipper"},
-{x:105,y:100},
-{x:140,y:125},
-{x:185,y:160},
-{x:250,y:200,label:"Arcturus",main:true}
-]
-},
-
-Vega:{
-constellation:"Lyra",
-mag:0.03,
-season:"Summer",
-find:"Find the bright blue-white star of the Summer Triangle. Vega is usually the highest and brightest of the three.",
-diagram:[
-{x:160,y:70,label:"Vega",main:true},
-{x:80,y:180,label:"Deneb"},
-{x:255,y:190,label:"Altair"},
-{x:160,y:70},
-{x:80,y:180},
-{x:255,y:190}
-]
-},
-
-Polaris:{
-constellation:"Ursa Minor",
-mag:1.97,
-season:"All year Northern Hemisphere",
-find:"Find the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
-diagram:[
-{x:70,y:190,label:"Pointer"},
-{x:115,y:170,label:"Pointer"},
-{x:250,y:80,label:"Polaris",main:true}
-]
-}
+Alpheratz:{constellation:"Andromeda",mag:2.1,season:"Autumn",find:"Find the Great Square of Pegasus. Alpheratz is the north-eastern corner of the square.",diagram:[{x:80,y:90,label:"Markab"},{x:230,y:90,label:"Alpheratz",main:true},{x:80,y:210},{x:230,y:210}]},
+Ankaa:{constellation:"Phoenix",mag:2.4,season:"Autumn / Southern sky",find:"Look low in the southern sky near Fomalhaut and Achernar. It is the brightest star of Phoenix.",diagram:[{x:90,y:120,label:"Fomalhaut"},{x:190,y:170,label:"Ankaa",main:true},{x:260,y:210,label:"Achernar"}]},
+Schedar:{constellation:"Cassiopeia",mag:2.2,season:"Autumn / Northern sky",find:"Find the W-shaped Cassiopeia. Schedar is one of the bright end stars of the W.",diagram:[{x:60,y:160},{x:110,y:90,label:"Schedar",main:true},{x:160,y:155},{x:210,y:95},{x:260,y:155}]},
+Diphda:{constellation:"Cetus",mag:2.0,season:"Autumn",find:"Look south of Pisces and east of Aquarius. Diphda is a fairly isolated bright star in Cetus.",diagram:[{x:80,y:100,label:"Pisces"},{x:180,y:170,label:"Diphda",main:true},{x:260,y:120,label:"Cetus"}]},
+Achernar:{constellation:"Eridanus",mag:0.5,season:"Autumn / Winter Southern sky",find:"Follow the long river Eridanus downward from Orion. Achernar is the bright star at the far southern end.",diagram:[{x:80,y:50,label:"Orion"},{x:120,y:100},{x:170,y:150},{x:230,y:210,label:"Achernar",main:true}]},
+Hamal:{constellation:"Aries",mag:2.0,season:"Autumn / Winter",find:"Find the small triangle of Aries between Pegasus and Taurus. Hamal is the brightest star.",diagram:[{x:90,y:120,label:"Sheratan"},{x:160,y:90,label:"Hamal",main:true},{x:230,y:135,label:"Mesarthim"}]},
+Acamar:{constellation:"Eridanus",mag:3.2,season:"Winter / Southern sky",find:"Look along Eridanus below Orion and above Achernar. Acamar is a fainter navigation star in the river.",diagram:[{x:90,y:60,label:"Orion"},{x:140,y:110},{x:190,y:160,label:"Acamar",main:true},{x:240,y:215,label:"Achernar"}]},
+Menkar:{constellation:"Cetus",mag:2.5,season:"Autumn / Winter",find:"Find Cetus below Aries and Pisces. Menkar is in the head of the whale.",diagram:[{x:80,y:90,label:"Aries"},{x:170,y:150,label:"Menkar",main:true},{x:250,y:190,label:"Diphda"}]},
+Mirfak:{constellation:"Perseus",mag:1.8,season:"Winter",find:"Find Cassiopeia and move toward Auriga. Mirfak is the brightest star in Perseus.",diagram:[{x:70,y:80,label:"Cassiopeia"},{x:165,y:135,label:"Mirfak",main:true},{x:260,y:190,label:"Capella"}]},
+Aldebaran:{constellation:"Taurus",mag:0.9,season:"Winter",find:"Follow Orion's Belt upward toward Taurus. The orange star in the V-shaped Hyades is Aldebaran.",diagram:[{x:70,y:170,label:"Orion Belt"},{x:160,y:120,label:"Aldebaran",main:true},{x:230,y:90,label:"Pleiades"}]},
+Rigel:{constellation:"Orion",mag:0.1,season:"Winter",find:"Find Orion. Rigel is the bright blue-white star at Orion's foot, opposite Betelgeuse.",diagram:[{x:120,y:60,label:"Betelgeuse"},{x:90,y:115},{x:120,y:115,label:"Belt"},{x:150,y:115},{x:150,y:190,label:"Rigel",main:true}]},
+Capella:{constellation:"Auriga",mag:0.1,season:"Winter",find:"Look high north of Orion. Capella is the bright yellow star in Auriga.",diagram:[{x:120,y:70,label:"Capella",main:true},{x:70,y:140},{x:130,y:210},{x:220,y:160},{x:210,y:90}]},
+Bellatrix:{constellation:"Orion",mag:1.6,season:"Winter",find:"Find Orion. Bellatrix is the blue-white shoulder star opposite Betelgeuse.",diagram:[{x:80,y:70,label:"Betelgeuse"},{x:190,y:70,label:"Bellatrix",main:true},{x:100,y:130,label:"Belt"},{x:170,y:190,label:"Rigel"}]},
+Elnath:{constellation:"Taurus / Auriga",mag:1.7,season:"Winter",find:"Look between Taurus and Auriga. Elnath is near the tip of Taurus horn, close to Capella.",diagram:[{x:90,y:80,label:"Capella"},{x:190,y:140,label:"Elnath",main:true},{x:260,y:200,label:"Aldebaran"}]},
+Alnilam:{constellation:"Orion",mag:1.7,season:"Winter",find:"Alnilam is the central star of Orion's Belt.",diagram:[{x:80,y:120},{x:150,y:120,label:"Alnilam",main:true},{x:220,y:120},{x:95,y:60,label:"Betelgeuse"},{x:210,y:190,label:"Rigel"}]},
+Betelgeuse:{constellation:"Orion",mag:0.5,season:"Winter",find:"Find Orion. Betelgeuse is the orange-red star at Orion's shoulder above the belt.",diagram:[{x:90,y:60,label:"Betelgeuse",main:true},{x:130,y:120,label:"Belt"},{x:190,y:190,label:"Rigel"}]},
+Canopus:{constellation:"Carina",mag:-0.7,season:"Winter / Southern sky",find:"Look low in the southern sky. Canopus is the second brightest star and lies well below Sirius.",diagram:[{x:165,y:60,label:"Sirius"},{x:170,y:190,label:"Canopus",main:true}]},
+Sirius:{constellation:"Canis Major",mag:-1.5,season:"Winter",find:"Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",diagram:[{x:110,y:55,label:"Betelgeuse"},{x:80,y:100,label:"Orion Belt"},{x:120,y:100},{x:160,y:100},{x:125,y:145,label:"Rigel"},{x:250,y:190,label:"Sirius",main:true}]},
+Adhara:{constellation:"Canis Major",mag:1.5,season:"Winter",find:"Find Sirius. Adhara lies below and east of Sirius in Canis Major.",diagram:[{x:120,y:80,label:"Sirius"},{x:180,y:155,label:"Adhara",main:true},{x:230,y:205,label:"Wezen"}]},
+Procyon:{constellation:"Canis Minor",mag:0.4,season:"Winter / Spring",find:"Procyon forms the Winter Triangle with Sirius and Betelgeuse.",diagram:[{x:80,y:190,label:"Sirius"},{x:170,y:70,label:"Betelgeuse"},{x:260,y:160,label:"Procyon",main:true}]},
+Pollux:{constellation:"Gemini",mag:1.1,season:"Winter / Spring",find:"Find Gemini above Orion. Pollux is the brighter twin, near Castor.",diagram:[{x:120,y:80,label:"Castor"},{x:190,y:90,label:"Pollux",main:true},{x:150,y:190,label:"Orion"}]},
+Avior:{constellation:"Carina",mag:1.9,season:"Southern sky",find:"Look in the southern constellation Carina, between Canopus and the Southern Cross region.",diagram:[{x:80,y:80,label:"Canopus"},{x:170,y:150,label:"Avior",main:true},{x:260,y:210,label:"Acrux"}]},
+Suhail:{constellation:"Vela",mag:2.2,season:"Southern sky",find:"Look south, between Canopus and the stars of Vela. Suhail is a bright southern navigation star.",diagram:[{x:80,y:80,label:"Canopus"},{x:170,y:150,label:"Suhail",main:true},{x:250,y:200,label:"Vela"}]},
+Miaplacidus:{constellation:"Carina",mag:1.7,season:"Southern sky",find:"Look in Carina below Canopus. Miaplacidus is a bright southern star near the ship constellation.",diagram:[{x:100,y:70,label:"Canopus"},{x:185,y:165,label:"Miaplacidus",main:true},{x:250,y:210,label:"Carina"}]},
+Alphard:{constellation:"Hydra",mag:2.0,season:"Spring",find:"Alphard is the solitary bright star of Hydra, south of Regulus.",diagram:[{x:150,y:70,label:"Regulus"},{x:175,y:175,label:"Alphard",main:true}]},
+Regulus:{constellation:"Leo",mag:1.4,season:"Spring",find:"Find the sickle-shaped head of Leo. Regulus is the bright star at the base.",diagram:[{x:90,y:90,label:"Leo Sickle"},{x:150,y:140},{x:210,y:190,label:"Regulus",main:true}]},
+Dubhe:{constellation:"Ursa Major",mag:1.8,season:"All year Northern sky",find:"Dubhe is one of the two pointer stars of the Big Dipper pointing toward Polaris.",diagram:[{x:70,y:160,label:"Merak"},{x:130,y:130,label:"Dubhe",main:true},{x:250,y:70,label:"Polaris"}]},
+Denebola:{constellation:"Leo",mag:2.1,season:"Spring",find:"Denebola is the tail of Leo, east of Regulus.",diagram:[{x:70,y:180,label:"Regulus"},{x:180,y:130},{x:270,y:100,label:"Denebola",main:true}]},
+Gienah:{constellation:"Corvus",mag:2.6,season:"Spring",find:"Find the small quadrilateral of Corvus south of Spica. Gienah is one corner.",diagram:[{x:100,y:80,label:"Spica"},{x:130,y:150,label:"Gienah",main:true},{x:220,y:150},{x:230,y:210},{x:120,y:210}]},
+Acrux:{constellation:"Crux",mag:0.8,season:"Southern sky",find:"Find the Southern Cross. Acrux is the bright bottom star of the cross.",diagram:[{x:170,y:60,label:"Gacrux"},{x:170,y:200,label:"Acrux",main:true},{x:105,y:130},{x:235,y:130}]},
+Gacrux:{constellation:"Crux",mag:1.6,season:"Southern sky",find:"Find the Southern Cross. Gacrux is the red upper star of the cross.",diagram:[{x:170,y:60,label:"Gacrux",main:true},{x:170,y:200,label:"Acrux"},{x:105,y:130},{x:235,y:130}]},
+Alioth:{constellation:"Ursa Major",mag:1.8,season:"Northern sky",find:"Alioth is in the handle of the Big Dipper, near the middle of the handle.",diagram:[{x:60,y:150,label:"Bowl"},{x:120,y:130},{x:180,y:110,label:"Alioth",main:true},{x:250,y:90,label:"Alkaid"}]},
+Spica:{constellation:"Virgo",mag:1.0,season:"Spring",find:"Follow the Big Dipper handle: arc to Arcturus, then speed on to Spica.",diagram:[{x:70,y:70,label:"Big Dipper"},{x:155,y:130,label:"Arcturus"},{x:250,y:205,label:"Spica",main:true}]},
+Alkaid:{constellation:"Ursa Major",mag:1.9,season:"Northern sky",find:"Alkaid is the end star of the Big Dipper handle.",diagram:[{x:70,y:150,label:"Bowl"},{x:140,y:125},{x:210,y:100},{x:270,y:80,label:"Alkaid",main:true}]},
+Hadar:{constellation:"Centaurus",mag:0.6,season:"Southern sky",find:"Look near Rigil Kentaurus and the Southern Cross. Hadar is a bright companion star nearby.",diagram:[{x:110,y:160,label:"Rigil Kentaurus"},{x:190,y:130,label:"Hadar",main:true},{x:260,y:90,label:"Acrux"}]},
+Menkent:{constellation:"Centaurus",mag:2.1,season:"Southern sky",find:"Menkent is in northern Centaurus, between Spica and the Southern Cross region.",diagram:[{x:70,y:80,label:"Spica"},{x:165,y:150,label:"Menkent",main:true},{x:260,y:220,label:"Centaurus"}]},
+Arcturus:{constellation:"Boötes",mag:-0.1,season:"Spring / Summer",find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",diagram:[{x:70,y:80,label:"Big Dipper"},{x:105,y:100},{x:140,y:125},{x:185,y:160},{x:250,y:200,label:"Arcturus",main:true}]},
+"Rigil Kentaurus":{constellation:"Centaurus",mag:-0.3,season:"Southern sky",find:"Look near the Southern Cross. Rigil Kentaurus is one of the brightest southern stars, close to Hadar.",diagram:[{x:90,y:160,label:"Acrux"},{x:170,y:130,label:"Hadar"},{x:240,y:165,label:"Rigil Kentaurus",main:true}]},
+Zubenelgenubi:{constellation:"Libra",mag:2.8,season:"Spring / Summer",find:"Look between Spica and Antares. Zubenelgenubi is one of the main stars of Libra.",diagram:[{x:70,y:90,label:"Spica"},{x:165,y:150,label:"Zubenelgenubi",main:true},{x:260,y:210,label:"Antares"}]},
+Kochab:{constellation:"Ursa Minor",mag:2.1,season:"Northern sky",find:"Kochab is one of the bowl stars of the Little Dipper, opposite Polaris.",diagram:[{x:80,y:70,label:"Polaris"},{x:200,y:170,label:"Kochab",main:true},{x:250,y:190,label:"Pherkad"}]},
+Alphecca:{constellation:"Corona Borealis",mag:2.2,season:"Spring / Summer",find:"Find the small semicircle of Corona Borealis between Arcturus and Vega. Alphecca is the brightest star.",diagram:[{x:70,y:160,label:"Arcturus"},{x:170,y:90,label:"Alphecca",main:true},{x:270,y:160,label:"Vega"}]},
+Antares:{constellation:"Scorpius",mag:1.1,season:"Summer",find:"Look for the red heart of Scorpius. Antares is the bright red star in the middle of the scorpion.",diagram:[{x:80,y:80,label:"Claws"},{x:165,y:135,label:"Antares",main:true},{x:250,y:210,label:"Tail"}]},
+Atria:{constellation:"Triangulum Australe",mag:1.9,season:"Southern sky",find:"Atria is the brightest star in the small Southern Triangle near the Southern Cross region.",diagram:[{x:100,y:200},{x:170,y:70,label:"Atria",main:true},{x:250,y:200}]},
+Sabik:{constellation:"Ophiuchus",mag:2.4,season:"Summer",find:"Look between Antares and Altair in Ophiuchus. Sabik is a moderate bright navigation star.",diagram:[{x:70,y:190,label:"Antares"},{x:170,y:130,label:"Sabik",main:true},{x:270,y:80,label:"Altair"}]},
+Shaula:{constellation:"Scorpius",mag:1.6,season:"Summer",find:"Shaula is in the stinger of Scorpius, at the curved tail end.",diagram:[{x:80,y:70,label:"Antares"},{x:150,y:140},{x:230,y:210,label:"Shaula",main:true}]},
+Rasalhague:{constellation:"Ophiuchus",mag:2.1,season:"Summer",find:"Rasalhague is the bright star at the head of Ophiuchus, above Scorpius.",diagram:[{x:160,y:70,label:"Rasalhague",main:true},{x:140,y:160,label:"Ophiuchus"},{x:190,y:220,label:"Antares"}]},
+Eltanin:{constellation:"Draco",mag:2.2,season:"Northern sky / Summer",find:"Eltanin is in the head of Draco, near Vega in the northern summer sky.",diagram:[{x:80,y:100,label:"Vega"},{x:170,y:145,label:"Eltanin",main:true},{x:250,y:190,label:"Draco"}]},
+"Kaus Australis":{constellation:"Sagittarius",mag:1.8,season:"Summer",find:"Find the Teapot shape of Sagittarius. Kaus Australis is one of the bright stars in the bow of the teapot.",diagram:[{x:80,y:170,label:"Teapot"},{x:170,y:120,label:"Kaus Australis",main:true},{x:250,y:180}]},
+Vega:{constellation:"Lyra",mag:0.0,season:"Summer",find:"Vega is the bright blue-white star of Lyra and the brightest star of the Summer Triangle.",diagram:[{x:160,y:70,label:"Vega",main:true},{x:80,y:180,label:"Deneb"},{x:255,y:190,label:"Altair"}]},
+Nunki:{constellation:"Sagittarius",mag:2.0,season:"Summer",find:"Nunki is in the handle/top area of the Sagittarius Teapot.",diagram:[{x:90,y:190,label:"Kaus Australis"},{x:170,y:110,label:"Nunki",main:true},{x:250,y:170,label:"Teapot"}]},
+Altair:{constellation:"Aquila",mag:0.8,season:"Summer",find:"Altair is part of the Summer Triangle. It has two smaller stars close beside it in a straight line.",diagram:[{x:80,y:90,label:"Vega"},{x:250,y:100,label:"Deneb"},{x:170,y:190,label:"Altair",main:true}]},
+Peacock:{constellation:"Pavo",mag:1.9,season:"Southern sky",find:"Look far south in Pavo. Peacock is the brightest star of the constellation.",diagram:[{x:110,y:100,label:"Pavo"},{x:190,y:170,label:"Peacock",main:true},{x:250,y:220}]},
+Deneb:{constellation:"Cygnus",mag:1.3,season:"Summer / Autumn",find:"Deneb is the tail of Cygnus and one corner of the Summer Triangle with Vega and Altair.",diagram:[{x:160,y:70,label:"Deneb",main:true},{x:80,y:190,label:"Vega"},{x:255,y:200,label:"Altair"}]},
+Enif:{constellation:"Pegasus",mag:2.4,season:"Autumn",find:"Find the Great Square of Pegasus. Enif lies west/southwest of the square.",diagram:[{x:210,y:80,label:"Great Square"},{x:95,y:180,label:"Enif",main:true}]},
+Alnair:{constellation:"Grus",mag:1.7,season:"Autumn / Southern sky",find:"Look in the southern sky near Fomalhaut and Peacock. Alnair is the bright star of Grus.",diagram:[{x:90,y:90,label:"Fomalhaut"},{x:170,y:165,label:"Alnair",main:true},{x:260,y:215,label:"Peacock"}]},
+Fomalhaut:{constellation:"Piscis Austrinus",mag:1.2,season:"Autumn",find:"Fomalhaut is a lonely bright star low in the southern sky, often isolated from other bright stars.",diagram:[{x:170,y:120,label:"Fomalhaut",main:true},{x:90,y:200,label:"Aquarius"},{x:250,y:210,label:"Piscis Austrinus"}]},
+Markab:{constellation:"Pegasus",mag:2.5,season:"Autumn",find:"Markab is the south-western corner of the Great Square of Pegasus.",diagram:[{x:80,y:90,label:"Markab",main:true},{x:230,y:90,label:"Alpheratz"},{x:80,y:210},{x:230,y:210}]},
+Polaris:{constellation:"Ursa Minor",mag:2.0,season:"All year Northern Hemisphere",find:"Use the two pointer stars of the Big Dipper. Extend their line about five times to Polaris.",diagram:[{x:70,y:190,label:"Pointer"},{x:115,y:170,label:"Pointer"},{x:250,y:80,label:"Polaris",main:true}]}
 };
+function populateStarGuideList(){
 
+let select=document.getElementById("guideStar");
+if(!select)return;
+
+let html="";
+
+Object.keys(STAR_GUIDE).forEach(name=>{
+html+="<option value='"+name+"'>⭐ "+name+"</option>";
+});
+
+select.innerHTML=html;
+
+}
 function showStarGuide(){
 
 let name=document.getElementById("guideStar").value;
@@ -2229,6 +2221,7 @@ setNowUTC();
 togglePositionSource();
 updateBodyFields();
 drawSkyView();
+populateStarGuideList();
 showStarGuide();
 
 </script>
