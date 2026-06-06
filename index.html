@@ -289,14 +289,21 @@ Learn how to identify navigational stars by constellation and sky pattern.
 Show Guide
 </button>
 
-<button class="main" onclick="startStarPractice()">
-Start Practice
-</button>
-
 <div class="result" id="starGuideResult">
 Select a star and press Show Guide.
 </div>
-
+<canvas
+id="constellationCanvas"
+width="350"
+height="260"
+style="
+margin-top:15px;
+background:#06152a;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
 </div>
 </div>
 <div id="observation" class="section">
@@ -2046,58 +2053,71 @@ el.addEventListener("change",autoUpdateVisibleStars);
 const STAR_GUIDE = {
 Sirius:{
 constellation:"Canis Major",
-find:"Find Orion's Belt. Extend the belt line downward toward the southeast. The very bright white star is Sirius.",
-difficulty:"Easy"
+mag:-1.46,
+season:"Winter",
+find:"Locate Orion. Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",
+diagram:[
+{x:110,y:55,label:"Betelgeuse"},
+{x:80,y:100,label:"Orion Belt"},
+{x:120,y:100},
+{x:160,y:100},
+{x:125,y:145,label:"Rigel"},
+{x:250,y:190,label:"Sirius",main:true}
+]
 },
+
 Canopus:{
 constellation:"Carina",
-find:"Very bright southern star. Look low in the southern sky, well below Sirius for northern observers.",
-difficulty:"Medium"
+mag:-0.74,
+season:"Winter / Southern sky",
+find:"Look low in the southern sky. Canopus is the second brightest star and is located well below Sirius for northern observers.",
+diagram:[
+{x:170,y:55,label:"Sirius"},
+{x:145,y:115},
+{x:190,y:115},
+{x:170,y:180,label:"Canopus",main:true}
+]
 },
+
 Arcturus:{
 constellation:"Boötes",
-find:"Follow the curve of the Big Dipper handle. Arc to Arcturus.",
-difficulty:"Easy"
+mag:-0.05,
+season:"Spring / Summer",
+find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",
+diagram:[
+{x:70,y:80,label:"Big Dipper"},
+{x:105,y:100},
+{x:140,y:125},
+{x:185,y:160},
+{x:250,y:200,label:"Arcturus",main:true}
+]
 },
+
 Vega:{
 constellation:"Lyra",
-find:"Very bright blue-white star. Part of the Summer Triangle with Altair and Deneb.",
-difficulty:"Easy"
+mag:0.03,
+season:"Summer",
+find:"Find the bright blue-white star of the Summer Triangle. Vega is usually the highest and brightest of the three.",
+diagram:[
+{x:160,y:70,label:"Vega",main:true},
+{x:80,y:180,label:"Deneb"},
+{x:255,y:190,label:"Altair"},
+{x:160,y:70},
+{x:80,y:180},
+{x:255,y:190}
+]
 },
-Capella:{
-constellation:"Auriga",
-find:"Bright yellow star in the northern sky. Often high above Orion in winter.",
-difficulty:"Easy"
-},
-Rigel:{
-constellation:"Orion",
-find:"Blue-white star at Orion's foot. Opposite Betelgeuse across Orion's Belt.",
-difficulty:"Easy"
-},
-Aldebaran:{
-constellation:"Taurus",
-find:"Orange star forming the eye of Taurus. Follow Orion's Belt upward toward Taurus.",
-difficulty:"Easy"
-},
-Betelgeuse:{
-constellation:"Orion",
-find:"Orange-red star at Orion's shoulder, above Orion's Belt.",
-difficulty:"Easy"
-},
-Altair:{
-constellation:"Aquila",
-find:"Part of the Summer Triangle. It lies between Vega and the southern sky, with two smaller stars beside it.",
-difficulty:"Medium"
-},
-Fomalhaut:{
-constellation:"Piscis Austrinus",
-find:"Lonely bright star low in the southern sky in autumn. Often isolated from other bright stars.",
-difficulty:"Medium"
-},
+
 Polaris:{
 constellation:"Ursa Minor",
-find:"Use the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
-difficulty:"Easy"
+mag:1.97,
+season:"All year Northern Hemisphere",
+find:"Find the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
+diagram:[
+{x:70,y:190,label:"Pointer"},
+{x:115,y:170,label:"Pointer"},
+{x:250,y:80,label:"Polaris",main:true}
+]
 }
 };
 
@@ -2112,26 +2132,98 @@ document.getElementById("starGuideResult").innerHTML=
 return;
 }
 
-document.getElementById("starGuideResult").innerHTML=
-"<b>"+name+"</b><br><br>"+
-"Constellation: "+g.constellation+"<br><br>"+
-"<b>How to find:</b><br>"+
-g.find+"<br><br>"+
-"Difficulty: "+g.difficulty;
+let positionText="";
+
+if(STAR_CATALOG[name]){
+
+let data=getInputData();
+
+if(!data.error){
+
+let sun=sunAlmanac(data.date,data.time);
+let star=STAR_CATALOG[name];
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+data.lon);
+let r=calculateHcZn(data.lat,star.Dec,LHA);
+
+let visibility="Not visible";
+
+if(r.Hc>=30){
+visibility="Excellent";
+}else if(r.Hc>=15){
+visibility="Good";
+}else if(r.Hc>=5){
+visibility="Low";
 }
 
-function startStarPractice(){
+positionText=
+"<br><hr>"+
+"<b>Expected Position Now</b><br>"+
+"Bearing / Zn: "+r.Zn.toFixed(1)+"°<br>"+
+"Altitude / Hc: "+r.Hc.toFixed(1)+"°<br>"+
+"Visibility: "+visibility+"<br>";
 
-let names=Object.keys(STAR_GUIDE);
-let randomName=names[Math.floor(Math.random()*names.length)];
+}
 
-document.getElementById("guideStar").value=randomName;
+}
 
 document.getElementById("starGuideResult").innerHTML=
-"<b>PRACTICE MODE</b><br><br>"+
-"Find this star in the sky:<br><br>"+
-"<b>"+randomName+"</b><br><br>"+
-"Then open the guide if you need help.";
+"<b>⭐ "+name+"</b><br><br>"+
+"Constellation: "+g.constellation+"<br>"+
+"Magnitude: "+g.mag+"<br>"+
+"Navigation Star: YES<br>"+
+"Best Season: "+g.season+"<br><br>"+
+"<b>How to Find:</b><br>"+
+g.find+
+positionText;
+
+drawConstellationGuide(g);
+
+}
+function drawConstellationGuide(g){
+
+let canvas=document.getElementById("constellationCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#06152a";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="#31506a";
+ctx.fillStyle="#ffffff";
+ctx.font="12px Arial";
+
+for(let i=0;i<g.diagram.length-1;i++){
+
+let a=g.diagram[i];
+let b=g.diagram[i+1];
+
+ctx.beginPath();
+ctx.moveTo(a.x,a.y);
+ctx.lineTo(b.x,b.y);
+ctx.stroke();
+
+}
+
+g.diagram.forEach(p=>{
+
+ctx.fillStyle=p.main ? "#ffd966" : "#ffffff";
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.main ? 6 : 4,0,Math.PI*2);
+ctx.fill();
+
+if(p.label){
+ctx.fillStyle="#ffffff";
+ctx.fillText(p.label,p.x+8,p.y+4);
+}
+
+});
+
 }
 setNowUTC();
 togglePositionSource();
