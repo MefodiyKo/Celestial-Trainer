@@ -249,7 +249,7 @@ onchange="updateBodyFields()"
 <option value="20">20°</option>
 </select>
 
-<button class="main" onclick="findVisibleStars()">Find Visible Stars</button>
+
 
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
@@ -1716,6 +1716,43 @@ document.getElementById("parallaxValue").value="0.0";
 }
 
 }
+function autoUpdateVisibleStars(){
+
+let data=getInputData();
+
+if(data.error){
+lastVisibleStars=[];
+drawSkyView();
+return;
+}
+
+let sun=sunAlmanac(data.date,data.time);
+let visibleStars=[];
+let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+
+for(let starName in STAR_CATALOG){
+let star=STAR_CATALOG[starName];
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+let LHA=norm360(GHA+data.lon);
+let r=calculateHcZn(data.lat,star.Dec,LHA);
+
+if(r.Hc>minAlt){
+visibleStars.push({
+name:starName,
+hc:r.Hc,
+zn:r.Zn,
+mag:star.Mag
+});
+}
+}
+
+visibleStars.sort((a,b)=>b.hc-a.hc);
+
+lastVisibleStars=visibleStars;
+drawSkyView();
+
+}
 function drawSkyView(){
 
 let canvas=document.getElementById("skyCanvas");
@@ -1893,10 +1930,29 @@ return;
 }
 
 }
+function setupAutoSkyUpdate(){
+
+let ids=[
+"dateUTC","utcHour","utcMin","utcSec",
+"latDeg","latMin","latDir",
+"lonDeg","lonMin","lonDir",
+"minStarAltitude"
+];
+
+ids.forEach(id=>{
+let el=document.getElementById(id);
+if(el){
+el.addEventListener("input",autoUpdateVisibleStars);
+el.addEventListener("change",autoUpdateVisibleStars);
+}
+});
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
-updateSightCorrections();
+setupAutoSkyUpdate();
+autoUpdateVisibleStars();
 drawSkyView();
 
 </script>
