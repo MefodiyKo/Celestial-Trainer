@@ -105,6 +105,9 @@ Visual training sky view. Shows last calculated object and visible stars.
 </div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Celestial Almanac</button>
+<button class="tab" onclick="openTab('starguide',this)">
+Star Guide
+</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('log',this)">
@@ -258,7 +261,44 @@ Find Visible Stars
 <div class="result" id="pairAdvisorResult"></div>
 </div>
 </div>
+<div id="starguide" class="section">
+<div class="card">
 
+<h3>Star Guide</h3>
+
+<p class="small">
+Learn how to identify navigational stars by constellation and sky pattern.
+</p>
+
+<label>Select Star</label>
+<select id="guideStar" class="full" onchange="showStarGuide()">
+<option value="Sirius">Sirius</option>
+<option value="Canopus">Canopus</option>
+<option value="Arcturus">Arcturus</option>
+<option value="Vega">Vega</option>
+<option value="Capella">Capella</option>
+<option value="Rigel">Rigel</option>
+<option value="Aldebaran">Aldebaran</option>
+<option value="Betelgeuse">Betelgeuse</option>
+<option value="Altair">Altair</option>
+<option value="Fomalhaut">Fomalhaut</option>
+<option value="Polaris">Polaris</option>
+</select>
+
+<button class="main" onclick="showStarGuide()">
+Show Guide
+</button>
+
+<button class="main" onclick="startStarPractice()">
+Start Practice
+</button>
+
+<div class="result" id="starGuideResult">
+Select a star and press Show Guide.
+</div>
+
+</div>
+</div>
 <div id="observation" class="section">
 <div class="card">
 
@@ -2003,10 +2043,101 @@ el.addEventListener("change",autoUpdateVisibleStars);
 });
 
 }
+const STAR_GUIDE = {
+Sirius:{
+constellation:"Canis Major",
+find:"Find Orion's Belt. Extend the belt line downward toward the southeast. The very bright white star is Sirius.",
+difficulty:"Easy"
+},
+Canopus:{
+constellation:"Carina",
+find:"Very bright southern star. Look low in the southern sky, well below Sirius for northern observers.",
+difficulty:"Medium"
+},
+Arcturus:{
+constellation:"Boötes",
+find:"Follow the curve of the Big Dipper handle. Arc to Arcturus.",
+difficulty:"Easy"
+},
+Vega:{
+constellation:"Lyra",
+find:"Very bright blue-white star. Part of the Summer Triangle with Altair and Deneb.",
+difficulty:"Easy"
+},
+Capella:{
+constellation:"Auriga",
+find:"Bright yellow star in the northern sky. Often high above Orion in winter.",
+difficulty:"Easy"
+},
+Rigel:{
+constellation:"Orion",
+find:"Blue-white star at Orion's foot. Opposite Betelgeuse across Orion's Belt.",
+difficulty:"Easy"
+},
+Aldebaran:{
+constellation:"Taurus",
+find:"Orange star forming the eye of Taurus. Follow Orion's Belt upward toward Taurus.",
+difficulty:"Easy"
+},
+Betelgeuse:{
+constellation:"Orion",
+find:"Orange-red star at Orion's shoulder, above Orion's Belt.",
+difficulty:"Easy"
+},
+Altair:{
+constellation:"Aquila",
+find:"Part of the Summer Triangle. It lies between Vega and the southern sky, with two smaller stars beside it.",
+difficulty:"Medium"
+},
+Fomalhaut:{
+constellation:"Piscis Austrinus",
+find:"Lonely bright star low in the southern sky in autumn. Often isolated from other bright stars.",
+difficulty:"Medium"
+},
+Polaris:{
+constellation:"Ursa Minor",
+find:"Use the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
+difficulty:"Easy"
+}
+};
+
+function showStarGuide(){
+
+let name=document.getElementById("guideStar").value;
+let g=STAR_GUIDE[name];
+
+if(!g){
+document.getElementById("starGuideResult").innerHTML=
+"No guide available for this star yet.";
+return;
+}
+
+document.getElementById("starGuideResult").innerHTML=
+"<b>"+name+"</b><br><br>"+
+"Constellation: "+g.constellation+"<br><br>"+
+"<b>How to find:</b><br>"+
+g.find+"<br><br>"+
+"Difficulty: "+g.difficulty;
+}
+
+function startStarPractice(){
+
+let names=Object.keys(STAR_GUIDE);
+let randomName=names[Math.floor(Math.random()*names.length)];
+
+document.getElementById("guideStar").value=randomName;
+
+document.getElementById("starGuideResult").innerHTML=
+"<b>PRACTICE MODE</b><br><br>"+
+"Find this star in the sky:<br><br>"+
+"<b>"+randomName+"</b><br><br>"+
+"Then open the guide if you need help.";
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
 drawSkyView();
+showStarGuide();
 
 </script>
 
