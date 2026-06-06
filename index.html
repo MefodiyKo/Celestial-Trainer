@@ -1167,7 +1167,37 @@ maximumAge:0
 }
 );
 }
+function updateObjectListWithVisibleStars(stars){
 
+let select=document.getElementById("celestialObject");
+
+let current=select.value;
+
+let html=
+"<option value='Sun'>☀️ Sun</option>"+
+"<option value='Moon'>🌙 Moon</option>"+
+"<option disabled>────────── Visible Stars ──────────</option>";
+
+stars.forEach(star=>{
+html+=
+"<option value='"+star.name+"'>⭐ "+star.name+"</option>";
+});
+
+html+=
+"<option disabled>──────────</option>"+
+"<option value='Polaris'>⭐ Polaris</option>";
+
+select.innerHTML=html;
+
+if(current==="Sun" || current==="Moon" || stars.some(s=>s.name===current)){
+select.value=current;
+}else{
+select.value="Sun";
+}
+
+updateBodyFields();
+
+}
 function findVisibleStars(){
 let data=getInputData();
 
@@ -1200,6 +1230,7 @@ mag:star.Mag
 visibleStars.sort((a,b)=>b.hc-a.hc);
 lastVisibleStars=visibleStars;
 drawSkyView();
+updateObjectListWithVisibleStars(visibleStars);
 let output="<b>VISIBLE STARS</b><br>"+
 "Minimum altitude: "+minAlt+"°<br><br>";
 
