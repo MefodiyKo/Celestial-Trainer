@@ -844,8 +844,49 @@ radToDeg(Math.asin(6378.14 / distance));
 
 let SD =
 0.2725 * HP;
+let moonAge =
+norm360(lon - sunAlmanac(date,time).GHA) / 12.19075;
 
-return {JD:JD,GHA:GHA,Dec:Dec,HP:HP,SD:SD};
+let phaseName="New Moon";
+let phaseIcon="🌑";
+
+if(moonAge>=1.8 && moonAge<5.5){
+phaseName="Waxing Crescent";
+phaseIcon="🌒";
+}
+else if(moonAge>=5.5 && moonAge<9.2){
+phaseName="First Quarter";
+phaseIcon="🌓";
+}
+else if(moonAge>=9.2 && moonAge<12.9){
+phaseName="Waxing Gibbous";
+phaseIcon="🌔";
+}
+else if(moonAge>=12.9 && moonAge<16.6){
+phaseName="Full Moon";
+phaseIcon="🌕";
+}
+else if(moonAge>=16.6 && moonAge<20.3){
+phaseName="Waning Gibbous";
+phaseIcon="🌖";
+}
+else if(moonAge>=20.3 && moonAge<24.0){
+phaseName="Last Quarter";
+phaseIcon="🌗";
+}
+else if(moonAge>=24.0){
+phaseName="Waning Crescent";
+phaseIcon="🌘";
+}
+return {
+JD:JD,
+GHA:GHA,
+Dec:Dec,
+HP:HP,
+SD:SD,
+phaseName:phaseName,
+phaseIcon:phaseIcon
+};
 }
 
 function calculateHcZn(lat,dec,LHA){
@@ -937,6 +978,11 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
 "<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
 "<div class='resultBox'>SD: "+moon.SD.toFixed(3)+"°</div>"+
+"<div class='resultBox'>Moon Phase: "+
+moon.phaseIcon+
+" "+
+moon.phaseName+
+"</div>"+
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
