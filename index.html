@@ -422,6 +422,9 @@ Zn: <span id="sightZn">--</span>
 </div>
 </div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="addSightToPositionFix()">
+Add Sight to 3-LOP Fix
+</button>
 <button class="main" onclick="saveAstroFixLOP1()">
 Save as Astro Fix LOP1
 </button>
@@ -566,6 +569,29 @@ border-radius:8px;
 width:100%;
 ">
 </canvas>
+<hr>
+
+<h3>3-LOP Position Fix</h3>
+
+<p class="small">
+Uses last saved sights. Intercepts are treated as TOWARD positive and AWAY negative.
+</p>
+
+<div class="resultBox">
+Saved LOPs: <span id="positionFixCount">0</span> / 3
+</div>
+
+<button class="main" onclick="calculateThreeLOPFix()">
+Calculate 3-LOP Position
+</button>
+
+<button class="main" onclick="clearPositionFixLOPs()">
+Clear 3-LOP Fix
+</button>
+
+<div class="result" id="positionFixResult">
+No position fix calculated.
+</div>
 </div>
 </div>
 <div id="notes" class="section">
@@ -587,6 +613,7 @@ let runningFixLOP1=null;
 let lastVisibleStars=[];
 let skyObjects=[];
 let runningFixLOP2=null;
+let positionFixLOPs=[];
 
 const STAR_CATALOG = {
 Alpheratz:{SHA:358,Dec:29,Mag:2.1},
@@ -1198,6 +1225,7 @@ Math.abs(intercept);
 
 lastSunData.direction=
 direction;
+lastSunData.signedIntercept=intercept;
 document.getElementById("sightResult").innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
@@ -2589,10 +2617,191 @@ distance.toFixed(1)+" NM / Bearing "+bearing.toFixed(0)+"°<br><br>"+
 "<span class='small'>Training approximation from two LOP intercept vectors.</span>";
 
 }
+function formatLatLon(value,isLat){
+
+let dir=isLat ? (value>=0?"N":"S") : (value>=0?"E":"W");
+
+value=Math.abs(value);
+
+let d=Math.floor(value);
+let m=(value-d)*60;
+
+return d+"° "+m.toFixed(1)+"' "+dir;
+
+}
+
+function formatFixIntercept(value){
+
+let dir=value>=0?"TOWARD":"AWAY";
+
+return Math.abs(value).toFixed(1)+" NM "+dir;
+
+}
+
+function updatePositionFixCount(){
+
+let el=document.getElementById("positionFixCount");
+
+if(el){
+el.innerText=positionFixLOPs.length;
+}
+
+}
+
+function addSightToPositionFix(){
+
+if(!lastSunData || lastSunData.signedIntercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+if(positionFixLOPs.length>=3){
+alert("Already have 3 LOPs. Clear fix first.");
+return;
+}
+
+positionFixLOPs.push({
+object:lastSunData.object,
+time:lastSunData.time,
+lat:lastSunData.lat,
+lon:lastSunData.lon,
+zn:lastSunData.Zn,
+intercept:lastSunData.signedIntercept
+});
+
+updatePositionFixCount();
+
+alert("LOP added to 3-LOP Fix.");
+
+}
+
+function clearPositionFixLOPs(){
+
+positionFixLOPs=[];
+
+updatePositionFixCount();
+
+document.getElementById("positionFixResult").innerHTML=
+"No position fix calculated.";
+
+}
+
+function calculateThreeLOPFix(){
+
+if(positionFixLOPs.length<3){
+document.getElementById("positionFixResult").innerHTML=
+"Add 3 sights first.";
+return;
+}
+
+let apLat=positionFixLOPs[0].lat;
+let apLon=positionFixLOPs[0].lon;
+
+let Sss=0;
+let Ssc=0;
+let Scc=0;
+let Bs=0;
+let Bc=0;
+
+positionFixLOPs.forEach(lop=>{
+
+let z=degToRad(lop.zn);
+
+let s=Math.sin(z);
+let c=Math.cos(z);
+
+Sss+=s*s;
+Ssc+=s*c;
+Scc+=c*c;
+
+Bs+=lop.intercept*s;
+Bc+=lop.intercept*c;
+
+});
+
+let det=Sss*Scc-Ssc*Ssc;
+
+if(Math.abs(det)<0.0001){
+document.getElementById("positionFixResult").innerHTML=
+"LOPs are too close to parallel. Fix quality poor.";
+return;
+}
+
+let dx=(Bs*Scc-Bc*Ssc)/det;
+let dy=(Sss*Bc-Ssc*Bs)/det;
+
+let fixLat=apLat+dy/60;
+let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
+
+let distance=Math.sqrt(dx*dx+dy*dy);
+let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+
+let residualText="";
+let rms=0;
+
+positionFixLOPs.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+
+let predicted=
+dx*Math.sin(z)+
+dy*Math.cos(z);
+
+let residual=predicted-lop.intercept;
+
+rms+=residual*residual;
+
+residualText+=
+"LOP "+(index+1)+
+" "+lop.object+
+" / Zn "+lop.zn.toFixed(1)+"° / "+
+formatFixIntercept(lop.intercept)+
+" / Residual "+residual.toFixed(2)+" NM<br>";
+
+});
+
+rms=Math.sqrt(rms/positionFixLOPs.length);
+
+let quality="GOOD";
+
+if(rms>2){
+quality="POOR";
+}
+
+if(rms<=1){
+quality="EXCELLENT";
+}
+
+document.getElementById("positionFixResult").innerHTML=
+"<b>3-LOP ASTRONOMICAL POSITION FIX</b><br><br>"+
+
+"<b>Assumed Position</b><br>"+
+"Lat: "+formatLatLon(apLat,true)+"<br>"+
+"Lon: "+formatLatLon(apLon,false)+"<br><br>"+
+
+"<b>Observed Position</b><br>"+
+"Lat: "+formatLatLon(fixLat,true)+"<br>"+
+"Lon: "+formatLatLon(fixLon,false)+"<br><br>"+
+
+"<b>Offset from AP</b><br>"+
+distance.toFixed(1)+" NM / Bearing "+
+bearing.toFixed(0)+"°<br><br>"+
+
+"<b>LOP Residuals</b><br>"+
+residualText+
+"<br>"+
+
+"<b>Fix Quality:</b> "+quality+
+"<br>RMS Error: "+rms.toFixed(2)+" NM<br><br>"+
+
+"<span class='small'>Training approximation. Based on 3 LOP least-squares intersection.</span>";
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
 drawSkyView();
+updatePositionFixCount();
 populateStarGuideList();
 showStarGuide();
 
