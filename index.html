@@ -208,10 +208,14 @@ onchange="updateBodyFields()"
 
 <button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">Get GPS Position</button>
 
-<label>Date UTC</label>
+<div class="twoCol">
+<div>
+<div class="fieldTitle">Date UTC</div>
 <input id="dateUTC" class="full" type="date">
+</div>
 
-<label>Time UTC</label>
+<div>
+<div class="fieldTitle">Time UTC</div>
 <div class="row">
 <input id="utcHour" class="boxDeg" type="number" min="0" max="23" placeholder="HH">
 <span>:</span>
@@ -219,8 +223,13 @@ onchange="updateBodyFields()"
 <span>:</span>
 <input id="utcSec" class="boxDeg" type="number" min="0" max="59" placeholder="SS">
 </div>
+</div>
+</div>
 
-<label>Latitude</label>
+<div class="twoCol">
+
+<div>
+<div class="fieldTitle">Latitude</div>
 <div class="row">
 <input id="latDeg" class="boxDeg" type="number" placeholder="08">
 <span>°</span>
@@ -231,8 +240,10 @@ onchange="updateBodyFields()"
 <option>S</option>
 </select>
 </div>
+</div>
 
-<label>Longitude</label>
+<div>
+<div class="fieldTitle">Longitude</div>
 <div class="row">
 <input id="lonDeg" class="boxDeg" type="number" placeholder="086">
 <span>°</span>
@@ -242,6 +253,9 @@ onchange="updateBodyFields()"
 <option>E</option>
 <option>W</option>
 </select>
+</div>
+</div>
+
 </div>
 
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
@@ -255,9 +269,7 @@ onchange="updateBodyFields()"
 <option value="20">20°</option>
 </select>
 
-<button class="main" onclick="findVisibleStars()">
-Find Visible Stars
-</button>
+
 <button class="main" onclick="calculateTwilight()">
 Calculate Twilight
 </button>
@@ -2800,6 +2812,8 @@ residualText+
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
+setupAutoSkyUpdate();
+autoUpdateVisibleStars();
 drawSkyView();
 updatePositionFixCount();
 populateStarGuideList();
