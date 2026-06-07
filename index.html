@@ -261,15 +261,6 @@ onchange="updateBodyFields()"
 <button class="main" onclick="setNowUTC()">Set Current UTC</button>
 <button class="main" onclick="calculateObject()">Calculate Object</button>
 
-<label>Minimum Star Altitude</label>
-<select id="minStarAltitude" class="full">
-<option value="5">5°</option>
-<option value="10">10°</option>
-<option value="15">15°</option>
-<option value="20">20°</option>
-</select>
-
-
 <button class="main" onclick="calculateTwilight()">
 Calculate Twilight
 </button>
@@ -1400,7 +1391,7 @@ return;
 
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
-let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let minAlt=5;
 let sunLHA=norm360(sun.GHA+data.lon);
 let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
 
@@ -1975,7 +1966,7 @@ return;
 
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
-let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let minAlt=5;
 
 for(let starName in STAR_CATALOG){
 let star=STAR_CATALOG[starName];
@@ -2302,8 +2293,7 @@ function setupAutoSkyUpdate(){
 let ids=[
 "dateUTC","utcHour","utcMin","utcSec",
 "latDeg","latMin","latDir",
-"lonDeg","lonMin","lonDir",
-"minStarAltitude"
+"lonDeg","lonMin","lonDir"
 ];
 
 ids.forEach(id=>{
