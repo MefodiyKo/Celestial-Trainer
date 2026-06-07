@@ -2074,7 +2074,17 @@ let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
 let minAlt=5;
 
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
+
+if(sunPos.Hc>-6){
+lastVisibleStars=[];
+drawSkyView();
+return;
+}
+
 for(let starName in STAR_CATALOG){
+
 let star=STAR_CATALOG[starName];
 
 let GHA=norm360(sun.GHAAries+star.SHA);
@@ -2089,6 +2099,7 @@ zn:r.Zn,
 mag:star.Mag
 });
 }
+
 }
 
 visibleStars.sort((a,b)=>b.hc-a.hc);
