@@ -1525,8 +1525,9 @@ pa.toFixed(1)+
 "Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
 "Intercept: "+Math.abs(intercept).toFixed(1)+" NM "+direction+"<br>"+
 "Zn: "+formatBearing(lastSunData.Zn);
-}
+
 return true;
+}
 
 function copyObservation(){
 let text=document.getElementById("observationResult").innerText;
