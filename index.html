@@ -3351,7 +3351,7 @@ drawThreeLOPDiagram(fixLOPs, dx, dy);
 
 function drawThreeLOPDiagram(fixLOPs, dx, dy){
 
-let canvas=document.getElementById("runningFixCanvas");
+let canvas=document.getElementById("threeLOPCanvas");
 if(!canvas)return;
 
 let ctx=canvas.getContext("2d");
@@ -3360,10 +3360,35 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 let cx=175;
 let cy=150;
 let scale=5;
+ctx.fillStyle="#ffffff";
 
+ctx.beginPath();
+ctx.arc(cx,cy,4,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("AP",cx+8,cy-8);
 ctx.lineWidth=2;
 ctx.font="13px Arial";
+ctx.strokeStyle="#223344";
+ctx.lineWidth=1;
 
+for(let x=25;x<=325;x+=25){
+
+ctx.beginPath();
+ctx.moveTo(x,20);
+ctx.lineTo(x,280);
+ctx.stroke();
+
+}
+
+for(let y=25;y<=275;y+=25){
+
+ctx.beginPath();
+ctx.moveTo(20,y);
+ctx.lineTo(330,y);
+ctx.stroke();
+
+}
 fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
@@ -3395,10 +3420,63 @@ cy+shiftY-10
 );
 
 });
+let intersections=[];
 
+for(let i=0;i<fixLOPs.length;i++){
+
+for(let j=i+1;j<fixLOPs.length;j++){
+
+let z1=degToRad(fixLOPs[i].zn);
+let z2=degToRad(fixLOPs[j].zn);
+
+let p1={
+x:cx+fixLOPs[i].intercept*Math.sin(z1)*scale,
+y:cy-fixLOPs[i].intercept*Math.cos(z1)*scale
+};
+
+let p2={
+x:p1.x+Math.sin(z1+Math.PI/2)*200,
+y:p1.y-Math.cos(z1+Math.PI/2)*200
+};
+
+let p3={
+x:cx+fixLOPs[j].intercept*Math.sin(z2)*scale,
+y:cy-fixLOPs[j].intercept*Math.cos(z2)*scale
+};
+
+let p4={
+x:p3.x+Math.sin(z2+Math.PI/2)*200,
+y:p3.y-Math.cos(z2+Math.PI/2)*200
+};
+
+let p=lineIntersection(p1,p2,p3,p4);
+
+if(p)intersections.push(p);
+
+}
+
+}
 let fixX=cx+dx*scale;
 let fixY=cy-dy*scale;
+if(intersections.length===3){
 
+ctx.fillStyle="rgba(255,255,0,0.15)";
+ctx.strokeStyle="#ffd966";
+
+ctx.beginPath();
+
+ctx.moveTo(intersections[0].x,intersections[0].y);
+
+ctx.lineTo(intersections[1].x,intersections[1].y);
+
+ctx.lineTo(intersections[2].x,intersections[2].y);
+
+ctx.closePath();
+
+ctx.fill();
+ctx.stroke();
+
+}
 ctx.fillStyle="#ffd966";
 ctx.beginPath();
 ctx.arc(fixX,fixY,6,0,Math.PI*2);
