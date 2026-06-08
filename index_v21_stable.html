@@ -282,6 +282,26 @@ margin-top:0;
 height:36px;
 font-size:13px;
 }
+.sourceRow select,
+.objectRow select{
+height:36px;
+font-size:13px;
+}
+
+.lopButtons{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+margin-top:12px;
+}
+
+.lopButtons button.main{
+height:38px;
+padding:6px;
+font-size:13px;
+margin-top:0;
+}
+
 </style>
 </head>
 
@@ -670,27 +690,11 @@ Zn: <span id="sightZn">--</span>
 </div>
 </div>
 </div>
-<button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
-<button class="main" onclick="addSightToPositionFix()">
-Add Sight to 3-LOP Fix
-</button>
-<button class="main" onclick="saveAstroFixLOP1()">
-Save as Astro Fix LOP1
-</button>
-
-<button class="main" onclick="saveAstroFixLOP2()">
-Save as Astro Fix LOP2
-</button>
-<button class="main" onclick="saveAsLOP1()">
-Save as Running Fix LOP1
-</button>
-
-<button class="main" onclick="saveAsLOP2()">
-Save as Running Fix LOP2
-</button>
-<button class="main" onclick="saveObservation()">
-Save Observation
-</button>
+<div class="lopButtons">
+<button class="main" onclick="savePositionFixLOP(0)">LOP 1</button>
+<button class="main" onclick="savePositionFixLOP(1)">LOP 2</button>
+<button class="main" onclick="savePositionFixLOP(2)">LOP 3</button>
+</div>
 <div class="result" id="sightResult">Calculate object in Almanac first.</div>
 
 </div>
@@ -776,7 +780,7 @@ No saved observations.
 <div id="runningfix" class="section">
 <div class="card">
 
-<h3>Running Fix</h3>
+<h3>Running Fix / 3-LOP Fix</h3>
 
 <label>LOP 1 Bearing (Zn)</label>
 <input id="rfZn1" class="full" type="number" step="0.1">
@@ -841,6 +845,18 @@ Clear 3-LOP Fix
 <div class="result" id="positionFixResult">
 No position fix calculated.
 </div>
+<canvas
+id="threeLOPCanvas"
+width="350"
+height="300"
+style="
+margin-top:15px;
+background:#0b1b2b;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
 </div>
 </div>
 <div id="notes" class="section">
@@ -862,7 +878,7 @@ let runningFixLOP1=null;
 let lastVisibleStars=[];
 let skyObjects=[];
 let runningFixLOP2=null;
-let positionFixLOPs=[];
+let positionFixLOPs=[null,null,null];
 
 const STAR_CATALOG = {
 Alpheratz:{SHA:358,Dec:29,Mag:2.1},
@@ -1407,7 +1423,7 @@ function calculateSightReduction(){
 if(!lastSunData){
 document.getElementById("sightResult").innerHTML=
 "Calculate object in Almanac first.";
-return;
+return false;
 }
 
 let hsDeg=parseFloat(document.getElementById("hsDeg").value);
@@ -1433,7 +1449,7 @@ dip.toFixed(1)+"'";
 if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)){
 document.getElementById("sightResult").innerHTML=
 "Enter Hs, IE and Dip.";
-return;
+return false;
 }
 
 let Hs=hsDeg+(hsMin/60);
@@ -1521,6 +1537,8 @@ pa.toFixed(1)+
 "Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
 "Intercept: "+Math.abs(intercept).toFixed(1)+" NM "+direction+"<br>"+
 "Zn: "+formatBearing(lastSunData.Zn);
+
+return true;
 }
 
 function copyObservation(){
@@ -3056,47 +3074,114 @@ let dir=value>=0?"TOWARD":"AWAY";
 return Math.abs(value).toFixed(1)+" NM "+dir;
 
 }
-
 function updatePositionFixCount(){
+
+let count=positionFixLOPs.filter(lop=>lop!==null).length;
 
 let el=document.getElementById("positionFixCount");
 
 if(el){
-el.innerText=positionFixLOPs.length;
+el.innerText=count;
 }
 
 }
 
-function addSightToPositionFix(){
+function savePositionFixLOP(index){
 
-if(!lastSunData || lastSunData.signedIntercept===undefined){
-alert("Calculate Sight Reduction first.");
+calculateObject();
+
+let ok=calculateSightReduction();
+
+if(!ok || !lastSunData || lastSunData.signedIntercept===undefined){
+alert("Check Object, Hs, IE and position.");
 return;
 }
 
-if(positionFixLOPs.length>=3){
-alert("Already have 3 LOPs. Clear fix first.");
-return;
-}
-
-positionFixLOPs.push({
+positionFixLOPs[index]={
 object:lastSunData.object,
 time:lastSunData.time,
+date:lastSunData.date,
 lat:lastSunData.lat,
 lon:lastSunData.lon,
 zn:lastSunData.Zn,
+hc:lastSunData.Hc,
 intercept:lastSunData.signedIntercept
-});
+};
+
+let log=JSON.parse(localStorage.getItem("celestialLog") || "[]");
+
+let entry=
+"LOP "+(index+1)+"\n"+
+"Object: "+lastSunData.object+"\n"+
+"Date: "+lastSunData.date+"\n"+
+"Time: "+lastSunData.time+"\n"+
+"Zn: "+lastSunData.Zn.toFixed(1)+"°\n"+
+"Hc: "+lastSunData.Hc.toFixed(1)+"°\n"+
+"Intercept: "+
+Math.abs(lastSunData.signedIntercept).toFixed(1)+
+" NM "+
+(lastSunData.signedIntercept>=0 ? "TOWARD" : "AWAY");
+
+log.unshift(entry);
+localStorage.setItem("celestialLog",JSON.stringify(log));
+/* Auto-fill Astro Fix */
+if(index===0){
+document.getElementById("fixZn1").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixInt1").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
+}
+
+if(index===1){
+document.getElementById("fixZn2").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixInt2").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
+}
+
+/* Auto-fill Running Fix */
+if(index===0){
+
+runningFixLOP1={
+zn:lastSunData.Zn,
+intercept:Math.abs(lastSunData.signedIntercept)
+};
+
+document.getElementById("rfZn1").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("rfInt1").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
+}
+
+if(index===1){
+
+runningFixLOP2={
+zn:lastSunData.Zn,
+intercept:Math.abs(lastSunData.signedIntercept)
+};
+
+document.getElementById("rfZn2").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("rfInt2").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
+}
+document.getElementById("fixLatDeg").value=document.getElementById("latDeg").value;
+document.getElementById("fixLatMin").value=document.getElementById("latMin").value;
+document.getElementById("fixLatDir").value=document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=document.getElementById("lonDeg").value;
+document.getElementById("fixLonMin").value=document.getElementById("lonMin").value;
+document.getElementById("fixLonDir").value=document.getElementById("lonDir").value;
 
 updatePositionFixCount();
 
-alert("LOP added to 3-LOP Fix.");
+alert("LOP "+(index+1)+" saved");
 
 }
 
 function clearPositionFixLOPs(){
 
-positionFixLOPs=[];
+positionFixLOPs=[null,null,null];
 
 updatePositionFixCount();
 
@@ -3107,14 +3192,16 @@ document.getElementById("positionFixResult").innerHTML=
 
 function calculateThreeLOPFix(){
 
-if(positionFixLOPs.length<3){
+let fixLOPs=positionFixLOPs.filter(lop=>lop!==null);
+
+if(fixLOPs.length<3){
 document.getElementById("positionFixResult").innerHTML=
-"Add 3 sights first.";
+"Save LOP 1, LOP 2 and LOP 3 first.";
 return;
 }
 
-let apLat=positionFixLOPs[0].lat;
-let apLon=positionFixLOPs[0].lon;
+let apLat=fixLOPs[0].lat;
+let apLon=fixLOPs[0].lon;
 
 let Sss=0;
 let Ssc=0;
@@ -3122,7 +3209,7 @@ let Scc=0;
 let Bs=0;
 let Bc=0;
 
-positionFixLOPs.forEach(lop=>{
+fixLOPs.forEach(lop=>{
 
 let z=degToRad(lop.zn);
 
@@ -3158,7 +3245,7 @@ let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
 let residualText="";
 let rms=0;
 
-positionFixLOPs.forEach((lop,index)=>{
+fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
 
@@ -3179,7 +3266,7 @@ formatFixIntercept(lop.intercept)+
 
 });
 
-rms=Math.sqrt(rms/positionFixLOPs.length);
+rms=Math.sqrt(rms/fixLOPs.length);
 
 let quality="GOOD";
 
@@ -3214,7 +3301,66 @@ residualText+
 "<br>RMS Error: "+rms.toFixed(2)+" NM<br><br>"+
 
 "<span class='small'>Training approximation. Based on 3 LOP least-squares intersection.</span>";
+drawThreeLOPDiagram(fixLOPs, dx, dy);
 
+}
+
+function drawThreeLOPDiagram(fixLOPs, dx, dy){
+
+let canvas=document.getElementById("runningFixCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let cx=175;
+let cy=150;
+let scale=5;
+
+ctx.lineWidth=2;
+ctx.font="13px Arial";
+
+fixLOPs.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+let lineAngle=degToRad(lop.zn+90);
+
+let shiftX=lop.intercept*Math.sin(z)*scale;
+let shiftY=-lop.intercept*Math.cos(z)*scale;
+
+ctx.strokeStyle="#9ee7ff";
+ctx.beginPath();
+
+ctx.moveTo(
+cx+shiftX-Math.sin(lineAngle)*160,
+cy+shiftY+Math.cos(lineAngle)*160
+);
+
+ctx.lineTo(
+cx+shiftX+Math.sin(lineAngle)*160,
+cy+shiftY-Math.cos(lineAngle)*160
+);
+
+ctx.stroke();
+
+ctx.fillStyle="#ffffff";
+ctx.fillText(
+"LOP "+(index+1),
+cx+shiftX+10,
+cy+shiftY-10
+);
+
+});
+
+let fixX=cx+dx*scale;
+let fixY=cy-dy*scale;
+
+ctx.fillStyle="#ffd966";
+ctx.beginPath();
+ctx.arc(fixX,fixY,6,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("FIX",fixX+10,fixY-10);
 }
 setNowUTC();
 togglePositionSource();
