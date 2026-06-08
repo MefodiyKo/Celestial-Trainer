@@ -1591,6 +1591,7 @@ document.getElementById("lonMin").value=lonMin.toFixed(1);
 document.getElementById("lonDir").value=lonDir;
 
 setNowUTC();
+autoUpdateVisibleStars();
 calculateObject();
 },
 function(error){
@@ -2485,14 +2486,9 @@ function azToX(az){
 az=norm360(az);
 
 if(skyMode==="north"){
-let x=azToX(obj.zn);
+return left+(az/360)*width;
 }
 
-/* Course centered mode:
-center = gyro course / ship's head
-left edge = course - 180
-right edge = course + 180
-*/
 let rel=normalizeError(az-skyCourse);
 
 return left+((rel+180)/360)*width;
@@ -2518,9 +2514,6 @@ ctx.beginPath();
 ctx.moveTo(left,horizonY);
 ctx.lineTo(right,horizonY);
 ctx.stroke();
-let skyCourse=parseFloat(
-document.getElementById("skyCourse")?.value || 0
-);
 
 let centerX=left+(width/2);
 
@@ -2573,7 +2566,7 @@ let selectedInfo=null;
 /* Draw visible sky objects */
 lastVisibleStars.forEach(obj=>{
 
-let x=left+(obj.zn/360)*width;
+let x=azToX(obj.zn);
 let y=horizonY-(obj.hc/90)*(horizonY-topY);
 
 if(y<topY)y=topY;
