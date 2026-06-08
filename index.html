@@ -3112,32 +3112,46 @@ Math.abs(lastSunData.signedIntercept).toFixed(1)+
 
 log.unshift(entry);
 localStorage.setItem("celestialLog",JSON.stringify(log));
-
-updatePositionFixCount();
-
-alert("LOP "+(index+1)+" saved");
-
-}
 /* Auto-fill Astro Fix */
 if(index===0){
 document.getElementById("fixZn1").value=lastSunData.Zn.toFixed(1);
-document.getElementById("fixInt1").value=lastSunData.signedIntercept.toFixed(1);
+document.getElementById("fixInt1").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
 }
 
 if(index===1){
 document.getElementById("fixZn2").value=lastSunData.Zn.toFixed(1);
-document.getElementById("fixInt2").value=lastSunData.signedIntercept.toFixed(1);
+document.getElementById("fixInt2").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
 }
 
 /* Auto-fill Running Fix */
 if(index===0){
-document.getElementById("rfZn1").value=lastSunData.Zn.toFixed(1);
-document.getElementById("rfInt1").value=lastSunData.intercept.toFixed(1);
+
+runningFixLOP1={
+zn:lastSunData.Zn,
+intercept:Math.abs(lastSunData.signedIntercept)
+};
+
+document.getElementById("rfZn1").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("rfInt1").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
 }
 
 if(index===1){
-document.getElementById("rfZn2").value=lastSunData.Zn.toFixed(1);
-document.getElementById("rfInt2").value=lastSunData.intercept.toFixed(1);
+
+runningFixLOP2={
+zn:lastSunData.Zn,
+intercept:Math.abs(lastSunData.signedIntercept)
+};
+
+document.getElementById("rfZn2").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("rfInt2").value=
+Math.abs(lastSunData.signedIntercept).toFixed(1);
 }
 document.getElementById("fixLatDeg").value=document.getElementById("latDeg").value;
 document.getElementById("fixLatMin").value=document.getElementById("latMin").value;
@@ -3146,6 +3160,12 @@ document.getElementById("fixLatDir").value=document.getElementById("latDir").val
 document.getElementById("fixLonDeg").value=document.getElementById("lonDeg").value;
 document.getElementById("fixLonMin").value=document.getElementById("lonMin").value;
 document.getElementById("fixLonDir").value=document.getElementById("lonDir").value;
+
+updatePositionFixCount();
+
+alert("LOP "+(index+1)+" saved");
+
+}
 
 function clearPositionFixLOPs(){
 
