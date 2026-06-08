@@ -78,6 +78,203 @@ background:#06152a;
 border-radius:8px;
 border:1px solid #31506a;
 }
+button.main{
+padding:11px;
+margin-top:12px;
+border-radius:8px;
+font-size:15px;
+}
+
+input,select{
+padding:8px;
+font-size:15px;
+border-radius:7px;
+}
+
+label{
+margin-top:10px;
+font-size:15px;
+}
+
+.card{
+padding:14px;
+}
+
+.row{
+gap:6px;
+}
+
+.boxDeg{
+width:26%;
+}
+
+.boxMin{
+width:30%;
+}
+
+.boxDir{
+width:28%;
+}
+
+.tabs button{
+padding:10px;
+font-size:14px;
+}
+
+.result{
+font-size:16px;
+line-height:1.5;
+}
+
+.dateTimeRow{
+display:grid;
+grid-template-columns:140px 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.positionRow{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.timeBox{
+display:grid;
+grid-template-columns:1fr auto 1fr auto 1fr;
+gap:5px;
+align-items:center;
+}
+
+.timeBox input{
+width:100%;
+text-align:center;
+}
+
+.coordBox{
+display:grid;
+grid-template-columns:1fr auto 1fr auto 1fr;
+gap:5px;
+align-items:center;
+}
+
+.coordBox input,
+.coordBox select{
+width:100%;
+text-align:center;
+}
+
+#dateUTC{
+width:140px;
+height:32px;
+padding:3px 6px;
+font-size:12px;
+line-height:12px;
+}
+
+#dateUTC::-webkit-datetime-edit{
+font-size:12px;
+}
+
+#dateUTC::-webkit-calendar-picker-indicator{
+transform:scale(0.60);
+}
+.dateTimeRow{
+display:grid;
+grid-template-columns:130px 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.positionRow{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.sourceRow{
+display:grid;
+grid-template-columns:1fr 1.2fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.objectRow{
+display:grid;
+grid-template-columns:1.4fr 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
+
+.twoButtons{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.timeBox{
+display:grid;
+grid-template-columns:1fr auto 1fr auto 1fr;
+gap:5px;
+align-items:center;
+}
+
+.timeBox input{
+width:100%;
+text-align:center;
+}
+
+.coordBox{
+display:grid;
+grid-template-columns:1fr auto 1fr auto 1fr;
+gap:5px;
+align-items:center;
+}
+
+.coordBox input,
+.coordBox select{
+width:100%;
+text-align:center;
+}
+
+#dateUTC{
+width:130px;
+height:34px;
+padding:4px 6px;
+font-size:12px;
+}
+
+#dateUTC::-webkit-datetime-edit{
+font-size:12px;
+}
+
+#dateUTC::-webkit-calendar-picker-indicator{
+transform:scale(0.65);
+margin-left:-6px;
+}
+
+.sourceRow button.main,
+.objectRow button.main,
+.twoButtons button.main{
+height:36px;
+padding:6px;
+font-size:13px;
+margin-top:0;
+}
+
+.sourceRow select,
+.objectRow select{
+height:36px;
+font-size:13px;
+}
 </style>
 </head>
 
@@ -110,6 +307,9 @@ Star Guide
 </button>
 <button class="tab" onclick="openTab('observation',this)">Compass Observation</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
+<button class="tab" onclick="openTab('astrofix',this)">
+Astro Fix
+</button>
 <button class="tab" onclick="openTab('log',this)">
 Observation Log
 </button>
@@ -124,7 +324,84 @@ Running Fix
 
 <h3>Celestial Almanac</h3>
 
-<label>Object</label>
+<div class="dateTimeRow">
+
+<div>
+<div class="fieldTitle">Date UTC</div>
+<input id="dateUTC" type="date">
+</div>
+
+<div>
+<div class="fieldTitle">Time UTC</div>
+<div class="timeBox">
+<input id="utcHour" type="number" min="0" max="23" placeholder="HH">
+<span>:</span>
+<input id="utcMin" type="number" min="0" max="59" placeholder="MM">
+<span>:</span>
+<input id="utcSec" type="number" min="0" max="59" placeholder="SS">
+</div>
+</div>
+
+</div>
+
+<div class="positionRow">
+
+<div>
+<div class="fieldTitle">Latitude</div>
+<div class="coordBox">
+<input id="latDeg" type="number" placeholder="08">
+<span>°</span>
+<input id="latMin" type="number" step="0.1" placeholder="43.5">
+<span>'</span>
+<select id="latDir">
+<option>N</option>
+<option>S</option>
+</select>
+</div>
+</div>
+
+<div>
+<div class="fieldTitle">Longitude</div>
+<div class="coordBox">
+<input id="lonDeg" type="number" placeholder="086">
+<span>°</span>
+<input id="lonMin" type="number" step="0.1" placeholder="48.3">
+<span>'</span>
+<select id="lonDir">
+<option>E</option>
+<option>W</option>
+</select>
+</div>
+</div>
+
+</div>
+
+<div class="sourceRow">
+
+<div>
+<div class="fieldTitle">Position Source</div>
+<select id="positionSource" class="full" onchange="togglePositionSource()">
+<option value="manual">Manual</option>
+<option value="gps">GPS</option>
+</select>
+</div>
+
+<div class="twoButtons">
+<button id="gpsButton" class="main" onclick="getGPSPosition()">
+Get GPS
+</button>
+
+<button class="main" onclick="setNowUTC(); autoUpdateVisibleStars();">
+Set UTC
+</button>
+</div>
+
+</div>
+
+<div class="objectRow">
+
+<div>
+<div class="fieldTitle">Object</div>
 <select
 id="celestialObject"
 class="full"
@@ -196,66 +473,21 @@ onchange="updateBodyFields()"
 <option disabled>──────────</option>
 <option value="Polaris">⭐ Polaris</option>
 </select>
-
-<label>Position Source</label>
-<select id="positionSource" class="full" onchange="togglePositionSource()">
-<option value="manual">Manual</option>
-<option value="gps">GPS</option>
-</select>
-
-<button id="gpsButton" class="main" style="display:none;" onclick="getGPSPosition()">Get GPS Position</button>
-
-<label>Date UTC</label>
-<input id="dateUTC" class="full" type="date">
-
-<label>Time UTC</label>
-<div class="row">
-<input id="utcHour" class="boxDeg" type="number" min="0" max="23" placeholder="HH">
-<span>:</span>
-<input id="utcMin" class="boxDeg" type="number" min="0" max="59" placeholder="MM">
-<span>:</span>
-<input id="utcSec" class="boxDeg" type="number" min="0" max="59" placeholder="SS">
 </div>
 
-<label>Latitude</label>
-<div class="row">
-<input id="latDeg" class="boxDeg" type="number" placeholder="08">
-<span>°</span>
-<input id="latMin" class="boxMin" type="number" step="0.1" placeholder="43.5">
-<span>'</span>
-<select id="latDir" class="boxDir">
-<option>N</option>
-<option>S</option>
-</select>
-</div>
-
-<label>Longitude</label>
-<div class="row">
-<input id="lonDeg" class="boxDeg" type="number" placeholder="086">
-<span>°</span>
-<input id="lonMin" class="boxMin" type="number" step="0.1" placeholder="48.3">
-<span>'</span>
-<select id="lonDir" class="boxDir">
-<option>E</option>
-<option>W</option>
-</select>
-</div>
-
-<button class="main" onclick="setNowUTC()">Set Current UTC</button>
-<button class="main" onclick="calculateObject()">Calculate Object</button>
-
-<label>Minimum Star Altitude</label>
-<select id="minStarAltitude" class="full">
-<option value="5">5°</option>
-<option value="10">10°</option>
-<option value="15">15°</option>
-<option value="20">20°</option>
-</select>
-
-<button class="main" onclick="findVisibleStars()">
-Find Visible Stars
+<div>
+<div class="fieldTitle">&nbsp;</div>
+<button class="main" onclick="calculateObject()">
+Calculate Object
 </button>
+</div>
 
+</div>
+
+<button class="main" onclick="calculateTwilight()">
+Calculate Twilight
+</button>
+<div class="result" id="twilightResult"></div>
 <div class="result" id="sunResult">Waiting for calculation...</div>
 <div class="result" id="starFinderResult"></div>
 <div class="result" id="pairAdvisorResult"></div>
@@ -272,17 +504,6 @@ Learn how to identify navigational stars by constellation and sky pattern.
 
 <label>Select Star</label>
 <select id="guideStar" class="full" onchange="showStarGuide()">
-<option value="Sirius">Sirius</option>
-<option value="Canopus">Canopus</option>
-<option value="Arcturus">Arcturus</option>
-<option value="Vega">Vega</option>
-<option value="Capella">Capella</option>
-<option value="Rigel">Rigel</option>
-<option value="Aldebaran">Aldebaran</option>
-<option value="Betelgeuse">Betelgeuse</option>
-<option value="Altair">Altair</option>
-<option value="Fomalhaut">Fomalhaut</option>
-<option value="Polaris">Polaris</option>
 </select>
 
 <button class="main" onclick="showStarGuide()">
@@ -427,6 +648,16 @@ Zn: <span id="sightZn">--</span>
 </div>
 </div>
 <button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
+<button class="main" onclick="addSightToPositionFix()">
+Add Sight to 3-LOP Fix
+</button>
+<button class="main" onclick="saveAstroFixLOP1()">
+Save as Astro Fix LOP1
+</button>
+
+<button class="main" onclick="saveAstroFixLOP2()">
+Save as Astro Fix LOP2
+</button>
 <button class="main" onclick="saveAsLOP1()">
 Save as Running Fix LOP1
 </button>
@@ -438,6 +669,63 @@ Save as Running Fix LOP2
 Save Observation
 </button>
 <div class="result" id="sightResult">Calculate object in Almanac first.</div>
+
+</div>
+</div>
+<div id="astrofix" class="section">
+<div class="card">
+
+<h3>Astronomical Fix</h3>
+
+<p class="small">
+Training mode: calculates position offset from assumed position using two LOPs.
+</p>
+
+<label>Assumed Latitude</label>
+<div class="row">
+<input id="fixLatDeg" class="boxDeg" type="number" placeholder="34">
+<span>°</span>
+<input id="fixLatMin" class="boxMin" type="number" step="0.1" placeholder="25.0">
+<span>'</span>
+<select id="fixLatDir" class="boxDir">
+<option>N</option>
+<option>S</option>
+</select>
+</div>
+
+<label>Assumed Longitude</label>
+<div class="row">
+<input id="fixLonDeg" class="boxDeg" type="number" placeholder="128">
+<span>°</span>
+<input id="fixLonMin" class="boxMin" type="number" step="0.1" placeholder="15.0">
+<span>'</span>
+<select id="fixLonDir" class="boxDir">
+<option>E</option>
+<option>W</option>
+</select>
+</div>
+
+<hr>
+
+<label>LOP 1 Zn</label>
+<input id="fixZn1" class="full" type="number" step="0.1">
+
+<label>LOP 1 Intercept, NM</label>
+<input id="fixInt1" class="full" type="number" step="0.1">
+
+<label>LOP 2 Zn</label>
+<input id="fixZn2" class="full" type="number" step="0.1">
+
+<label>LOP 2 Intercept, NM</label>
+<input id="fixInt2" class="full" type="number" step="0.1">
+
+<button class="main" onclick="calculateAstroFix()">
+Calculate Astronomical Fix
+</button>
+
+<div class="result" id="astroFixResult">
+Waiting for calculation...
+</div>
 
 </div>
 </div>
@@ -507,6 +795,29 @@ border-radius:8px;
 width:100%;
 ">
 </canvas>
+<hr>
+
+<h3>3-LOP Position Fix</h3>
+
+<p class="small">
+Uses last saved sights. Intercepts are treated as TOWARD positive and AWAY negative.
+</p>
+
+<div class="resultBox">
+Saved LOPs: <span id="positionFixCount">0</span> / 3
+</div>
+
+<button class="main" onclick="calculateThreeLOPFix()">
+Calculate 3-LOP Position
+</button>
+
+<button class="main" onclick="clearPositionFixLOPs()">
+Clear 3-LOP Fix
+</button>
+
+<div class="result" id="positionFixResult">
+No position fix calculated.
+</div>
 </div>
 </div>
 <div id="notes" class="section">
@@ -528,6 +839,7 @@ let runningFixLOP1=null;
 let lastVisibleStars=[];
 let skyObjects=[];
 let runningFixLOP2=null;
+let positionFixLOPs=[];
 
 const STAR_CATALOG = {
 Alpheratz:{SHA:358,Dec:29,Mag:2.1},
@@ -788,8 +1100,49 @@ radToDeg(Math.asin(6378.14 / distance));
 
 let SD =
 0.2725 * HP;
+let moonAge =
+norm360(lon - sunAlmanac(date,time).GHA) / 12.19075;
 
-return {JD:JD,GHA:GHA,Dec:Dec,HP:HP,SD:SD};
+let phaseName="New Moon";
+let phaseIcon="🌑";
+
+if(moonAge>=1.8 && moonAge<5.5){
+phaseName="Waxing Crescent";
+phaseIcon="🌒";
+}
+else if(moonAge>=5.5 && moonAge<9.2){
+phaseName="First Quarter";
+phaseIcon="🌓";
+}
+else if(moonAge>=9.2 && moonAge<12.9){
+phaseName="Waxing Gibbous";
+phaseIcon="🌔";
+}
+else if(moonAge>=12.9 && moonAge<16.6){
+phaseName="Full Moon";
+phaseIcon="🌕";
+}
+else if(moonAge>=16.6 && moonAge<20.3){
+phaseName="Waning Gibbous";
+phaseIcon="🌖";
+}
+else if(moonAge>=20.3 && moonAge<24.0){
+phaseName="Last Quarter";
+phaseIcon="🌗";
+}
+else if(moonAge>=24.0){
+phaseName="Waning Crescent";
+phaseIcon="🌘";
+}
+return {
+JD:JD,
+GHA:GHA,
+Dec:Dec,
+HP:HP,
+SD:SD,
+phaseName:phaseName,
+phaseIcon:phaseIcon
+};
 }
 
 function calculateHcZn(lat,dec,LHA){
@@ -881,6 +1234,11 @@ document.getElementById("sunResult").innerHTML=
 "<div class='resultBox'>Dec: "+formatDec(moon.Dec)+"</div>"+
 "<div class='resultBox'>HP: "+moon.HP.toFixed(3)+"°</div>"+
 "<div class='resultBox'>SD: "+moon.SD.toFixed(3)+"°</div>"+
+"<div class='resultBox'>Moon Phase: "+
+moon.phaseIcon+
+" "+
+moon.phaseName+
+"</div>"+
 "<div class='resultBox'>LHA: "+formatDM(LHA)+"</div>"+
 "<div class='resultBox'>Hc: "+formatAlt(r.Hc)+"</div>"+
 "<div class='resultBox'>Zn: "+formatBearing(r.Zn)+"</div>"+
@@ -1093,6 +1451,7 @@ Math.abs(intercept);
 
 lastSunData.direction=
 direction;
+lastSunData.signedIntercept=intercept;
 document.getElementById("sightResult").innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
@@ -1255,7 +1614,7 @@ return;
 
 let sun=sunAlmanac(data.date,data.time);
 let visibleStars=[];
-let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let minAlt=5;
 let sunLHA=norm360(sun.GHA+data.lon);
 let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
 
@@ -1829,30 +2188,195 @@ return;
 }
 
 let sun=sunAlmanac(data.date,data.time);
-let visibleStars=[];
-let minAlt=parseFloat(document.getElementById("minStarAltitude").value);
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
+
+let moon=moonAlmanac(data.date,data.time);
+let moonLHA=norm360(moon.GHA+data.lon);
+let moonPos=calculateHcZn(data.lat,moon.Dec,moonLHA);
+
+let visibleObjects=[];
+
+/* Sun is shown if above horizon */
+if(sunPos.Hc>-2){
+visibleObjects.push({
+name:"Sun",
+type:"sun",
+hc:sunPos.Hc,
+zn:sunPos.Zn,
+mag:-26
+});
+}
+
+/* Moon is shown if above horizon */
+if(moonPos.Hc>0){
+visibleObjects.push({
+name:"Moon",
+type:"moon",
+hc:moonPos.Hc,
+zn:moonPos.Zn,
+mag:-12
+});
+}
+
+/* Stars only if sky is dark enough */
+let starLimitMag=null;
+
+if(sunPos.Hc<=-12){
+starLimitMag=3.5;
+}else if(sunPos.Hc<=-6){
+starLimitMag=1.5;
+}
+
+if(starLimitMag!==null){
 
 for(let starName in STAR_CATALOG){
+
 let star=STAR_CATALOG[starName];
 
 let GHA=norm360(sun.GHAAries+star.SHA);
 let LHA=norm360(GHA+data.lon);
 let r=calculateHcZn(data.lat,star.Dec,LHA);
 
-if(r.Hc>minAlt){
-visibleStars.push({
+if(r.Hc>5 && star.Mag<=starLimitMag){
+visibleObjects.push({
 name:starName,
+type:"star",
 hc:r.Hc,
 zn:r.Zn,
 mag:star.Mag
 });
 }
+
 }
 
-visibleStars.sort((a,b)=>b.hc-a.hc);
+}
 
-lastVisibleStars=visibleStars;
+visibleObjects.sort((a,b)=>b.hc-a.hc);
+
+lastVisibleStars=visibleObjects;
+
 drawSkyView();
+
+}
+function calculateTwilight(){
+
+let data=getInputData();
+
+if(data.error){
+document.getElementById("twilightResult").innerHTML=data.error;
+return;
+}
+
+let date=data.date;
+let lat=data.lat;
+let lon=data.lon;
+
+let results=[];
+
+function sunAltAt(hour){
+
+let h=Math.floor(hour);
+let m=Math.floor((hour-h)*60);
+let s=Math.floor((((hour-h)*60)-m)*60);
+
+let time=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+let sun=sunAlmanac(date,time);
+let LHA=norm360(sun.GHA+lon);
+let r=calculateHcZn(lat,sun.Dec,LHA);
+
+return r.Hc;
+}
+
+function findCrossing(target, rising){
+
+let lastAlt=sunAltAt(0)-target;
+
+for(let t=0.1;t<=24;t+=0.1){
+
+let alt=sunAltAt(t)-target;
+
+if(rising){
+if(lastAlt<0 && alt>=0){
+return refineTime(t-0.1,t,target);
+}
+}else{
+if(lastAlt>0 && alt<=0){
+return refineTime(t-0.1,t,target);
+}
+}
+
+lastAlt=alt;
+}
+
+return null;
+}
+
+function refineTime(t1,t2,target){
+
+for(let i=0;i<12;i++){
+
+let mid=(t1+t2)/2;
+let alt1=sunAltAt(t1)-target;
+let altMid=sunAltAt(mid)-target;
+
+if((alt1<=0 && altMid>=0)||(alt1>=0 && altMid<=0)){
+t2=mid;
+}else{
+t1=mid;
+}
+
+}
+
+return (t1+t2)/2;
+}
+
+function formatHour(hour){
+
+if(hour===null){
+return "--";
+}
+
+let h=Math.floor(hour);
+let m=Math.round((hour-h)*60);
+
+if(m>=60){
+h++;
+m-=60;
+}
+
+h=h%24;
+
+return String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+" UTC";
+}
+
+let rise=findCrossing(-0.833,true);
+let set=findCrossing(-0.833,false);
+
+let civilStart=findCrossing(-6,true);
+let civilEnd=findCrossing(-6,false);
+
+let nauticalStart=findCrossing(-12,true);
+let nauticalEnd=findCrossing(-12,false);
+
+let astroStart=findCrossing(-18,true);
+let astroEnd=findCrossing(-18,false);
+
+document.getElementById("twilightResult").innerHTML=
+"<b>SUN & TWILIGHT</b><br><br>"+
+"Sunrise: "+formatHour(rise)+"<br>"+
+"Sunset: "+formatHour(set)+"<br><br>"+
+"Civil Twilight Start: "+formatHour(civilStart)+"<br>"+
+"Civil Twilight End: "+formatHour(civilEnd)+"<br><br>"+
+"Nautical Twilight Start: "+formatHour(nauticalStart)+"<br>"+
+"Nautical Twilight End: "+formatHour(nauticalEnd)+"<br><br>"+
+"Astronomical Twilight Start: "+formatHour(astroStart)+"<br>"+
+"Astronomical Twilight End: "+formatHour(astroEnd);
 
 }
 function drawSkyView(){
@@ -1861,172 +2385,238 @@ let canvas=document.getElementById("skyCanvas");
 if(!canvas)return;
 
 let ctx=canvas.getContext("2d");
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 skyObjects=[];
-let grd=ctx.createLinearGradient(0,0,0,canvas.height);
-grd.addColorStop(0,"#020814");
-grd.addColorStop(1,"#0b2b4a");
 
+let selectedName=
+document.getElementById("celestialObject")
+? document.getElementById("celestialObject").value
+: "";
+
+let data=getInputData();
+let sunAlt=null;
+
+if(!data.error){
+let sun=sunAlmanac(data.date,data.time);
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
+sunAlt=sunPos.Hc;
+}
+
+/* Background by light condition */
+let top="#020814";
+let bottom="#0b2b4a";
+let skyLabel="NIGHT";
+
+if(sunAlt!==null){
+if(sunAlt>-6){
+top="#2f6fa3";
+bottom="#87ceeb";
+skyLabel="DAY / CIVIL LIGHT";
+}else if(sunAlt>-12){
+top="#0b1b3a";
+bottom="#324b7a";
+skyLabel="NAUTICAL TWILIGHT";
+}else{
+top="#020814";
+bottom="#06152a";
+skyLabel="NIGHT";
+}
+}
+
+let grd=ctx.createLinearGradient(0,0,0,canvas.height);
+grd.addColorStop(0,top);
+grd.addColorStop(1,bottom);
 ctx.fillStyle=grd;
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-let horizonY=190;
-let left=25;
+let horizonY=170;
+let left=28;
 let right=340;
+let topY=24;
 let width=right-left;
 
-ctx.strokeStyle="#31506a";
+ctx.strokeStyle="rgba(158,231,255,0.35)";
 ctx.fillStyle="#9ee7ff";
-ctx.font="11px Arial";
+ctx.font="10px Arial";
 
+/* Altitude lines */
 for(let h=15;h<=75;h+=15){
-let y=horizonY-(h*2);
+let y=horizonY-(h/90)*(horizonY-topY);
 ctx.beginPath();
 ctx.moveTo(left,y);
 ctx.lineTo(right,y);
 ctx.stroke();
-ctx.fillText(h+"°",3,y+4);
+ctx.fillText(h+"°",4,y+3);
 }
 
+/* Horizon */
 ctx.strokeStyle="#9ee7ff";
 ctx.beginPath();
 ctx.moveTo(left,horizonY);
 ctx.lineTo(right,horizonY);
 ctx.stroke();
 
-for(let az=0;az<=360;az+=30){
-let x=left+(az/360)*width;
-
-ctx.beginPath();
-ctx.moveTo(x,horizonY);
-ctx.lineTo(x,horizonY+5);
-ctx.stroke();
-
-ctx.fillText(az+"°",x-10,horizonY+18);
-}
+/* Compass labels */
+let dirs=[
+{az:0,label:"N"},
+{az:45,label:"NE"},
+{az:90,label:"E"},
+{az:135,label:"SE"},
+{az:180,label:"S"},
+{az:225,label:"SW"},
+{az:270,label:"W"},
+{az:315,label:"NW"},
+{az:360,label:"N"}
+];
 
 ctx.fillStyle="#ffffff";
-ctx.fillText("E",left+70,horizonY+35);
-ctx.fillText("S",left+155,horizonY+35);
-ctx.fillText("W",left+235,horizonY+35);
-ctx.fillText("N",right-5,horizonY+35);
+ctx.font="11px Arial";
 
-lastVisibleStars.forEach(star=>{
+dirs.forEach(d=>{
+let x=left+(d.az/360)*width;
+ctx.fillText(d.label,x-7,horizonY+16);
+});
 
-let x=left+(star.zn/360)*width;
-let y=horizonY-(star.hc*2);
+/* Sky condition label */
+ctx.fillStyle="#9ee7ff";
+ctx.font="11px Arial";
+ctx.fillText(skyLabel,left,14);
 
-if(y<15)y=15;
+let selectedInfo=null;
+
+/* Draw visible sky objects */
+lastVisibleStars.forEach(obj=>{
+
+let x=left+(obj.zn/360)*width;
+let y=horizonY-(obj.hc/90)*(horizonY-topY);
+
+if(y<topY)y=topY;
 if(y>horizonY)y=horizonY;
 
-let mag=star.mag;
+let size=4;
 
-if(mag===undefined || isNaN(mag)){
-mag=2.0;
-}
-
-let size=6-(mag+1);
-
-if(size<2){size=2;}
-if(size>8){size=8;}
-
-ctx.fillStyle="#ffffff";
-ctx.shadowBlur=size*2;
+if(obj.type==="sun"){
+size=8;
+ctx.fillStyle="#ffd966";
+ctx.shadowColor="#ffd966";
+ctx.shadowBlur=10;
+}else if(obj.type==="moon"){
+size=7;
+ctx.fillStyle="#dddddd";
 ctx.shadowColor="#ffffff";
+ctx.shadowBlur=8;
+}else{
+let mag=obj.mag;
+if(mag===undefined || isNaN(mag)){mag=2.0;}
+size=5-(mag);
+if(size<2)size=2;
+if(size>6)size=6;
+ctx.fillStyle="#ffffff";
+ctx.shadowColor="#ffffff";
+ctx.shadowBlur=size*2;
+}
 
 ctx.beginPath();
 ctx.arc(x,y,size,0,Math.PI*2);
 ctx.fill();
-
 ctx.shadowBlur=0;
+
+/* selected object highlight */
+if(obj.name===selectedName){
+ctx.strokeStyle="#ffd966";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.arc(x,y,size+5,0,Math.PI*2);
+ctx.stroke();
 
 ctx.fillStyle="#ffffff";
 ctx.font="11px Arial";
-ctx.fillText(star.name,x+7,y+4);
+ctx.fillText(obj.name,x+8,y+4);
+
+selectedInfo=obj;
+}
+
 skyObjects.push({
-name:star.name,
+name:obj.name,
 x:x,
 y:y,
-radius:size+5
+radius:size+10
 });
+
 });
 
-if(lastSunData){
+/* Bottom selected info */
+ctx.fillStyle="rgba(0,0,0,0.35)";
+ctx.fillRect(0,190,canvas.width,30);
 
-let x=left+(lastSunData.Zn/360)*width;
-let y=horizonY-(lastSunData.Hc*2);
+ctx.fillStyle="#9ee7ff";
+ctx.font="11px Arial";
 
-if(y<15)y=15;
-if(y>horizonY)y=horizonY;
-
-ctx.fillStyle=
-lastSunData.object==="Sun" ? "#ffd966" :
-lastSunData.object==="Moon" ? "#dddddd" :
-"#4db8ff";
-
-ctx.beginPath();
-ctx.arc(x,y,8,0,Math.PI*2);
-ctx.fill();
-
-ctx.fillStyle="#ffffff";
-ctx.font="12px Arial";
-ctx.fillText(lastSunData.object,x+10,y+4);
+if(selectedInfo){
 ctx.fillText(
-"Hc "+lastSunData.Hc.toFixed(1)+"° / Zn "+lastSunData.Zn.toFixed(1)+"°",
-x+10,
-y+20
+"Selected: "+selectedInfo.name+
+" | Hc "+selectedInfo.hc.toFixed(1)+"°"+
+" | Zn "+selectedInfo.zn.toFixed(1)+"°",
+10,
+210
 );
-skyObjects.push({
-name:lastSunData.object,
-x:x,
-y:y,
-radius:15
-});
+}else{
+ctx.fillText(
+"Tap object on sky to select. Visible sky is based on Date / Time / Position.",
+10,
+210
+);
 }
 
 }
 function skyCanvasClick(event){
 
-let canvas=
-document.getElementById("skyCanvas");
+let canvas=document.getElementById("skyCanvas");
+let rect=canvas.getBoundingClientRect();
 
-let rect=
-canvas.getBoundingClientRect();
-
-let x=
-(event.clientX-rect.left)*
-(canvas.width/rect.width);
-
-let y=
-(event.clientY-rect.top)*
-(canvas.height/rect.height);
+let x=(event.clientX-rect.left)*(canvas.width/rect.width);
+let y=(event.clientY-rect.top)*(canvas.height/rect.height);
 
 for(let obj of skyObjects){
 
 let dx=x-obj.x;
 let dy=y-obj.y;
-
-let dist=
-Math.sqrt(dx*dx+dy*dy);
+let dist=Math.sqrt(dx*dx+dy*dy);
 
 if(dist<=obj.radius){
 
-if(STAR_CATALOG[obj.name]){
+let select=document.getElementById("celestialObject");
 
-document.getElementById(
-"celestialObject"
-).value=obj.name;
+if(select){
 
-calculateObject();
+/* If selected object is not in list, add it */
+let exists=false;
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-return;
+for(let i=0;i<select.options.length;i++){
+if(select.options[i].value===obj.name){
+exists=true;
+break;
+}
 }
 
+if(!exists){
+let option=document.createElement("option");
+option.value=obj.name;
+option.text="⭐ "+obj.name;
+select.appendChild(option);
+}
+
+select.value=obj.name;
+updateBodyFields();
+calculateObject();
+autoUpdateVisibleStars();
+drawSkyView();
+
+}
+
+return;
 }
 
 }
@@ -2037,90 +2627,92 @@ function setupAutoSkyUpdate(){
 let ids=[
 "dateUTC","utcHour","utcMin","utcSec",
 "latDeg","latMin","latDir",
-"lonDeg","lonMin","lonDir",
-"minStarAltitude"
+"lonDeg","lonMin","lonDir"
 ];
 
 ids.forEach(id=>{
 let el=document.getElementById(id);
 if(el){
-el.addEventListener("input",autoUpdateVisibleStars);
+
 el.addEventListener("change",autoUpdateVisibleStars);
 }
 });
 
 }
 const STAR_GUIDE = {
-Sirius:{
-constellation:"Canis Major",
-mag:-1.46,
-season:"Winter",
-find:"Locate Orion. Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",
-diagram:[
-{x:110,y:55,label:"Betelgeuse"},
-{x:80,y:100,label:"Orion Belt"},
-{x:120,y:100},
-{x:160,y:100},
-{x:125,y:145,label:"Rigel"},
-{x:250,y:190,label:"Sirius",main:true}
-]
-},
-
-Canopus:{
-constellation:"Carina",
-mag:-0.74,
-season:"Winter / Southern sky",
-find:"Look low in the southern sky. Canopus is the second brightest star and is located well below Sirius for northern observers.",
-diagram:[
-{x:170,y:55,label:"Sirius"},
-{x:145,y:115},
-{x:190,y:115},
-{x:170,y:180,label:"Canopus",main:true}
-]
-},
-
-Arcturus:{
-constellation:"Boötes",
-mag:-0.05,
-season:"Spring / Summer",
-find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",
-diagram:[
-{x:70,y:80,label:"Big Dipper"},
-{x:105,y:100},
-{x:140,y:125},
-{x:185,y:160},
-{x:250,y:200,label:"Arcturus",main:true}
-]
-},
-
-Vega:{
-constellation:"Lyra",
-mag:0.03,
-season:"Summer",
-find:"Find the bright blue-white star of the Summer Triangle. Vega is usually the highest and brightest of the three.",
-diagram:[
-{x:160,y:70,label:"Vega",main:true},
-{x:80,y:180,label:"Deneb"},
-{x:255,y:190,label:"Altair"},
-{x:160,y:70},
-{x:80,y:180},
-{x:255,y:190}
-]
-},
-
-Polaris:{
-constellation:"Ursa Minor",
-mag:1.97,
-season:"All year Northern Hemisphere",
-find:"Find the two pointer stars of the Big Dipper. Extend the line about five times to Polaris.",
-diagram:[
-{x:70,y:190,label:"Pointer"},
-{x:115,y:170,label:"Pointer"},
-{x:250,y:80,label:"Polaris",main:true}
-]
-}
+Alpheratz:{constellation:"Andromeda",mag:2.1,season:"Autumn",find:"Find the Great Square of Pegasus. Alpheratz is the north-eastern corner of the square.",diagram:[{x:80,y:90,label:"Markab"},{x:230,y:90,label:"Alpheratz",main:true},{x:80,y:210},{x:230,y:210}]},
+Ankaa:{constellation:"Phoenix",mag:2.4,season:"Autumn / Southern sky",find:"Look low in the southern sky near Fomalhaut and Achernar. It is the brightest star of Phoenix.",diagram:[{x:90,y:120,label:"Fomalhaut"},{x:190,y:170,label:"Ankaa",main:true},{x:260,y:210,label:"Achernar"}]},
+Schedar:{constellation:"Cassiopeia",mag:2.2,season:"Autumn / Northern sky",find:"Find the W-shaped Cassiopeia. Schedar is one of the bright end stars of the W.",diagram:[{x:60,y:160},{x:110,y:90,label:"Schedar",main:true},{x:160,y:155},{x:210,y:95},{x:260,y:155}]},
+Diphda:{constellation:"Cetus",mag:2.0,season:"Autumn",find:"Look south of Pisces and east of Aquarius. Diphda is a fairly isolated bright star in Cetus.",diagram:[{x:80,y:100,label:"Pisces"},{x:180,y:170,label:"Diphda",main:true},{x:260,y:120,label:"Cetus"}]},
+Achernar:{constellation:"Eridanus",mag:0.5,season:"Autumn / Winter Southern sky",find:"Follow the long river Eridanus downward from Orion. Achernar is the bright star at the far southern end.",diagram:[{x:80,y:50,label:"Orion"},{x:120,y:100},{x:170,y:150},{x:230,y:210,label:"Achernar",main:true}]},
+Hamal:{constellation:"Aries",mag:2.0,season:"Autumn / Winter",find:"Find the small triangle of Aries between Pegasus and Taurus. Hamal is the brightest star.",diagram:[{x:90,y:120,label:"Sheratan"},{x:160,y:90,label:"Hamal",main:true},{x:230,y:135,label:"Mesarthim"}]},
+Acamar:{constellation:"Eridanus",mag:3.2,season:"Winter / Southern sky",find:"Look along Eridanus below Orion and above Achernar. Acamar is a fainter navigation star in the river.",diagram:[{x:90,y:60,label:"Orion"},{x:140,y:110},{x:190,y:160,label:"Acamar",main:true},{x:240,y:215,label:"Achernar"}]},
+Menkar:{constellation:"Cetus",mag:2.5,season:"Autumn / Winter",find:"Find Cetus below Aries and Pisces. Menkar is in the head of the whale.",diagram:[{x:80,y:90,label:"Aries"},{x:170,y:150,label:"Menkar",main:true},{x:250,y:190,label:"Diphda"}]},
+Mirfak:{constellation:"Perseus",mag:1.8,season:"Winter",find:"Find Cassiopeia and move toward Auriga. Mirfak is the brightest star in Perseus.",diagram:[{x:70,y:80,label:"Cassiopeia"},{x:165,y:135,label:"Mirfak",main:true},{x:260,y:190,label:"Capella"}]},
+Aldebaran:{constellation:"Taurus",mag:0.9,season:"Winter",find:"Follow Orion's Belt upward toward Taurus. The orange star in the V-shaped Hyades is Aldebaran.",diagram:[{x:70,y:170,label:"Orion Belt"},{x:160,y:120,label:"Aldebaran",main:true},{x:230,y:90,label:"Pleiades"}]},
+Rigel:{constellation:"Orion",mag:0.1,season:"Winter",find:"Find Orion. Rigel is the bright blue-white star at Orion's foot, opposite Betelgeuse.",diagram:[{x:120,y:60,label:"Betelgeuse"},{x:90,y:115},{x:120,y:115,label:"Belt"},{x:150,y:115},{x:150,y:190,label:"Rigel",main:true}]},
+Capella:{constellation:"Auriga",mag:0.1,season:"Winter",find:"Look high north of Orion. Capella is the bright yellow star in Auriga.",diagram:[{x:120,y:70,label:"Capella",main:true},{x:70,y:140},{x:130,y:210},{x:220,y:160},{x:210,y:90}]},
+Bellatrix:{constellation:"Orion",mag:1.6,season:"Winter",find:"Find Orion. Bellatrix is the blue-white shoulder star opposite Betelgeuse.",diagram:[{x:80,y:70,label:"Betelgeuse"},{x:190,y:70,label:"Bellatrix",main:true},{x:100,y:130,label:"Belt"},{x:170,y:190,label:"Rigel"}]},
+Elnath:{constellation:"Taurus / Auriga",mag:1.7,season:"Winter",find:"Look between Taurus and Auriga. Elnath is near the tip of Taurus horn, close to Capella.",diagram:[{x:90,y:80,label:"Capella"},{x:190,y:140,label:"Elnath",main:true},{x:260,y:200,label:"Aldebaran"}]},
+Alnilam:{constellation:"Orion",mag:1.7,season:"Winter",find:"Alnilam is the central star of Orion's Belt.",diagram:[{x:80,y:120},{x:150,y:120,label:"Alnilam",main:true},{x:220,y:120},{x:95,y:60,label:"Betelgeuse"},{x:210,y:190,label:"Rigel"}]},
+Betelgeuse:{constellation:"Orion",mag:0.5,season:"Winter",find:"Find Orion. Betelgeuse is the orange-red star at Orion's shoulder above the belt.",diagram:[{x:90,y:60,label:"Betelgeuse",main:true},{x:130,y:120,label:"Belt"},{x:190,y:190,label:"Rigel"}]},
+Canopus:{constellation:"Carina",mag:-0.7,season:"Winter / Southern sky",find:"Look low in the southern sky. Canopus is the second brightest star and lies well below Sirius.",diagram:[{x:165,y:60,label:"Sirius"},{x:170,y:190,label:"Canopus",main:true}]},
+Sirius:{constellation:"Canis Major",mag:-1.5,season:"Winter",find:"Find Orion's Belt and extend the belt downward toward the south-east. The very bright white star is Sirius.",diagram:[{x:110,y:55,label:"Betelgeuse"},{x:80,y:100,label:"Orion Belt"},{x:120,y:100},{x:160,y:100},{x:125,y:145,label:"Rigel"},{x:250,y:190,label:"Sirius",main:true}]},
+Adhara:{constellation:"Canis Major",mag:1.5,season:"Winter",find:"Find Sirius. Adhara lies below and east of Sirius in Canis Major.",diagram:[{x:120,y:80,label:"Sirius"},{x:180,y:155,label:"Adhara",main:true},{x:230,y:205,label:"Wezen"}]},
+Procyon:{constellation:"Canis Minor",mag:0.4,season:"Winter / Spring",find:"Procyon forms the Winter Triangle with Sirius and Betelgeuse.",diagram:[{x:80,y:190,label:"Sirius"},{x:170,y:70,label:"Betelgeuse"},{x:260,y:160,label:"Procyon",main:true}]},
+Pollux:{constellation:"Gemini",mag:1.1,season:"Winter / Spring",find:"Find Gemini above Orion. Pollux is the brighter twin, near Castor.",diagram:[{x:120,y:80,label:"Castor"},{x:190,y:90,label:"Pollux",main:true},{x:150,y:190,label:"Orion"}]},
+Avior:{constellation:"Carina",mag:1.9,season:"Southern sky",find:"Look in the southern constellation Carina, between Canopus and the Southern Cross region.",diagram:[{x:80,y:80,label:"Canopus"},{x:170,y:150,label:"Avior",main:true},{x:260,y:210,label:"Acrux"}]},
+Suhail:{constellation:"Vela",mag:2.2,season:"Southern sky",find:"Look south, between Canopus and the stars of Vela. Suhail is a bright southern navigation star.",diagram:[{x:80,y:80,label:"Canopus"},{x:170,y:150,label:"Suhail",main:true},{x:250,y:200,label:"Vela"}]},
+Miaplacidus:{constellation:"Carina",mag:1.7,season:"Southern sky",find:"Look in Carina below Canopus. Miaplacidus is a bright southern star near the ship constellation.",diagram:[{x:100,y:70,label:"Canopus"},{x:185,y:165,label:"Miaplacidus",main:true},{x:250,y:210,label:"Carina"}]},
+Alphard:{constellation:"Hydra",mag:2.0,season:"Spring",find:"Alphard is the solitary bright star of Hydra, south of Regulus.",diagram:[{x:150,y:70,label:"Regulus"},{x:175,y:175,label:"Alphard",main:true}]},
+Regulus:{constellation:"Leo",mag:1.4,season:"Spring",find:"Find the sickle-shaped head of Leo. Regulus is the bright star at the base.",diagram:[{x:90,y:90,label:"Leo Sickle"},{x:150,y:140},{x:210,y:190,label:"Regulus",main:true}]},
+Dubhe:{constellation:"Ursa Major",mag:1.8,season:"All year Northern sky",find:"Dubhe is one of the two pointer stars of the Big Dipper pointing toward Polaris.",diagram:[{x:70,y:160,label:"Merak"},{x:130,y:130,label:"Dubhe",main:true},{x:250,y:70,label:"Polaris"}]},
+Denebola:{constellation:"Leo",mag:2.1,season:"Spring",find:"Denebola is the tail of Leo, east of Regulus.",diagram:[{x:70,y:180,label:"Regulus"},{x:180,y:130},{x:270,y:100,label:"Denebola",main:true}]},
+Gienah:{constellation:"Corvus",mag:2.6,season:"Spring",find:"Find the small quadrilateral of Corvus south of Spica. Gienah is one corner.",diagram:[{x:100,y:80,label:"Spica"},{x:130,y:150,label:"Gienah",main:true},{x:220,y:150},{x:230,y:210},{x:120,y:210}]},
+Acrux:{constellation:"Crux",mag:0.8,season:"Southern sky",find:"Find the Southern Cross. Acrux is the bright bottom star of the cross.",diagram:[{x:170,y:60,label:"Gacrux"},{x:170,y:200,label:"Acrux",main:true},{x:105,y:130},{x:235,y:130}]},
+Gacrux:{constellation:"Crux",mag:1.6,season:"Southern sky",find:"Find the Southern Cross. Gacrux is the red upper star of the cross.",diagram:[{x:170,y:60,label:"Gacrux",main:true},{x:170,y:200,label:"Acrux"},{x:105,y:130},{x:235,y:130}]},
+Alioth:{constellation:"Ursa Major",mag:1.8,season:"Northern sky",find:"Alioth is in the handle of the Big Dipper, near the middle of the handle.",diagram:[{x:60,y:150,label:"Bowl"},{x:120,y:130},{x:180,y:110,label:"Alioth",main:true},{x:250,y:90,label:"Alkaid"}]},
+Spica:{constellation:"Virgo",mag:1.0,season:"Spring",find:"Follow the Big Dipper handle: arc to Arcturus, then speed on to Spica.",diagram:[{x:70,y:70,label:"Big Dipper"},{x:155,y:130,label:"Arcturus"},{x:250,y:205,label:"Spica",main:true}]},
+Alkaid:{constellation:"Ursa Major",mag:1.9,season:"Northern sky",find:"Alkaid is the end star of the Big Dipper handle.",diagram:[{x:70,y:150,label:"Bowl"},{x:140,y:125},{x:210,y:100},{x:270,y:80,label:"Alkaid",main:true}]},
+Hadar:{constellation:"Centaurus",mag:0.6,season:"Southern sky",find:"Look near Rigil Kentaurus and the Southern Cross. Hadar is a bright companion star nearby.",diagram:[{x:110,y:160,label:"Rigil Kentaurus"},{x:190,y:130,label:"Hadar",main:true},{x:260,y:90,label:"Acrux"}]},
+Menkent:{constellation:"Centaurus",mag:2.1,season:"Southern sky",find:"Menkent is in northern Centaurus, between Spica and the Southern Cross region.",diagram:[{x:70,y:80,label:"Spica"},{x:165,y:150,label:"Menkent",main:true},{x:260,y:220,label:"Centaurus"}]},
+Arcturus:{constellation:"Boötes",mag:-0.1,season:"Spring / Summer",find:"Find the Big Dipper. Follow the curve of the handle outward: arc to Arcturus.",diagram:[{x:70,y:80,label:"Big Dipper"},{x:105,y:100},{x:140,y:125},{x:185,y:160},{x:250,y:200,label:"Arcturus",main:true}]},
+"Rigil Kentaurus":{constellation:"Centaurus",mag:-0.3,season:"Southern sky",find:"Look near the Southern Cross. Rigil Kentaurus is one of the brightest southern stars, close to Hadar.",diagram:[{x:90,y:160,label:"Acrux"},{x:170,y:130,label:"Hadar"},{x:240,y:165,label:"Rigil Kentaurus",main:true}]},
+Zubenelgenubi:{constellation:"Libra",mag:2.8,season:"Spring / Summer",find:"Look between Spica and Antares. Zubenelgenubi is one of the main stars of Libra.",diagram:[{x:70,y:90,label:"Spica"},{x:165,y:150,label:"Zubenelgenubi",main:true},{x:260,y:210,label:"Antares"}]},
+Kochab:{constellation:"Ursa Minor",mag:2.1,season:"Northern sky",find:"Kochab is one of the bowl stars of the Little Dipper, opposite Polaris.",diagram:[{x:80,y:70,label:"Polaris"},{x:200,y:170,label:"Kochab",main:true},{x:250,y:190,label:"Pherkad"}]},
+Alphecca:{constellation:"Corona Borealis",mag:2.2,season:"Spring / Summer",find:"Find the small semicircle of Corona Borealis between Arcturus and Vega. Alphecca is the brightest star.",diagram:[{x:70,y:160,label:"Arcturus"},{x:170,y:90,label:"Alphecca",main:true},{x:270,y:160,label:"Vega"}]},
+Antares:{constellation:"Scorpius",mag:1.1,season:"Summer",find:"Look for the red heart of Scorpius. Antares is the bright red star in the middle of the scorpion.",diagram:[{x:80,y:80,label:"Claws"},{x:165,y:135,label:"Antares",main:true},{x:250,y:210,label:"Tail"}]},
+Atria:{constellation:"Triangulum Australe",mag:1.9,season:"Southern sky",find:"Atria is the brightest star in the small Southern Triangle near the Southern Cross region.",diagram:[{x:100,y:200},{x:170,y:70,label:"Atria",main:true},{x:250,y:200}]},
+Sabik:{constellation:"Ophiuchus",mag:2.4,season:"Summer",find:"Look between Antares and Altair in Ophiuchus. Sabik is a moderate bright navigation star.",diagram:[{x:70,y:190,label:"Antares"},{x:170,y:130,label:"Sabik",main:true},{x:270,y:80,label:"Altair"}]},
+Shaula:{constellation:"Scorpius",mag:1.6,season:"Summer",find:"Shaula is in the stinger of Scorpius, at the curved tail end.",diagram:[{x:80,y:70,label:"Antares"},{x:150,y:140},{x:230,y:210,label:"Shaula",main:true}]},
+Rasalhague:{constellation:"Ophiuchus",mag:2.1,season:"Summer",find:"Rasalhague is the bright star at the head of Ophiuchus, above Scorpius.",diagram:[{x:160,y:70,label:"Rasalhague",main:true},{x:140,y:160,label:"Ophiuchus"},{x:190,y:220,label:"Antares"}]},
+Eltanin:{constellation:"Draco",mag:2.2,season:"Northern sky / Summer",find:"Eltanin is in the head of Draco, near Vega in the northern summer sky.",diagram:[{x:80,y:100,label:"Vega"},{x:170,y:145,label:"Eltanin",main:true},{x:250,y:190,label:"Draco"}]},
+"Kaus Australis":{constellation:"Sagittarius",mag:1.8,season:"Summer",find:"Find the Teapot shape of Sagittarius. Kaus Australis is one of the bright stars in the bow of the teapot.",diagram:[{x:80,y:170,label:"Teapot"},{x:170,y:120,label:"Kaus Australis",main:true},{x:250,y:180}]},
+Vega:{constellation:"Lyra",mag:0.0,season:"Summer",find:"Vega is the bright blue-white star of Lyra and the brightest star of the Summer Triangle.",diagram:[{x:160,y:70,label:"Vega",main:true},{x:80,y:180,label:"Deneb"},{x:255,y:190,label:"Altair"}]},
+Nunki:{constellation:"Sagittarius",mag:2.0,season:"Summer",find:"Nunki is in the handle/top area of the Sagittarius Teapot.",diagram:[{x:90,y:190,label:"Kaus Australis"},{x:170,y:110,label:"Nunki",main:true},{x:250,y:170,label:"Teapot"}]},
+Altair:{constellation:"Aquila",mag:0.8,season:"Summer",find:"Altair is part of the Summer Triangle. It has two smaller stars close beside it in a straight line.",diagram:[{x:80,y:90,label:"Vega"},{x:250,y:100,label:"Deneb"},{x:170,y:190,label:"Altair",main:true}]},
+Peacock:{constellation:"Pavo",mag:1.9,season:"Southern sky",find:"Look far south in Pavo. Peacock is the brightest star of the constellation.",diagram:[{x:110,y:100,label:"Pavo"},{x:190,y:170,label:"Peacock",main:true},{x:250,y:220}]},
+Deneb:{constellation:"Cygnus",mag:1.3,season:"Summer / Autumn",find:"Deneb is the tail of Cygnus and one corner of the Summer Triangle with Vega and Altair.",diagram:[{x:160,y:70,label:"Deneb",main:true},{x:80,y:190,label:"Vega"},{x:255,y:200,label:"Altair"}]},
+Enif:{constellation:"Pegasus",mag:2.4,season:"Autumn",find:"Find the Great Square of Pegasus. Enif lies west/southwest of the square.",diagram:[{x:210,y:80,label:"Great Square"},{x:95,y:180,label:"Enif",main:true}]},
+Alnair:{constellation:"Grus",mag:1.7,season:"Autumn / Southern sky",find:"Look in the southern sky near Fomalhaut and Peacock. Alnair is the bright star of Grus.",diagram:[{x:90,y:90,label:"Fomalhaut"},{x:170,y:165,label:"Alnair",main:true},{x:260,y:215,label:"Peacock"}]},
+Fomalhaut:{constellation:"Piscis Austrinus",mag:1.2,season:"Autumn",find:"Fomalhaut is a lonely bright star low in the southern sky, often isolated from other bright stars.",diagram:[{x:170,y:120,label:"Fomalhaut",main:true},{x:90,y:200,label:"Aquarius"},{x:250,y:210,label:"Piscis Austrinus"}]},
+Markab:{constellation:"Pegasus",mag:2.5,season:"Autumn",find:"Markab is the south-western corner of the Great Square of Pegasus.",diagram:[{x:80,y:90,label:"Markab",main:true},{x:230,y:90,label:"Alpheratz"},{x:80,y:210},{x:230,y:210}]},
+Polaris:{constellation:"Ursa Minor",mag:2.0,season:"All year Northern Hemisphere",find:"Use the two pointer stars of the Big Dipper. Extend their line about five times to Polaris.",diagram:[{x:70,y:190,label:"Pointer"},{x:115,y:170,label:"Pointer"},{x:250,y:80,label:"Polaris",main:true}]}
 };
+function populateStarGuideList(){
 
+let select=document.getElementById("guideStar");
+if(!select)return;
+
+let html="";
+
+Object.keys(STAR_GUIDE).forEach(name=>{
+html+="<option value='"+name+"'>⭐ "+name+"</option>";
+});
+
+select.innerHTML=html;
+
+}
 function showStarGuide(){
 
 let name=document.getElementById("guideStar").value;
@@ -2225,10 +2817,330 @@ ctx.fillText(p.label,p.x+8,p.y+4);
 });
 
 }
+function formatLatLon(value,isLat){
+
+let dir;
+
+if(isLat){
+dir=value>=0?"N":"S";
+}else{
+dir=value>=0?"E":"W";
+}
+
+value=Math.abs(value);
+
+let d=Math.floor(value);
+let m=(value-d)*60;
+
+return d+"° "+m.toFixed(1)+"' "+dir;
+
+}
+function saveAstroFixLOP1(){
+
+if(!lastSunData || lastSunData.intercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+document.getElementById("fixZn1").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("fixInt1").value=
+lastSunData.intercept.toFixed(1);
+
+document.getElementById("fixLatDeg").value=
+document.getElementById("latDeg").value;
+
+document.getElementById("fixLatMin").value=
+document.getElementById("latMin").value;
+
+document.getElementById("fixLatDir").value=
+document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=
+document.getElementById("lonDeg").value;
+
+document.getElementById("fixLonMin").value=
+document.getElementById("lonMin").value;
+
+document.getElementById("fixLonDir").value=
+document.getElementById("lonDir").value;
+
+alert("Saved as Astro Fix LOP1");
+
+}
+
+function saveAstroFixLOP2(){
+
+if(!lastSunData || lastSunData.intercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+document.getElementById("fixZn2").value=
+lastSunData.Zn.toFixed(1);
+
+document.getElementById("fixInt2").value=
+lastSunData.intercept.toFixed(1);
+
+document.getElementById("fixLatDeg").value=
+document.getElementById("latDeg").value;
+
+document.getElementById("fixLatMin").value=
+document.getElementById("latMin").value;
+
+document.getElementById("fixLatDir").value=
+document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=
+document.getElementById("lonDeg").value;
+
+document.getElementById("fixLonMin").value=
+document.getElementById("lonMin").value;
+
+document.getElementById("fixLonDir").value=
+document.getElementById("lonDir").value;
+
+alert("Saved as Astro Fix LOP2");
+
+}
+function calculateAstroFix(){
+
+let lat=getCoord("fixLatDeg","fixLatMin","fixLatDir");
+let lon=getCoord("fixLonDeg","fixLonMin","fixLonDir");
+
+let zn1=parseFloat(document.getElementById("fixZn1").value);
+let int1=parseFloat(document.getElementById("fixInt1").value);
+let zn2=parseFloat(document.getElementById("fixZn2").value);
+let int2=parseFloat(document.getElementById("fixInt2").value);
+
+if(lat===null||lon===null||isNaN(zn1)||isNaN(int1)||isNaN(zn2)||isNaN(int2)){
+document.getElementById("astroFixResult").innerHTML="Enter all values.";
+return;
+}
+
+let a1=degToRad(zn1);
+let a2=degToRad(zn2);
+
+let x1=int1*Math.sin(a1);
+let y1=int1*Math.cos(a1);
+
+let x2=int2*Math.sin(a2);
+let y2=int2*Math.cos(a2);
+
+let dx=(x1+x2)/2;
+let dy=(y1+y2)/2;
+
+let dLat=dy/60;
+let dLon=dx/(60*Math.cos(degToRad(lat)));
+
+let fixLat=lat+dLat;
+let fixLon=lon+dLon;
+
+let distance=Math.sqrt(dx*dx+dy*dy);
+let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+
+document.getElementById("astroFixResult").innerHTML=
+"<b>ASTRONOMICAL FIX</b><br><br>"+
+"<b>Assumed Position</b><br>"+
+"Lat: "+formatLatLon(lat,true)+"<br>"+
+"Lon: "+formatLatLon(lon,false)+"<br><br>"+
+"<b>Observed Position</b><br>"+
+"Lat: "+formatLatLon(fixLat,true)+"<br>"+
+"Lon: "+formatLatLon(fixLon,false)+"<br><br>"+
+"<b>Position Difference</b><br>"+
+distance.toFixed(1)+" NM / Bearing "+bearing.toFixed(0)+"°<br><br>"+
+"<span class='small'>Training approximation from two LOP intercept vectors.</span>";
+
+}
+function formatLatLon(value,isLat){
+
+let dir=isLat ? (value>=0?"N":"S") : (value>=0?"E":"W");
+
+value=Math.abs(value);
+
+let d=Math.floor(value);
+let m=(value-d)*60;
+
+return d+"° "+m.toFixed(1)+"' "+dir;
+
+}
+
+function formatFixIntercept(value){
+
+let dir=value>=0?"TOWARD":"AWAY";
+
+return Math.abs(value).toFixed(1)+" NM "+dir;
+
+}
+
+function updatePositionFixCount(){
+
+let el=document.getElementById("positionFixCount");
+
+if(el){
+el.innerText=positionFixLOPs.length;
+}
+
+}
+
+function addSightToPositionFix(){
+
+if(!lastSunData || lastSunData.signedIntercept===undefined){
+alert("Calculate Sight Reduction first.");
+return;
+}
+
+if(positionFixLOPs.length>=3){
+alert("Already have 3 LOPs. Clear fix first.");
+return;
+}
+
+positionFixLOPs.push({
+object:lastSunData.object,
+time:lastSunData.time,
+lat:lastSunData.lat,
+lon:lastSunData.lon,
+zn:lastSunData.Zn,
+intercept:lastSunData.signedIntercept
+});
+
+updatePositionFixCount();
+
+alert("LOP added to 3-LOP Fix.");
+
+}
+
+function clearPositionFixLOPs(){
+
+positionFixLOPs=[];
+
+updatePositionFixCount();
+
+document.getElementById("positionFixResult").innerHTML=
+"No position fix calculated.";
+
+}
+
+function calculateThreeLOPFix(){
+
+if(positionFixLOPs.length<3){
+document.getElementById("positionFixResult").innerHTML=
+"Add 3 sights first.";
+return;
+}
+
+let apLat=positionFixLOPs[0].lat;
+let apLon=positionFixLOPs[0].lon;
+
+let Sss=0;
+let Ssc=0;
+let Scc=0;
+let Bs=0;
+let Bc=0;
+
+positionFixLOPs.forEach(lop=>{
+
+let z=degToRad(lop.zn);
+
+let s=Math.sin(z);
+let c=Math.cos(z);
+
+Sss+=s*s;
+Ssc+=s*c;
+Scc+=c*c;
+
+Bs+=lop.intercept*s;
+Bc+=lop.intercept*c;
+
+});
+
+let det=Sss*Scc-Ssc*Ssc;
+
+if(Math.abs(det)<0.0001){
+document.getElementById("positionFixResult").innerHTML=
+"LOPs are too close to parallel. Fix quality poor.";
+return;
+}
+
+let dx=(Bs*Scc-Bc*Ssc)/det;
+let dy=(Sss*Bc-Ssc*Bs)/det;
+
+let fixLat=apLat+dy/60;
+let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
+
+let distance=Math.sqrt(dx*dx+dy*dy);
+let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+
+let residualText="";
+let rms=0;
+
+positionFixLOPs.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+
+let predicted=
+dx*Math.sin(z)+
+dy*Math.cos(z);
+
+let residual=predicted-lop.intercept;
+
+rms+=residual*residual;
+
+residualText+=
+"LOP "+(index+1)+
+" "+lop.object+
+" / Zn "+lop.zn.toFixed(1)+"° / "+
+formatFixIntercept(lop.intercept)+
+" / Residual "+residual.toFixed(2)+" NM<br>";
+
+});
+
+rms=Math.sqrt(rms/positionFixLOPs.length);
+
+let quality="GOOD";
+
+if(rms>2){
+quality="POOR";
+}
+
+if(rms<=1){
+quality="EXCELLENT";
+}
+
+document.getElementById("positionFixResult").innerHTML=
+"<b>3-LOP ASTRONOMICAL POSITION FIX</b><br><br>"+
+
+"<b>Assumed Position</b><br>"+
+"Lat: "+formatLatLon(apLat,true)+"<br>"+
+"Lon: "+formatLatLon(apLon,false)+"<br><br>"+
+
+"<b>Observed Position</b><br>"+
+"Lat: "+formatLatLon(fixLat,true)+"<br>"+
+"Lon: "+formatLatLon(fixLon,false)+"<br><br>"+
+
+"<b>Offset from AP</b><br>"+
+distance.toFixed(1)+" NM / Bearing "+
+bearing.toFixed(0)+"°<br><br>"+
+
+"<b>LOP Residuals</b><br>"+
+residualText+
+"<br>"+
+
+"<b>Fix Quality:</b> "+quality+
+"<br>RMS Error: "+rms.toFixed(2)+" NM<br><br>"+
+
+"<span class='small'>Training approximation. Based on 3 LOP least-squares intersection.</span>";
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
+setupAutoSkyUpdate();
+autoUpdateVisibleStars();
 drawSkyView();
+updatePositionFixCount();
+populateStarGuideList();
 showStarGuide();
 
 </script>
