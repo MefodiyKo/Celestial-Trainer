@@ -2188,17 +2188,47 @@ return;
 }
 
 let sun=sunAlmanac(data.date,data.time);
-let visibleStars=[];
-let minAlt=5;
-
 let sunLHA=norm360(sun.GHA+data.lon);
 let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
 
-if(sunPos.Hc>-6){
-lastVisibleStars=[];
-drawSkyView();
-return;
+let moon=moonAlmanac(data.date,data.time);
+let moonLHA=norm360(moon.GHA+data.lon);
+let moonPos=calculateHcZn(data.lat,moon.Dec,moonLHA);
+
+let visibleObjects=[];
+
+/* Sun is shown if above horizon */
+if(sunPos.Hc>-2){
+visibleObjects.push({
+name:"Sun",
+type:"sun",
+hc:sunPos.Hc,
+zn:sunPos.Zn,
+mag:-26
+});
 }
+
+/* Moon is shown if above horizon */
+if(moonPos.Hc>0){
+visibleObjects.push({
+name:"Moon",
+type:"moon",
+hc:moonPos.Hc,
+zn:moonPos.Zn,
+mag:-12
+});
+}
+
+/* Stars only if sky is dark enough */
+let starLimitMag=null;
+
+if(sunPos.Hc<=-12){
+starLimitMag=3.5;
+}else if(sunPos.Hc<=-6){
+starLimitMag=1.5;
+}
+
+if(starLimitMag!==null){
 
 for(let starName in STAR_CATALOG){
 
@@ -2208,9 +2238,10 @@ let GHA=norm360(sun.GHAAries+star.SHA);
 let LHA=norm360(GHA+data.lon);
 let r=calculateHcZn(data.lat,star.Dec,LHA);
 
-if(r.Hc>minAlt){
-visibleStars.push({
+if(r.Hc>5 && star.Mag<=starLimitMag){
+visibleObjects.push({
 name:starName,
+type:"star",
 hc:r.Hc,
 zn:r.Zn,
 mag:star.Mag
@@ -2219,9 +2250,12 @@ mag:star.Mag
 
 }
 
-visibleStars.sort((a,b)=>b.hc-a.hc);
+}
 
-lastVisibleStars=visibleStars;
+visibleObjects.sort((a,b)=>b.hc-a.hc);
+
+lastVisibleStars=visibleObjects;
+
 drawSkyView();
 
 }
@@ -2351,172 +2385,238 @@ let canvas=document.getElementById("skyCanvas");
 if(!canvas)return;
 
 let ctx=canvas.getContext("2d");
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 skyObjects=[];
-let grd=ctx.createLinearGradient(0,0,0,canvas.height);
-grd.addColorStop(0,"#020814");
-grd.addColorStop(1,"#0b2b4a");
 
+let selectedName=
+document.getElementById("celestialObject")
+? document.getElementById("celestialObject").value
+: "";
+
+let data=getInputData();
+let sunAlt=null;
+
+if(!data.error){
+let sun=sunAlmanac(data.date,data.time);
+let sunLHA=norm360(sun.GHA+data.lon);
+let sunPos=calculateHcZn(data.lat,sun.Dec,sunLHA);
+sunAlt=sunPos.Hc;
+}
+
+/* Background by light condition */
+let top="#020814";
+let bottom="#0b2b4a";
+let skyLabel="NIGHT";
+
+if(sunAlt!==null){
+if(sunAlt>-6){
+top="#2f6fa3";
+bottom="#87ceeb";
+skyLabel="DAY / CIVIL LIGHT";
+}else if(sunAlt>-12){
+top="#0b1b3a";
+bottom="#324b7a";
+skyLabel="NAUTICAL TWILIGHT";
+}else{
+top="#020814";
+bottom="#06152a";
+skyLabel="NIGHT";
+}
+}
+
+let grd=ctx.createLinearGradient(0,0,0,canvas.height);
+grd.addColorStop(0,top);
+grd.addColorStop(1,bottom);
 ctx.fillStyle=grd;
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-let horizonY=190;
-let left=25;
+let horizonY=170;
+let left=28;
 let right=340;
+let topY=24;
 let width=right-left;
 
-ctx.strokeStyle="#31506a";
+ctx.strokeStyle="rgba(158,231,255,0.35)";
 ctx.fillStyle="#9ee7ff";
-ctx.font="11px Arial";
+ctx.font="10px Arial";
 
+/* Altitude lines */
 for(let h=15;h<=75;h+=15){
-let y=horizonY-(h*2);
+let y=horizonY-(h/90)*(horizonY-topY);
 ctx.beginPath();
 ctx.moveTo(left,y);
 ctx.lineTo(right,y);
 ctx.stroke();
-ctx.fillText(h+"°",3,y+4);
+ctx.fillText(h+"°",4,y+3);
 }
 
+/* Horizon */
 ctx.strokeStyle="#9ee7ff";
 ctx.beginPath();
 ctx.moveTo(left,horizonY);
 ctx.lineTo(right,horizonY);
 ctx.stroke();
 
-for(let az=0;az<=360;az+=30){
-let x=left+(az/360)*width;
-
-ctx.beginPath();
-ctx.moveTo(x,horizonY);
-ctx.lineTo(x,horizonY+5);
-ctx.stroke();
-
-ctx.fillText(az+"°",x-10,horizonY+18);
-}
+/* Compass labels */
+let dirs=[
+{az:0,label:"N"},
+{az:45,label:"NE"},
+{az:90,label:"E"},
+{az:135,label:"SE"},
+{az:180,label:"S"},
+{az:225,label:"SW"},
+{az:270,label:"W"},
+{az:315,label:"NW"},
+{az:360,label:"N"}
+];
 
 ctx.fillStyle="#ffffff";
-ctx.fillText("E",left+70,horizonY+35);
-ctx.fillText("S",left+155,horizonY+35);
-ctx.fillText("W",left+235,horizonY+35);
-ctx.fillText("N",right-5,horizonY+35);
+ctx.font="11px Arial";
 
-lastVisibleStars.forEach(star=>{
+dirs.forEach(d=>{
+let x=left+(d.az/360)*width;
+ctx.fillText(d.label,x-7,horizonY+16);
+});
 
-let x=left+(star.zn/360)*width;
-let y=horizonY-(star.hc*2);
+/* Sky condition label */
+ctx.fillStyle="#9ee7ff";
+ctx.font="11px Arial";
+ctx.fillText(skyLabel,left,14);
 
-if(y<15)y=15;
+let selectedInfo=null;
+
+/* Draw visible sky objects */
+lastVisibleStars.forEach(obj=>{
+
+let x=left+(obj.zn/360)*width;
+let y=horizonY-(obj.hc/90)*(horizonY-topY);
+
+if(y<topY)y=topY;
 if(y>horizonY)y=horizonY;
 
-let mag=star.mag;
+let size=4;
 
-if(mag===undefined || isNaN(mag)){
-mag=2.0;
-}
-
-let size=6-(mag+1);
-
-if(size<2){size=2;}
-if(size>8){size=8;}
-
-ctx.fillStyle="#ffffff";
-ctx.shadowBlur=size*2;
+if(obj.type==="sun"){
+size=8;
+ctx.fillStyle="#ffd966";
+ctx.shadowColor="#ffd966";
+ctx.shadowBlur=10;
+}else if(obj.type==="moon"){
+size=7;
+ctx.fillStyle="#dddddd";
 ctx.shadowColor="#ffffff";
+ctx.shadowBlur=8;
+}else{
+let mag=obj.mag;
+if(mag===undefined || isNaN(mag)){mag=2.0;}
+size=5-(mag);
+if(size<2)size=2;
+if(size>6)size=6;
+ctx.fillStyle="#ffffff";
+ctx.shadowColor="#ffffff";
+ctx.shadowBlur=size*2;
+}
 
 ctx.beginPath();
 ctx.arc(x,y,size,0,Math.PI*2);
 ctx.fill();
-
 ctx.shadowBlur=0;
+
+/* selected object highlight */
+if(obj.name===selectedName){
+ctx.strokeStyle="#ffd966";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.arc(x,y,size+5,0,Math.PI*2);
+ctx.stroke();
 
 ctx.fillStyle="#ffffff";
 ctx.font="11px Arial";
-ctx.fillText(star.name,x+7,y+4);
+ctx.fillText(obj.name,x+8,y+4);
+
+selectedInfo=obj;
+}
+
 skyObjects.push({
-name:star.name,
+name:obj.name,
 x:x,
 y:y,
-radius:size+5
+radius:size+10
 });
+
 });
 
-if(lastSunData){
+/* Bottom selected info */
+ctx.fillStyle="rgba(0,0,0,0.35)";
+ctx.fillRect(0,190,canvas.width,30);
 
-let x=left+(lastSunData.Zn/360)*width;
-let y=horizonY-(lastSunData.Hc*2);
+ctx.fillStyle="#9ee7ff";
+ctx.font="11px Arial";
 
-if(y<15)y=15;
-if(y>horizonY)y=horizonY;
-
-ctx.fillStyle=
-lastSunData.object==="Sun" ? "#ffd966" :
-lastSunData.object==="Moon" ? "#dddddd" :
-"#4db8ff";
-
-ctx.beginPath();
-ctx.arc(x,y,8,0,Math.PI*2);
-ctx.fill();
-
-ctx.fillStyle="#ffffff";
-ctx.font="12px Arial";
-ctx.fillText(lastSunData.object,x+10,y+4);
+if(selectedInfo){
 ctx.fillText(
-"Hc "+lastSunData.Hc.toFixed(1)+"° / Zn "+lastSunData.Zn.toFixed(1)+"°",
-x+10,
-y+20
+"Selected: "+selectedInfo.name+
+" | Hc "+selectedInfo.hc.toFixed(1)+"°"+
+" | Zn "+selectedInfo.zn.toFixed(1)+"°",
+10,
+210
 );
-skyObjects.push({
-name:lastSunData.object,
-x:x,
-y:y,
-radius:15
-});
+}else{
+ctx.fillText(
+"Tap object on sky to select. Visible sky is based on Date / Time / Position.",
+10,
+210
+);
 }
 
 }
 function skyCanvasClick(event){
 
-let canvas=
-document.getElementById("skyCanvas");
+let canvas=document.getElementById("skyCanvas");
+let rect=canvas.getBoundingClientRect();
 
-let rect=
-canvas.getBoundingClientRect();
-
-let x=
-(event.clientX-rect.left)*
-(canvas.width/rect.width);
-
-let y=
-(event.clientY-rect.top)*
-(canvas.height/rect.height);
+let x=(event.clientX-rect.left)*(canvas.width/rect.width);
+let y=(event.clientY-rect.top)*(canvas.height/rect.height);
 
 for(let obj of skyObjects){
 
 let dx=x-obj.x;
 let dy=y-obj.y;
-
-let dist=
-Math.sqrt(dx*dx+dy*dy);
+let dist=Math.sqrt(dx*dx+dy*dy);
 
 if(dist<=obj.radius){
 
-if(STAR_CATALOG[obj.name]){
+let select=document.getElementById("celestialObject");
 
-document.getElementById(
-"celestialObject"
-).value=obj.name;
+if(select){
 
-calculateObject();
+/* If selected object is not in list, add it */
+let exists=false;
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-return;
+for(let i=0;i<select.options.length;i++){
+if(select.options[i].value===obj.name){
+exists=true;
+break;
+}
 }
 
+if(!exists){
+let option=document.createElement("option");
+option.value=obj.name;
+option.text="⭐ "+obj.name;
+select.appendChild(option);
+}
+
+select.value=obj.name;
+updateBodyFields();
+calculateObject();
+autoUpdateVisibleStars();
+drawSkyView();
+
+}
+
+return;
 }
 
 }
