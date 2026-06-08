@@ -1560,24 +1560,25 @@ function togglePositionSource(){
 let mode=document.getElementById("positionSource").value;
 let gpsMode=(mode==="gps");
 
-document.getElementById("latDeg").disabled=gpsMode;
-document.getElementById("latMin").disabled=gpsMode;
-document.getElementById("latDir").disabled=gpsMode;
+document.getElementById("latDeg").disabled=false;
+document.getElementById("latMin").disabled=false;
+document.getElementById("latDir").disabled=false;
 
-document.getElementById("lonDeg").disabled=gpsMode;
-document.getElementById("lonMin").disabled=gpsMode;
-document.getElementById("lonDir").disabled=gpsMode;
+document.getElementById("lonDeg").disabled=false;
+document.getElementById("lonMin").disabled=false;
+document.getElementById("lonDir").disabled=false;
 
 let gpsButton=document.getElementById("gpsButton");
 
 if(gpsButton){
-gpsButton.disabled=!gpsMode;
-gpsButton.style.opacity=gpsMode ? "1" : "0.45";
+gpsButton.disabled=false;
+gpsButton.style.opacity="1";
 }
 
 }
 
 function getGPSPosition(){
+document.getElementById("positionSource").value="gps";   
 if(!navigator.geolocation){
 alert("GPS not supported.");
 return;
