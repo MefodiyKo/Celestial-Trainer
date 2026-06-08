@@ -3574,9 +3574,11 @@ document.getElementById("formsResult").innerHTML=
 }
 function drawPlottingSheet(){
 
-if(!lastSunData || lastSunData.signedIntercept===undefined){
+let fixLOPs=positionFixLOPs.filter(lop=>lop!==null);
+
+if(fixLOPs.length===0){
 document.getElementById("formsResult").innerHTML=
-"Calculate sight reduction first.";
+"Save at least one LOP first.";
 return;
 }
 
@@ -3593,6 +3595,7 @@ let scale=6;
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
+/* Grid */
 ctx.strokeStyle="#cccccc";
 ctx.lineWidth=1;
 
@@ -3610,6 +3613,7 @@ ctx.lineTo(325,y);
 ctx.stroke();
 }
 
+/* N/E axes */
 ctx.strokeStyle="black";
 ctx.lineWidth=2;
 
@@ -3633,14 +3637,17 @@ ctx.beginPath();
 ctx.arc(cx,cy,4,0,Math.PI*2);
 ctx.fill();
 
-let z=degToRad(lastSunData.Zn);
-let intNm=lastSunData.signedIntercept;
+/* Draw all saved LOPs */
+fixLOPs.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+let intNm=lop.intercept;
 
 let ix=cx+Math.sin(z)*intNm*scale;
 let iy=cy-Math.cos(z)*intNm*scale;
 
 ctx.strokeStyle="red";
-ctx.lineWidth=2;
+ctx.lineWidth=1.5;
 ctx.beginPath();
 ctx.moveTo(cx,cy);
 ctx.lineTo(ix,iy);
@@ -3651,40 +3658,50 @@ ctx.beginPath();
 ctx.arc(ix,iy,4,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText("Intercept",ix+6,iy-6);
+ctx.fillText("Int "+(index+1),ix+6,iy-6);
 
-let lineAngle=degToRad(lastSunData.Zn+90);
+let lineAngle=degToRad(lop.zn+90);
 
 ctx.strokeStyle="blue";
 ctx.lineWidth=2;
 ctx.beginPath();
+
 ctx.moveTo(
-ix-Math.sin(lineAngle)*160,
-iy+Math.cos(lineAngle)*160
+ix-Math.sin(lineAngle)*170,
+iy+Math.cos(lineAngle)*170
 );
+
 ctx.lineTo(
-ix+Math.sin(lineAngle)*160,
-iy-Math.cos(lineAngle)*160
+ix+Math.sin(lineAngle)*170,
+iy-Math.cos(lineAngle)*170
 );
+
 ctx.stroke();
 
 ctx.fillStyle="blue";
 ctx.fillText(
-"LOP / Zn "+lastSunData.Zn.toFixed(1)+"°",
+"LOP "+(index+1)+" / Zn "+lop.zn.toFixed(1)+"°",
 30,
-340
+335-(index*16)
 );
 
-document.getElementById("formsResult").innerHTML=
-"<b>PLOTTING SHEET</b><br><br>"+
-"Object: "+lastSunData.object+"<br>"+
-"Date: "+lastSunData.date+"<br>"+
-"UTC: "+lastSunData.time+"<br>"+
-"AP: "+formatLatLon(lastSunData.lat,true)+" / "+
-formatLatLon(lastSunData.lon,false)+"<br>"+
-"Zn: "+lastSunData.Zn.toFixed(1)+"°<br>"+
-"Intercept: "+
-formatFixIntercept(lastSunData.signedIntercept);
+});
+
+/* If 3 LOPs saved, draw fix triangle / fix point */
+if(fixLOPs.length>=3){
+calculateThreeLOPFix();
+}
+
+let info="<b>PLOTTING SHEET</b><br><br>";
+
+fixLOPs.forEach((lop,index)=>{
+info+=
+"LOP "+(index+1)+": "+lop.object+
+" / Zn "+lop.zn.toFixed(1)+"° / "+
+formatFixIntercept(lop.intercept)+"<br>";
+});
+
+document.getElementById("formsResult").innerHTML=info;
 
 }
 setNowUTC();
