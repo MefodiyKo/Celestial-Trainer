@@ -303,7 +303,6 @@ margin-top:0;
 }
 
 </style>
-</style>
 </head>
 
 <body>
@@ -781,7 +780,7 @@ No saved observations.
 <div id="runningfix" class="section">
 <div class="card">
 
-<h3>Running Fix</h3>
+<h3>Running Fix / 3-LOP Fix</h3>
 
 <label>LOP 1 Bearing (Zn)</label>
 <input id="rfZn1" class="full" type="number" step="0.1">
@@ -867,7 +866,7 @@ let runningFixLOP1=null;
 let lastVisibleStars=[];
 let skyObjects=[];
 let runningFixLOP2=null;
-let positionFixLOPs=[];
+let positionFixLOPs=[null,null,null];
 
 const STAR_CATALOG = {
 Alpheratz:{SHA:358,Dec:29,Mag:2.1},
@@ -3061,47 +3060,64 @@ let dir=value>=0?"TOWARD":"AWAY";
 return Math.abs(value).toFixed(1)+" NM "+dir;
 
 }
-
 function updatePositionFixCount(){
+
+let count=positionFixLOPs.filter(lop=>lop!==null).length;
 
 let el=document.getElementById("positionFixCount");
 
 if(el){
-el.innerText=positionFixLOPs.length;
+el.innerText=count;
 }
 
 }
 
-function addSightToPositionFix(){
+function savePositionFixLOP(index){
+
+calculateSightReduction();
 
 if(!lastSunData || lastSunData.signedIntercept===undefined){
-alert("Calculate Sight Reduction first.");
+alert("Sight Reduction failed.");
 return;
 }
 
-if(positionFixLOPs.length>=3){
-alert("Already have 3 LOPs. Clear fix first.");
-return;
-}
-
-positionFixLOPs.push({
+positionFixLOPs[index]={
 object:lastSunData.object,
 time:lastSunData.time,
+date:lastSunData.date,
 lat:lastSunData.lat,
 lon:lastSunData.lon,
 zn:lastSunData.Zn,
+hc:lastSunData.Hc,
 intercept:lastSunData.signedIntercept
-});
+};
+
+let log=JSON.parse(localStorage.getItem("celestialLog") || "[]");
+
+let entry=
+"LOP "+(index+1)+"\n"+
+"Object: "+lastSunData.object+"\n"+
+"Date: "+lastSunData.date+"\n"+
+"Time: "+lastSunData.time+"\n"+
+"Zn: "+lastSunData.Zn.toFixed(1)+"°\n"+
+"Hc: "+lastSunData.Hc.toFixed(1)+"°\n"+
+"Intercept: "+
+Math.abs(lastSunData.signedIntercept).toFixed(1)+
+" NM "+
+(lastSunData.signedIntercept>=0 ? "TOWARD" : "AWAY");
+
+log.unshift(entry);
+localStorage.setItem("celestialLog",JSON.stringify(log));
 
 updatePositionFixCount();
 
-alert("LOP added to 3-LOP Fix.");
+alert("LOP "+(index+1)+" saved");
 
 }
 
 function clearPositionFixLOPs(){
 
-positionFixLOPs=[];
+positionFixLOPs=[null,null,null];
 
 updatePositionFixCount();
 
@@ -3112,14 +3128,16 @@ document.getElementById("positionFixResult").innerHTML=
 
 function calculateThreeLOPFix(){
 
-if(positionFixLOPs.length<3){
+let fixLOPs=positionFixLOPs.filter(lop=>lop!==null);
+
+if(fixLOPs.length<3){
 document.getElementById("positionFixResult").innerHTML=
-"Add 3 sights first.";
+"Save LOP 1, LOP 2 and LOP 3 first.";
 return;
 }
 
-let apLat=positionFixLOPs[0].lat;
-let apLon=positionFixLOPs[0].lon;
+let apLat=fixLOPs[0].lat;
+let apLon=fixLOPs[0].lon;
 
 let Sss=0;
 let Ssc=0;
@@ -3127,7 +3145,7 @@ let Scc=0;
 let Bs=0;
 let Bc=0;
 
-positionFixLOPs.forEach(lop=>{
+fixLOPs.forEach(lop=>{
 
 let z=degToRad(lop.zn);
 
@@ -3163,7 +3181,7 @@ let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
 let residualText="";
 let rms=0;
 
-positionFixLOPs.forEach((lop,index)=>{
+fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
 
@@ -3184,7 +3202,7 @@ formatFixIntercept(lop.intercept)+
 
 });
 
-rms=Math.sqrt(rms/positionFixLOPs.length);
+rms=Math.sqrt(rms/fixLOPs.length);
 
 let quality="GOOD";
 
