@@ -845,6 +845,18 @@ Clear 3-LOP Fix
 <div class="result" id="positionFixResult">
 No position fix calculated.
 </div>
+<canvas
+id="threeLOPCanvas"
+width="350"
+height="300"
+style="
+margin-top:15px;
+background:#0b1b2b;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
 </div>
 </div>
 <div id="notes" class="section">
@@ -3289,6 +3301,67 @@ residualText+
 "<br>RMS Error: "+rms.toFixed(2)+" NM<br><br>"+
 
 "<span class='small'>Training approximation. Based on 3 LOP least-squares intersection.</span>";
+drawThreeLOPDiagram(fixLOPs, dx, dy);
+
+}
+}
+
+function drawThreeLOPDiagram(fixLOPs, dx, dy){
+
+let canvas=document.getElementById("runningFixCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let cx=175;
+let cy=150;
+let scale=5;
+
+ctx.strokeStyle="#9ee7ff";
+ctx.lineWidth=2;
+
+fixLOPs.forEach((lop,index)=>{
+
+let angle=degToRad(lop.zn+90);
+
+let shiftX=lop.intercept*Math.sin(degToRad(lop.zn))*scale;
+let shiftY=-lop.intercept*Math.cos(degToRad(lop.zn))*scale;
+
+let x1=cx+shiftX-Math.cos(angle)*150;
+let y1=cy+shiftY-Math.sin(angle)*150;
+
+let x2=cx+shiftX+Math.cos(angle)*150;
+let y2=cy+shiftY+Math.sin(angle)*150;
+
+ctx.beginPath();
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
+ctx.stroke();
+
+ctx.fillStyle="#ffffff";
+ctx.fillText(
+"LOP "+(index+1),
+x2+5,
+y2
+);
+
+});
+
+let fixX=cx+dx*scale;
+let fixY=cy-dy*scale;
+
+ctx.fillStyle="#ffd966";
+ctx.beginPath();
+ctx.arc(fixX,fixY,6,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+"FIX",
+fixX+10,
+fixY-10
+);
 
 }
 setNowUTC();
