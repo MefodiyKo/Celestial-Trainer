@@ -3494,6 +3494,121 @@ document.getElementById("formsResult").innerHTML=
 "Intercept: "+formatFixIntercept(lastSunData.signedIntercept)+"<br>"+
 "Azimuth Zn: "+formatBearing(lastSunData.Zn);
 }
+function drawPlottingSheet(){
+
+if(!lastSunData || lastSunData.signedIntercept===undefined){
+document.getElementById("formsResult").innerHTML=
+"Calculate sight reduction first.";
+return;
+}
+
+let canvas=document.getElementById("plottingCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let cx=175;
+let cy=175;
+let scale=6;
+
+ctx.fillStyle="white";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="#cccccc";
+ctx.lineWidth=1;
+
+for(let x=25;x<=325;x+=25){
+ctx.beginPath();
+ctx.moveTo(x,25);
+ctx.lineTo(x,325);
+ctx.stroke();
+}
+
+for(let y=25;y<=325;y+=25){
+ctx.beginPath();
+ctx.moveTo(25,y);
+ctx.lineTo(325,y);
+ctx.stroke();
+}
+
+ctx.strokeStyle="black";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(cx,25);
+ctx.lineTo(cx,325);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(25,cy);
+ctx.lineTo(325,cy);
+ctx.stroke();
+
+ctx.fillStyle="black";
+ctx.font="12px Arial";
+ctx.fillText("N",cx-4,18);
+ctx.fillText("E",330,cy+4);
+ctx.fillText("AP",cx+6,cy-6);
+
+ctx.beginPath();
+ctx.arc(cx,cy,4,0,Math.PI*2);
+ctx.fill();
+
+let z=degToRad(lastSunData.Zn);
+let intNm=lastSunData.signedIntercept;
+
+let ix=cx+Math.sin(z)*intNm*scale;
+let iy=cy-Math.cos(z)*intNm*scale;
+
+ctx.strokeStyle="red";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(ix,iy);
+ctx.stroke();
+
+ctx.fillStyle="red";
+ctx.beginPath();
+ctx.arc(ix,iy,4,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("Intercept",ix+6,iy-6);
+
+let lineAngle=degToRad(lastSunData.Zn+90);
+
+ctx.strokeStyle="blue";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(
+ix-Math.sin(lineAngle)*160,
+iy+Math.cos(lineAngle)*160
+);
+ctx.lineTo(
+ix+Math.sin(lineAngle)*160,
+iy-Math.cos(lineAngle)*160
+);
+ctx.stroke();
+
+ctx.fillStyle="blue";
+ctx.fillText(
+"LOP / Zn "+lastSunData.Zn.toFixed(1)+"°",
+30,
+340
+);
+
+document.getElementById("formsResult").innerHTML=
+"<b>PLOTTING SHEET</b><br><br>"+
+"Object: "+lastSunData.object+"<br>"+
+"Date: "+lastSunData.date+"<br>"+
+"UTC: "+lastSunData.time+"<br>"+
+"AP: "+formatLatLon(lastSunData.lat,true)+" / "+
+formatLatLon(lastSunData.lon,false)+"<br>"+
+"Zn: "+lastSunData.Zn.toFixed(1)+"°<br>"+
+"Intercept: "+
+formatFixIntercept(lastSunData.signedIntercept);
+
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
