@@ -282,6 +282,27 @@ margin-top:0;
 height:36px;
 font-size:13px;
 }
+.sourceRow select,
+.objectRow select{
+height:36px;
+font-size:13px;
+}
+
+.lopButtons{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+margin-top:12px;
+}
+
+.lopButtons button.main{
+height:38px;
+padding:6px;
+font-size:13px;
+margin-top:0;
+}
+
+</style>
 </style>
 </head>
 
@@ -670,27 +691,11 @@ Zn: <span id="sightZn">--</span>
 </div>
 </div>
 </div>
-<button class="main" onclick="calculateSightReduction()">Calculate Sight Reduction</button>
-<button class="main" onclick="addSightToPositionFix()">
-Add Sight to 3-LOP Fix
-</button>
-<button class="main" onclick="saveAstroFixLOP1()">
-Save as Astro Fix LOP1
-</button>
-
-<button class="main" onclick="saveAstroFixLOP2()">
-Save as Astro Fix LOP2
-</button>
-<button class="main" onclick="saveAsLOP1()">
-Save as Running Fix LOP1
-</button>
-
-<button class="main" onclick="saveAsLOP2()">
-Save as Running Fix LOP2
-</button>
-<button class="main" onclick="saveObservation()">
-Save Observation
-</button>
+<div class="lopButtons">
+<button class="main" onclick="savePositionFixLOP(0)">LOP 1</button>
+<button class="main" onclick="savePositionFixLOP(1)">LOP 2</button>
+<button class="main" onclick="savePositionFixLOP(2)">LOP 3</button>
+</div>
 <div class="result" id="sightResult">Calculate object in Almanac first.</div>
 
 </div>
