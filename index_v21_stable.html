@@ -197,6 +197,13 @@ gap:8px;
 align-items:end;
 margin-top:10px;
 }
+.courseRow{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+align-items:end;
+margin-top:10px;
+}
 
 .sourceRow{
 display:grid;
@@ -372,6 +379,22 @@ Running Fix
 <option>W</option>
 </select>
 </div>
+</div>
+
+</div>
+<div class="courseRow">
+
+<div>
+<div class="fieldTitle">Gyro Course</div>
+<input id="skyCourse" class="full" type="number" step="0.1" value="000">
+</div>
+
+<div>
+<div class="fieldTitle">Sky View Mode</div>
+<select id="skyMode" class="full" onchange="drawSkyView()">
+<option value="course">Course Centered</option>
+<option value="north">North Up</option>
+</select>
 </div>
 
 </div>
@@ -1515,18 +1538,25 @@ function(){alert("Copy failed.");}
 }
 
 function togglePositionSource(){
+
 let mode=document.getElementById("positionSource").value;
-let disabled=(mode==="gps");
+let gpsMode=(mode==="gps");
 
-document.getElementById("latDeg").disabled=disabled;
-document.getElementById("latMin").disabled=disabled;
-document.getElementById("latDir").disabled=disabled;
+document.getElementById("latDeg").disabled=gpsMode;
+document.getElementById("latMin").disabled=gpsMode;
+document.getElementById("latDir").disabled=gpsMode;
 
-document.getElementById("lonDeg").disabled=disabled;
-document.getElementById("lonMin").disabled=disabled;
-document.getElementById("lonDir").disabled=disabled;
+document.getElementById("lonDeg").disabled=gpsMode;
+document.getElementById("lonMin").disabled=gpsMode;
+document.getElementById("lonDir").disabled=gpsMode;
 
-document.getElementById("gpsButton").style.display=disabled?"block":"none";
+let gpsButton=document.getElementById("gpsButton");
+
+if(gpsButton){
+gpsButton.disabled=!gpsMode;
+gpsButton.style.opacity=gpsMode ? "1" : "0.45";
+}
+
 }
 
 function getGPSPosition(){
@@ -1561,6 +1591,7 @@ document.getElementById("lonMin").value=lonMin.toFixed(1);
 document.getElementById("lonDir").value=lonDir;
 
 setNowUTC();
+autoUpdateVisibleStars();
 calculateObject();
 },
 function(error){
@@ -2436,7 +2467,33 @@ let left=28;
 let right=340;
 let topY=24;
 let width=right-left;
+let skyMode=document.getElementById("skyMode")
+? document.getElementById("skyMode").value
+: "course";
 
+let skyCourse=parseFloat(
+document.getElementById("skyCourse")
+? document.getElementById("skyCourse").value
+: 0
+);
+
+if(isNaN(skyCourse)){
+skyCourse=0;
+}
+
+function azToX(az){
+
+az=norm360(az);
+
+if(skyMode==="north"){
+return left+(az/360)*width;
+}
+
+let rel=normalizeError(az-skyCourse);
+
+return left+((rel+180)/360)*width;
+
+}
 ctx.strokeStyle="rgba(158,231,255,0.35)";
 ctx.fillStyle="#9ee7ff";
 ctx.font="10px Arial";
@@ -2458,6 +2515,26 @@ ctx.moveTo(left,horizonY);
 ctx.lineTo(right,horizonY);
 ctx.stroke();
 
+let centerX=left+(width/2);
+
+ctx.strokeStyle="#ffd966";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(centerX,15);
+ctx.lineTo(centerX,horizonY);
+ctx.stroke();
+
+ctx.fillStyle="#ffd966";
+ctx.font="11px Arial";
+ctx.fillText(
+"AHEAD "+skyCourse.toFixed(0)+"°",
+centerX-30,
+12
+);
+
+ctx.lineWidth=1;
+
 /* Compass labels */
 let dirs=[
 {az:0,label:"N"},
@@ -2475,7 +2552,7 @@ ctx.fillStyle="#ffffff";
 ctx.font="11px Arial";
 
 dirs.forEach(d=>{
-let x=left+(d.az/360)*width;
+let x=azToX(d.az);
 ctx.fillText(d.label,x-7,horizonY+16);
 });
 
@@ -2489,7 +2566,7 @@ let selectedInfo=null;
 /* Draw visible sky objects */
 lastVisibleStars.forEach(obj=>{
 
-let x=left+(obj.zn/360)*width;
+let x=azToX(obj.zn);
 let y=horizonY-(obj.hc/90)*(horizonY-topY);
 
 if(y<topY)y=topY;
@@ -2555,10 +2632,15 @@ ctx.fillStyle="#9ee7ff";
 ctx.font="11px Arial";
 
 if(selectedInfo){
+let relBearing=normalizeError(selectedInfo.zn-skyCourse);
+
+let side=relBearing>=0?"STBD":"PORT";
+
 ctx.fillText(
 "Selected: "+selectedInfo.name+
 " | Hc "+selectedInfo.hc.toFixed(1)+"°"+
-" | Zn "+selectedInfo.zn.toFixed(1)+"°",
+" | Zn "+selectedInfo.zn.toFixed(1)+"°"+
+" | Rel "+Math.abs(relBearing).toFixed(0)+"° "+side,
 10,
 210
 );
@@ -2627,7 +2709,8 @@ function setupAutoSkyUpdate(){
 let ids=[
 "dateUTC","utcHour","utcMin","utcSec",
 "latDeg","latMin","latDir",
-"lonDeg","lonMin","lonDir"
+"lonDeg","lonMin","lonDir",
+"skyCourse","skyMode"
 ];
 
 ids.forEach(id=>{
