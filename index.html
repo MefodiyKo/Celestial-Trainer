@@ -337,6 +337,9 @@ Star Guide
 <button class="tab" onclick="openTab('astrofix',this)">
 Astro Fix
 </button>
+<button class="tab" onclick="openTab('forms',this)">
+Forms
+</button>
 <button class="tab" onclick="openTab('log',this)">
 Observation Log
 </button>
@@ -344,6 +347,7 @@ Observation Log
 <button class="tab" onclick="openTab('runningfix',this)">
 Running Fix
 </button>
+
 </div>
 
 <div id="almanac" class="section active">
@@ -860,6 +864,42 @@ border-radius:8px;
 width:100%;
 ">
 </canvas>
+</div>
+</div>
+<div id="forms" class="section">
+<div class="card">
+
+<h3>Celestial Forms</h3>
+
+<button class="main" onclick="fillSunSightForm()">
+Generate Sun Sight Form
+</button>
+
+<button class="main" onclick="fillMeridianForm()">
+Generate Meridian Passage Form
+</button>
+
+<button class="main" onclick="drawPlottingSheet()">
+Generate Plotting Sheet
+</button>
+
+<div class="result" id="formsResult">
+No form generated.
+</div>
+
+<canvas
+id="plottingCanvas"
+width="350"
+height="350"
+style="
+margin-top:15px;
+background:white;
+border:1px solid #31506a;
+border-radius:8px;
+width:100%;
+">
+</canvas>
+
 </div>
 </div>
 <div id="notes" class="section">
@@ -3431,6 +3471,28 @@ setTimeout(function(){
 win.print();
 },500);
 
+}
+function fillSunSightForm(){
+
+if(!lastSunData || lastSunData.signedIntercept===undefined){
+document.getElementById("formsResult").innerHTML=
+"Calculate sight reduction first.";
+return;
+}
+
+document.getElementById("formsResult").innerHTML=
+"<b>SUN / STAR SIGHT FORM</b><br><br>"+
+"Date: "+lastSunData.date+"<br>"+
+"UTC: "+lastSunData.time+"<br>"+
+"DR Lat: "+formatLatLon(lastSunData.lat,true)+"<br>"+
+"DR Lon: "+formatLatLon(lastSunData.lon,false)+"<br><br>"+
+"GHA: "+formatDM(lastSunData.GHA)+"<br>"+
+"Dec: "+formatDec(lastSunData.Dec)+"<br>"+
+"LHA: "+formatDM(lastSunData.LHA)+"<br><br>"+
+"Hc: "+formatAlt(lastSunData.Hc)+"<br>"+
+"Ho: calculated from sight input<br>"+
+"Intercept: "+formatFixIntercept(lastSunData.signedIntercept)+"<br>"+
+"Azimuth Zn: "+formatBearing(lastSunData.Zn);
 }
 setNowUTC();
 togglePositionSource();
