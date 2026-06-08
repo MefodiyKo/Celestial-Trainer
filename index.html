@@ -3312,39 +3312,43 @@ let canvas=document.getElementById("runningFixCanvas");
 if(!canvas)return;
 
 let ctx=canvas.getContext("2d");
-
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 let cx=175;
 let cy=150;
 let scale=5;
 
-ctx.strokeStyle="#9ee7ff";
 ctx.lineWidth=2;
+ctx.font="13px Arial";
 
 fixLOPs.forEach((lop,index)=>{
 
-let angle=degToRad(lop.zn+90);
+let z=degToRad(lop.zn);
+let lineAngle=degToRad(lop.zn+90);
 
-let shiftX=lop.intercept*Math.sin(degToRad(lop.zn))*scale;
-let shiftY=-lop.intercept*Math.cos(degToRad(lop.zn))*scale;
+let shiftX=lop.intercept*Math.sin(z)*scale;
+let shiftY=-lop.intercept*Math.cos(z)*scale;
 
-let x1=cx+shiftX-Math.cos(angle)*150;
-let y1=cy+shiftY-Math.sin(angle)*150;
-
-let x2=cx+shiftX+Math.cos(angle)*150;
-let y2=cy+shiftY+Math.sin(angle)*150;
-
+ctx.strokeStyle="#9ee7ff";
 ctx.beginPath();
-ctx.moveTo(x1,y1);
-ctx.lineTo(x2,y2);
+
+ctx.moveTo(
+cx+shiftX-Math.sin(lineAngle)*160,
+cy+shiftY+Math.cos(lineAngle)*160
+);
+
+ctx.lineTo(
+cx+shiftX+Math.sin(lineAngle)*160,
+cy+shiftY-Math.cos(lineAngle)*160
+);
+
 ctx.stroke();
 
 ctx.fillStyle="#ffffff";
 ctx.fillText(
 "LOP "+(index+1),
-x2+5,
-y2
+cx+shiftX+10,
+cy+shiftY-10
 );
 
 });
@@ -3357,12 +3361,7 @@ ctx.beginPath();
 ctx.arc(fixX,fixY,6,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText(
-"FIX",
-fixX+10,
-fixY-10
-);
-
+ctx.fillText("FIX",fixX+10,fixY-10);
 }
 setNowUTC();
 togglePositionSource();
