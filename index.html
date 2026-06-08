@@ -1538,18 +1538,25 @@ function(){alert("Copy failed.");}
 }
 
 function togglePositionSource(){
+
 let mode=document.getElementById("positionSource").value;
-let disabled=(mode==="gps");
+let gpsMode=(mode==="gps");
 
-document.getElementById("latDeg").disabled=disabled;
-document.getElementById("latMin").disabled=disabled;
-document.getElementById("latDir").disabled=disabled;
+document.getElementById("latDeg").disabled=gpsMode;
+document.getElementById("latMin").disabled=gpsMode;
+document.getElementById("latDir").disabled=gpsMode;
 
-document.getElementById("lonDeg").disabled=disabled;
-document.getElementById("lonMin").disabled=disabled;
-document.getElementById("lonDir").disabled=disabled;
+document.getElementById("lonDeg").disabled=gpsMode;
+document.getElementById("lonMin").disabled=gpsMode;
+document.getElementById("lonDir").disabled=gpsMode;
 
-document.getElementById("gpsButton").style.display=disabled?"block":"none";
+let gpsButton=document.getElementById("gpsButton");
+
+if(gpsButton){
+gpsButton.disabled=!gpsMode;
+gpsButton.style.opacity=gpsMode ? "1" : "0.45";
+}
+
 }
 
 function getGPSPosition(){
