@@ -1411,7 +1411,7 @@ function calculateSightReduction(){
 if(!lastSunData){
 document.getElementById("sightResult").innerHTML=
 "Calculate object in Almanac first.";
-return;
+return false;
 }
 
 let hsDeg=parseFloat(document.getElementById("hsDeg").value);
@@ -1437,7 +1437,7 @@ dip.toFixed(1)+"'";
 if(isNaN(hsDeg)||isNaN(hsMin)||isNaN(ie)){
 document.getElementById("sightResult").innerHTML=
 "Enter Hs, IE and Dip.";
-return;
+return false;
 }
 
 let Hs=hsDeg+(hsMin/60);
@@ -1526,6 +1526,7 @@ pa.toFixed(1)+
 "Intercept: "+Math.abs(intercept).toFixed(1)+" NM "+direction+"<br>"+
 "Zn: "+formatBearing(lastSunData.Zn);
 }
+return true;
 
 function copyObservation(){
 let text=document.getElementById("observationResult").innerText;
@@ -3074,10 +3075,12 @@ el.innerText=count;
 
 function savePositionFixLOP(index){
 
-calculateSightReduction();
+calculateObject();
 
-if(!lastSunData || lastSunData.signedIntercept===undefined){
-alert("Sight Reduction failed.");
+let ok=calculateSightReduction();
+
+if(!ok || !lastSunData || lastSunData.signedIntercept===undefined){
+alert("Check Object, Hs, IE and position.");
 return;
 }
 
