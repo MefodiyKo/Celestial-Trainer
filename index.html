@@ -3590,7 +3590,18 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 
 let cx=175;
 let cy=175;
-let scale=6;
+let maxIntercept=1;
+
+fixLOPs.forEach(lop=>{
+if(Math.abs(lop.intercept)>maxIntercept){
+maxIntercept=Math.abs(lop.intercept);
+}
+});
+
+let scale=Math.min(
+10,
+140/(maxIntercept+2)
+);
 
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
