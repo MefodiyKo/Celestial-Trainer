@@ -3658,8 +3658,6 @@ ctx.beginPath();
 ctx.arc(ix,iy,4,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText("Int "+(index+1),ix+6,iy-6);
-
 let lineAngle=degToRad(lop.zn+90);
 
 ctx.strokeStyle="blue";
@@ -3688,9 +3686,6 @@ ctx.fillText(
 });
 
 /* If 3 LOPs saved, draw fix triangle / fix point */
-if(fixLOPs.length>=3){
-calculateThreeLOPFix();
-}
 
 let info="<b>PLOTTING SHEET</b><br><br>";
 
@@ -3745,7 +3740,16 @@ ctx.fillText(
 fixX+8,
 fixY-8
 );
+let apLat=fixLOPs[0].lat;
+let apLon=fixLOPs[0].lon;
 
+let fixLat=apLat+dy/60;
+let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
+
+info +=
+"<br><br><b>Calculated Fix</b><br>"+
+"Lat: "+formatLatLon(fixLat,true)+"<br>"+
+"Lon: "+formatLatLon(fixLon,false)+"<br>";
 }
 
 }
