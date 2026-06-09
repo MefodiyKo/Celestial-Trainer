@@ -3550,6 +3550,62 @@ win.print();
 },500);
 
 }
+function fillMeridianForm(){
+
+if(!lastSunData){
+document.getElementById("formsResult").innerHTML=
+"Calculate Sun first.";
+return;
+}
+
+if(lastSunData.object!=="Sun"){
+document.getElementById("formsResult").innerHTML=
+"Meridian Passage requires Sun.";
+return;
+}
+
+let Ho="Not entered";
+
+if(document.getElementById("sightResult").innerText.includes("Ho:")){
+Ho=document.getElementById("sightResult").innerText;
+}
+
+let lat=Math.abs(lastSunData.lat);
+let dec=Math.abs(lastSunData.Dec);
+
+let ZD=Math.abs(90-lastSunData.Hc);
+
+let calcLat;
+
+if(
+(lastSunData.lat>=0 && lastSunData.Dec>=0) ||
+(lastSunData.lat<0 && lastSunData.Dec<0)
+){
+calcLat=ZD+dec;
+}else{
+calcLat=ZD-dec;
+}
+
+document.getElementById("formsResult").innerHTML=
+
+"<b>MERIDIAN PASSAGE FORM</b><br><br>"+
+
+"Date: "+lastSunData.date+"<br>"+
+"LAN UTC: "+lastSunData.time+"<br><br>"+
+
+"Observed Body: Sun<br>"+
+"Dec: "+formatDec(lastSunData.Dec)+"<br>"+
+"Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
+
+"Zenith Distance: "+
+ZD.toFixed(2)+"°<br><br>"+
+
+"<b>Latitude by Meridian Passage</b><br>"+
+calcLat.toFixed(2)+"°<br><br>"+
+
+"<span class='small'>Training approximation.</span>";
+
+}
 function fillSunSightForm(){
 
 if(!lastSunData || lastSunData.signedIntercept===undefined){
