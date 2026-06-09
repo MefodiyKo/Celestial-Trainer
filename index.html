@@ -3168,17 +3168,22 @@ Math.abs(lastSunData.signedIntercept).toFixed(1)+
 
 log.unshift(entry);
 localStorage.setItem("celestialLog",JSON.stringify(log));
+
 /* Auto-fill Astro Fix */
 if(index===0){
-document.getElementById("fixZn1").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixZn1").value=
+lastSunData.Zn.toFixed(1);
+
 document.getElementById("fixInt1").value=
-Math.abs(lastSunData.signedIntercept).toFixed(1);
+lastSunData.signedIntercept.toFixed(1);
 }
 
 if(index===1){
-document.getElementById("fixZn2").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixZn2").value=
+lastSunData.Zn.toFixed(1);
+
 document.getElementById("fixInt2").value=
-Math.abs(lastSunData.signedIntercept).toFixed(1);
+lastSunData.signedIntercept.toFixed(1);
 }
 
 /* Auto-fill Running Fix */
@@ -3186,36 +3191,48 @@ if(index===0){
 
 runningFixLOP1={
 zn:lastSunData.Zn,
-intercept:Math.abs(lastSunData.signedIntercept)
+intercept:lastSunData.signedIntercept
 };
 
 document.getElementById("rfZn1").value=
 lastSunData.Zn.toFixed(1);
 
 document.getElementById("rfInt1").value=
-Math.abs(lastSunData.signedIntercept).toFixed(1);
+lastSunData.signedIntercept.toFixed(1);
 }
 
 if(index===1){
 
 runningFixLOP2={
 zn:lastSunData.Zn,
-intercept:Math.abs(lastSunData.signedIntercept)
+intercept:lastSunData.signedIntercept
 };
 
 document.getElementById("rfZn2").value=
 lastSunData.Zn.toFixed(1);
 
 document.getElementById("rfInt2").value=
-Math.abs(lastSunData.signedIntercept).toFixed(1);
+lastSunData.signedIntercept.toFixed(1);
 }
-document.getElementById("fixLatDeg").value=document.getElementById("latDeg").value;
-document.getElementById("fixLatMin").value=document.getElementById("latMin").value;
-document.getElementById("fixLatDir").value=document.getElementById("latDir").value;
 
-document.getElementById("fixLonDeg").value=document.getElementById("lonDeg").value;
-document.getElementById("fixLonMin").value=document.getElementById("lonMin").value;
-document.getElementById("fixLonDir").value=document.getElementById("lonDir").value;
+/* Auto-fill assumed position */
+document.getElementById("fixLatDeg").value=
+document.getElementById("latDeg").value;
+
+document.getElementById("fixLatMin").value=
+document.getElementById("latMin").value;
+
+document.getElementById("fixLatDir").value=
+document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=
+document.getElementById("lonDeg").value;
+
+document.getElementById("fixLonMin").value=
+document.getElementById("lonMin").value;
+
+document.getElementById("fixLonDir").value=
+document.getElementById("lonDir").value;
 
 updatePositionFixCount();
 
@@ -3646,7 +3663,10 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 
 let cx=175;
 let cy=175;
-let scale=8;
+let maxInt=Math.max(...fixLOPs.map(lop=>Math.abs(lop.intercept)));
+let scale=110/(maxInt || 1);
+if(scale>12) scale=12;
+if(scale<4) scale=4;
 
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -3828,7 +3848,8 @@ formatFixIntercept(lop.intercept)+"<br>";
 });
 
 info+=fixText;
-
+info+="<br><br><span class='small'>Scale: auto / 1 square approx. "+
+(25/scale).toFixed(1)+" NM</span>";
 document.getElementById("formsResult").innerHTML=info;
 
 }
