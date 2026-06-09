@@ -4091,7 +4091,7 @@ drawPlottingSheet();
 
 let canvas=document.getElementById("plottingCanvas");
 let image=canvas.toDataURL("image/png");
-
+let fixSummary = document.getElementById("formsResult").innerHTML;
 let lopRows="";
 
 fixLOPs.forEach((lop,index)=>{
@@ -4137,7 +4137,9 @@ ${lopRows}
 </table>
 
 <img src="${image}">
-
+<div style="border:1px solid #000;padding:10px;margin-top:10px;font-size:12px;">
+${fixSummary}
+</div>
 <p class="small">
 Celestial Trainer — plotting sheet generated from saved LOPs.
 </p>
