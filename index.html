@@ -3717,7 +3717,7 @@ ctx.fill();
 fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
-let intNm=lop.intercept;
+let intNm=lop.intercept; // signed value
 
 let ix=cx+Math.sin(z)*intNm*scale;
 let iy=cy-Math.cos(z)*intNm*scale;
