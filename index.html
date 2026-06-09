@@ -3700,7 +3700,55 @@ info+=
 " / Zn "+lop.zn.toFixed(1)+"° / "+
 formatFixIntercept(lop.intercept)+"<br>";
 });
+if(fixLOPs.length===3){
 
+let Sss=0;
+let Ssc=0;
+let Scc=0;
+let Bs=0;
+let Bc=0;
+
+fixLOPs.forEach(lop=>{
+
+let z=degToRad(lop.zn);
+
+let s=Math.sin(z);
+let c=Math.cos(z);
+
+Sss+=s*s;
+Ssc+=s*c;
+Scc+=c*c;
+
+Bs+=lop.intercept*s;
+Bc+=lop.intercept*c;
+
+});
+
+let det=Sss*Scc-Ssc*Ssc;
+
+if(Math.abs(det)>0.0001){
+
+let dx=(Bs*Scc-Bc*Ssc)/det;
+let dy=(Sss*Bc-Ssc*Bs)/det;
+
+let fixX=cx+dx*scale;
+let fixY=cy-dy*scale;
+
+ctx.fillStyle="gold";
+
+ctx.beginPath();
+ctx.arc(fixX,fixY,6,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+"FIX",
+fixX+8,
+fixY-8
+);
+
+}
+
+}
 document.getElementById("formsResult").innerHTML=info;
 
 }
