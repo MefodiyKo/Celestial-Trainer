@@ -882,6 +882,9 @@ Generate Meridian Passage Form
 <button class="main" onclick="drawPlottingSheet()">
 Generate Plotting Sheet
 </button>
+<button class="main" onclick="exportPlottingPDF()">
+Export Plotting Sheet PDF
+</button>
 
 <div class="result" id="formsResult">
 No form generated.
@@ -3851,6 +3854,84 @@ info+=fixText;
 info+="<br><br><span class='small'>Scale: auto / 1 square approx. "+
 (25/scale).toFixed(1)+" NM</span>";
 document.getElementById("formsResult").innerHTML=info;
+
+}
+function exportPlottingPDF(){
+
+let fixLOPs=positionFixLOPs.filter(lop=>lop!==null);
+
+if(fixLOPs.length===0){
+alert("Save at least one LOP first.");
+return;
+}
+
+drawPlottingSheet();
+
+let canvas=document.getElementById("plottingCanvas");
+let image=canvas.toDataURL("image/png");
+
+let lopRows="";
+
+fixLOPs.forEach((lop,index)=>{
+lopRows+=
+"<tr>"+
+"<td>LOP "+(index+1)+"</td>"+
+"<td>"+lop.object+"</td>"+
+"<td>"+lop.date+"</td>"+
+"<td>"+lop.time+"</td>"+
+"<td>"+lop.zn.toFixed(1)+"°</td>"+
+"<td>"+formatFixIntercept(lop.intercept)+"</td>"+
+"</tr>";
+});
+
+let html=
+`
+<html>
+<head>
+<title>Plotting Sheet</title>
+<style>
+body{font-family:Arial;margin:20px;color:#000}
+h2{text-align:center;margin:4px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+td,th{border:1px solid #000;padding:5px;text-align:center}
+.small{text-align:center;font-size:11px}
+img{display:block;margin:15px auto;width:90%;max-width:600px}
+</style>
+</head>
+<body>
+
+<h2>CELESTIAL PLOTTING SHEET</h2>
+
+<table>
+<tr>
+<th>LOP</th>
+<th>Object</th>
+<th>Date</th>
+<th>UTC</th>
+<th>Zn</th>
+<th>Intercept</th>
+</tr>
+${lopRows}
+</table>
+
+<img src="${image}">
+
+<p class="small">
+Celestial Trainer — plotting sheet generated from saved LOPs.
+</p>
+
+</body>
+</html>
+`;
+
+let win=window.open("","_blank");
+win.document.open();
+win.document.write(html);
+win.document.close();
+
+setTimeout(function(){
+win.print();
+},500);
 
 }
 setNowUTC();
