@@ -3646,24 +3646,13 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 
 let cx=175;
 let cy=175;
-let maxIntercept=1;
-
-fixLOPs.forEach(lop=>{
-if(Math.abs(lop.intercept)>maxIntercept){
-maxIntercept=Math.abs(lop.intercept);
-}
-});
-
-let scale=Math.min(
-10,
-140/(maxIntercept+2)
-);
+let scale=8;
 
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 /* Grid */
-ctx.strokeStyle="#cccccc";
+ctx.strokeStyle="#dddddd";
 ctx.lineWidth=1;
 
 for(let x=25;x<=325;x+=25){
@@ -3680,7 +3669,7 @@ ctx.lineTo(325,y);
 ctx.stroke();
 }
 
-/* N/E axes */
+/* Axes */
 ctx.strokeStyle="black";
 ctx.lineWidth=2;
 
@@ -3695,16 +3684,16 @@ ctx.lineTo(325,cy);
 ctx.stroke();
 
 ctx.fillStyle="black";
-ctx.font="12px Arial";
-ctx.fillText("N",cx-4,18);
+ctx.font="13px Arial";
+ctx.fillText("N",cx-5,18);
 ctx.fillText("E",330,cy+4);
-ctx.fillText("AP",cx+6,cy-6);
+ctx.fillText("AP",cx+7,cy-7);
 
 ctx.beginPath();
 ctx.arc(cx,cy,4,0,Math.PI*2);
 ctx.fill();
 
-/* Draw all saved LOPs */
+/* Draw LOPs */
 fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
@@ -3725,6 +3714,8 @@ ctx.beginPath();
 ctx.arc(ix,iy,4,0,Math.PI*2);
 ctx.fill();
 
+ctx.fillText("Int "+(index+1),ix+6,iy-6);
+
 let lineAngle=degToRad(lop.zn+90);
 
 ctx.strokeStyle="blue";
@@ -3732,13 +3723,13 @@ ctx.lineWidth=2;
 ctx.beginPath();
 
 ctx.moveTo(
-ix-Math.sin(lineAngle)*170,
-iy+Math.cos(lineAngle)*170
+ix-Math.sin(lineAngle)*200,
+iy+Math.cos(lineAngle)*200
 );
 
 ctx.lineTo(
-ix+Math.sin(lineAngle)*170,
-iy-Math.cos(lineAngle)*170
+ix+Math.sin(lineAngle)*200,
+iy-Math.cos(lineAngle)*200
 );
 
 ctx.stroke();
@@ -3747,22 +3738,15 @@ ctx.fillStyle="blue";
 ctx.fillText(
 "LOP "+(index+1)+" / Zn "+lop.zn.toFixed(1)+"°",
 30,
-335-(index*16)
+340-(index*16)
 );
 
 });
 
-/* If 3 LOPs saved, draw fix triangle / fix point */
+/* Calculate FIX for 3 LOPs */
+let fixText="";
 
-let info="<b>PLOTTING SHEET</b><br><br>";
-
-fixLOPs.forEach((lop,index)=>{
-info+=
-"LOP "+(index+1)+": "+lop.object+
-" / Zn "+lop.zn.toFixed(1)+"° / "+
-formatFixIntercept(lop.intercept)+"<br>";
-});
-if(fixLOPs.length===3){
+if(fixLOPs.length>=3){
 
 let Sss=0;
 let Ssc=0;
@@ -3773,7 +3757,6 @@ let Bc=0;
 fixLOPs.forEach(lop=>{
 
 let z=degToRad(lop.zn);
-
 let s=Math.sin(z);
 let c=Math.cos(z);
 
@@ -3796,30 +3779,56 @@ let dy=(Sss*Bc-Ssc*Bs)/det;
 let fixX=cx+dx*scale;
 let fixY=cy-dy*scale;
 
-ctx.fillStyle="gold";
-
-ctx.beginPath();
-ctx.arc(fixX,fixY,6,0,Math.PI*2);
-ctx.fill();
-
-ctx.fillText(
-"FIX",
-fixX+8,
-fixY-8
-);
 let apLat=fixLOPs[0].lat;
 let apLon=fixLOPs[0].lon;
 
 let fixLat=apLat+dy/60;
 let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
 
-info +=
+let distance=Math.sqrt(dx*dx+dy*dy);
+let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+
+ctx.fillStyle="gold";
+ctx.beginPath();
+ctx.arc(fixX,fixY,7,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="orange";
+ctx.font="14px Arial";
+ctx.fillText("FIX",fixX+10,fixY-10);
+
+/* AP to FIX line */
+ctx.strokeStyle="orange";
+ctx.setLineDash([5,5]);
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(fixX,fixY);
+ctx.stroke();
+ctx.setLineDash([]);
+
+fixText=
 "<br><br><b>Calculated Fix</b><br>"+
 "Lat: "+formatLatLon(fixLat,true)+"<br>"+
-"Lon: "+formatLatLon(fixLon,false)+"<br>";
+"Lon: "+formatLatLon(fixLon,false)+"<br>"+
+"From AP: "+distance.toFixed(1)+" NM / "+
+bearing.toFixed(0)+"°";
 }
 
 }
+
+/* Result text */
+let info="<b>PLOTTING SHEET</b><br><br>";
+
+fixLOPs.forEach((lop,index)=>{
+info+=
+"LOP "+(index+1)+": "+
+lop.object+
+" / Zn "+lop.zn.toFixed(1)+"° / "+
+formatFixIntercept(lop.intercept)+"<br>";
+});
+
+info+=fixText;
+
 document.getElementById("formsResult").innerHTML=info;
 
 }
