@@ -3661,121 +3661,139 @@ return;
 let canvas=document.getElementById("plottingCanvas");
 if(!canvas)return;
 
+canvas.width=700;
+canvas.height=700;
+
 let ctx=canvas.getContext("2d");
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-let cx=175;
-let cy=175;
-let maxInt=Math.max(...fixLOPs.map(lop=>Math.abs(lop.intercept)));
-let scale=110/(maxInt || 1);
-if(scale>12) scale=12;
-if(scale<4) scale=4;
+let cx=350;
+let cy=350;
+let radius=280;
 
+let maxInt=Math.max(...fixLOPs.map(lop=>Math.abs(lop.intercept)));
+let scale=180/(maxInt || 1);
+if(scale>30)scale=30;
+if(scale<8)scale=8;
+
+/* Background */
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-/* Grid */
-ctx.strokeStyle="#dddddd";
+/* Outer circle */
+ctx.strokeStyle="#000";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.arc(cx,cy,radius,0,Math.PI*2);
+ctx.stroke();
+
+/* Range circles */
+ctx.strokeStyle="#cccccc";
 ctx.lineWidth=1;
 
-for(let x=25;x<=325;x+=25){
+for(let r=50;r<radius;r+=50){
 ctx.beginPath();
-ctx.moveTo(x,25);
-ctx.lineTo(x,325);
+ctx.arc(cx,cy,r,0,Math.PI*2);
 ctx.stroke();
 }
 
-for(let y=25;y<=325;y+=25){
+/* Radials every 10 degrees */
+for(let a=0;a<360;a+=10){
+
+let rad=degToRad(a);
+let x1=cx+Math.sin(rad)*20;
+let y1=cy-Math.cos(rad)*20;
+let x2=cx+Math.sin(rad)*radius;
+let y2=cy-Math.cos(rad)*radius;
+
+ctx.strokeStyle=(a%90===0)?"#000":"#dddddd";
+ctx.lineWidth=(a%90===0)?2:1;
+
 ctx.beginPath();
-ctx.moveTo(25,y);
-ctx.lineTo(325,y);
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
 ctx.stroke();
+
 }
 
-/* Axes */
-ctx.strokeStyle="black";
-ctx.lineWidth=2;
+/* Compass labels */
+ctx.fillStyle="#000";
+ctx.font="18px Arial";
+ctx.fillText("N",cx-7,cy-radius-10);
+ctx.fillText("E",cx+radius+8,cy+6);
+ctx.fillText("S",cx-6,cy+radius+24);
+ctx.fillText("W",cx-radius-24,cy+6);
 
+/* AP */
+ctx.fillStyle="#000";
 ctx.beginPath();
-ctx.moveTo(cx,25);
-ctx.lineTo(cx,325);
-ctx.stroke();
-
-ctx.beginPath();
-ctx.moveTo(25,cy);
-ctx.lineTo(325,cy);
-ctx.stroke();
-
-ctx.fillStyle="black";
-ctx.font="13px Arial";
-ctx.fillText("N",cx-5,18);
-ctx.fillText("E",330,cy+4);
-ctx.fillText("AP",cx+7,cy-7);
-
-ctx.beginPath();
-ctx.arc(cx,cy,4,0,Math.PI*2);
+ctx.arc(cx,cy,5,0,Math.PI*2);
 ctx.fill();
+ctx.font="16px Arial";
+ctx.fillText("AP",cx+8,cy-8);
 
 /* Draw LOPs */
 fixLOPs.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
-let intNm=lop.intercept; // signed value
+let intNm=lop.intercept;
 
 let ix=cx+Math.sin(z)*intNm*scale;
 let iy=cy-Math.cos(z)*intNm*scale;
 
+/* Intercept line */
 ctx.strokeStyle="red";
-ctx.lineWidth=1.5;
+ctx.lineWidth=2;
 ctx.beginPath();
 ctx.moveTo(cx,cy);
 ctx.lineTo(ix,iy);
 ctx.stroke();
 
+/* Intercept point */
 ctx.fillStyle="red";
 ctx.beginPath();
-ctx.arc(ix,iy,4,0,Math.PI*2);
+ctx.arc(ix,iy,5,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText("Int "+(index+1),ix+6,iy-6);
+ctx.font="15px Arial";
+ctx.fillText("Int "+(index+1),ix+8,iy-8);
 
+/* LOP line */
 let lineAngle=degToRad(lop.zn+90);
 
 ctx.strokeStyle="blue";
-ctx.lineWidth=2;
+ctx.lineWidth=3;
 ctx.beginPath();
 
 ctx.moveTo(
-ix-Math.sin(lineAngle)*200,
-iy+Math.cos(lineAngle)*200
+ix-Math.sin(lineAngle)*350,
+iy+Math.cos(lineAngle)*350
 );
 
 ctx.lineTo(
-ix+Math.sin(lineAngle)*200,
-iy-Math.cos(lineAngle)*200
+ix+Math.sin(lineAngle)*350,
+iy-Math.cos(lineAngle)*350
 );
 
 ctx.stroke();
 
+/* Bottom labels */
 ctx.fillStyle="blue";
+ctx.font="16px Arial";
 ctx.fillText(
 "LOP "+(index+1)+" / Zn "+lop.zn.toFixed(1)+"°",
-30,
-340-(index*16)
+40,
+640-(index*22)
 );
 
 });
 
-/* Calculate FIX for 3 LOPs */
+/* Fix calculation */
 let fixText="";
 
 if(fixLOPs.length>=3){
 
-let Sss=0;
-let Ssc=0;
-let Scc=0;
-let Bs=0;
-let Bc=0;
+let Sss=0,Ssc=0,Scc=0,Bs=0,Bc=0;
 
 fixLOPs.forEach(lop=>{
 
@@ -3786,7 +3804,6 @@ let c=Math.cos(z);
 Sss+=s*s;
 Ssc+=s*c;
 Scc+=c*c;
-
 Bs+=lop.intercept*s;
 Bc+=lop.intercept*c;
 
@@ -3811,23 +3828,23 @@ let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
 let distance=Math.sqrt(dx*dx+dy*dy);
 let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
 
-ctx.fillStyle="gold";
-ctx.beginPath();
-ctx.arc(fixX,fixY,7,0,Math.PI*2);
-ctx.fill();
-
-ctx.fillStyle="orange";
-ctx.font="14px Arial";
-ctx.fillText("FIX",fixX+10,fixY-10);
-
-/* AP to FIX line */
 ctx.strokeStyle="orange";
-ctx.setLineDash([5,5]);
+ctx.setLineDash([8,6]);
+ctx.lineWidth=2;
 ctx.beginPath();
 ctx.moveTo(cx,cy);
 ctx.lineTo(fixX,fixY);
 ctx.stroke();
 ctx.setLineDash([]);
+
+ctx.fillStyle="gold";
+ctx.beginPath();
+ctx.arc(fixX,fixY,9,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="orange";
+ctx.font="18px Arial";
+ctx.fillText("FIX",fixX+12,fixY-12);
 
 fixText=
 "<br><br><b>Calculated Fix</b><br>"+
@@ -3835,6 +3852,7 @@ fixText=
 "Lon: "+formatLatLon(fixLon,false)+"<br>"+
 "From AP: "+distance.toFixed(1)+" NM / "+
 bearing.toFixed(0)+"°";
+
 }
 
 }
@@ -3851,8 +3869,9 @@ formatFixIntercept(lop.intercept)+"<br>";
 });
 
 info+=fixText;
-info+="<br><br><span class='small'>Scale: auto / 1 square approx. "+
-(25/scale).toFixed(1)+" NM</span>";
+info+="<br><br><span class='small'>Circular plotting sheet. Scale: auto / 1 ring approx. "+
+(50/scale).toFixed(1)+" NM</span>";
+
 document.getElementById("formsResult").innerHTML=info;
 
 }
