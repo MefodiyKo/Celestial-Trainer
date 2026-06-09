@@ -3716,13 +3716,36 @@ ctx.stroke();
 
 }
 
-/* Compass labels */
+/* Degree scale */
+
 ctx.fillStyle="#000";
-ctx.font="18px Arial";
-ctx.fillText("N",cx-7,cy-radius-10);
-ctx.fillText("E",cx+radius+8,cy+6);
-ctx.fillText("S",cx-6,cy+radius+24);
-ctx.fillText("W",cx-radius-24,cy+6);
+ctx.font="14px Arial";
+
+for(let deg=0;deg<360;deg+=10){
+
+let r=radius+18;
+
+let x=cx+Math.sin(degToRad(deg))*r;
+let y=cy-Math.cos(degToRad(deg))*r;
+
+let txt=String(deg).padStart(3,"0");
+
+ctx.fillText(
+txt,
+x-12,
+y+5
+);
+
+}
+
+/* Main cardinal labels */
+
+ctx.font="22px Arial";
+
+ctx.fillText("N",cx-8,cy-radius-35);
+ctx.fillText("E",cx+radius+35,cy+8);
+ctx.fillText("S",cx-8,cy+radius+42);
+ctx.fillText("W",cx-radius-42,cy+8);
 
 /* AP */
 ctx.fillStyle="#000";
@@ -3787,7 +3810,49 @@ ctx.fillText(
 );
 
 });
+/* Pair intersections for Cocked Hat */
 
+let pairPoints=[];
+
+for(let i=0;i<fixLOPs.length;i++){
+
+for(let j=i+1;j<fixLOPs.length;j++){
+
+let z1=degToRad(fixLOPs[i].zn);
+let z2=degToRad(fixLOPs[j].zn);
+
+let p1={
+x:cx+fixLOPs[i].intercept*Math.sin(z1)*scale,
+y:cy-fixLOPs[i].intercept*Math.cos(z1)*scale
+};
+
+let p2={
+x:p1.x+Math.sin(z1+Math.PI/2)*500,
+y:p1.y-Math.cos(z1+Math.PI/2)*500
+};
+
+let p3={
+x:cx+fixLOPs[j].intercept*Math.sin(z2)*scale,
+y:cy-fixLOPs[j].intercept*Math.cos(z2)*scale
+};
+
+let p4={
+x:p3.x+Math.sin(z2+Math.PI/2)*500,
+y:p3.y-Math.cos(z2+Math.PI/2)*500
+};
+
+let p=lineIntersection(
+p1,p2,
+p3,p4
+);
+
+if(p){
+pairPoints.push(p);
+}
+
+}
+
+}
 /* Fix calculation */
 let fixText="";
 
@@ -3827,7 +3892,37 @@ let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
 
 let distance=Math.sqrt(dx*dx+dy*dy);
 let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+/* Cocked Hat */
 
+if(pairPoints.length===3){
+
+ctx.fillStyle="rgba(255,215,0,0.20)";
+ctx.strokeStyle="#ffd966";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+
+ctx.moveTo(
+pairPoints[0].x,
+pairPoints[0].y
+);
+
+ctx.lineTo(
+pairPoints[1].x,
+pairPoints[1].y
+);
+
+ctx.lineTo(
+pairPoints[2].x,
+pairPoints[2].y
+);
+
+ctx.closePath();
+
+ctx.fill();
+ctx.stroke();
+
+}
 ctx.strokeStyle="orange";
 ctx.setLineDash([8,6]);
 ctx.lineWidth=2;
