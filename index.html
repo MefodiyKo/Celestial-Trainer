@@ -878,7 +878,9 @@ Generate Sun Sight Form
 <button class="main" onclick="fillMeridianForm()">
 Generate Meridian Passage Form
 </button>
-
+<button class="main" onclick="fillWorksheetForm()">
+Generate Sight Worksheet
+</button>
 <button class="main" onclick="drawPlottingSheet()">
 Generate Plotting Sheet
 </button>
@@ -1537,6 +1539,24 @@ Math.abs(intercept);
 lastSunData.direction=
 direction;
 lastSunData.signedIntercept=intercept;
+lastSunData.worksheet={
+Hs: Hs,
+IE: ie,
+Dip: dip,
+Ha: Ha,
+Pressure: pressure,
+Temperature: temperature,
+Refraction: ref,
+SD: sd,
+Parallax: pa,
+Ho: Ho,
+Hc: lastSunData.Hc,
+Zn: lastSunData.Zn,
+GHA: lastSunData.GHA,
+Dec: lastSunData.Dec,
+LHA: lastSunData.LHA,
+Intercept: intercept
+};
 document.getElementById("sightResult").innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Date UTC: "+lastSunData.date+"<br>"+
@@ -3152,7 +3172,8 @@ lat:lastSunData.lat,
 lon:lastSunData.lon,
 zn:lastSunData.Zn,
 hc:lastSunData.Hc,
-intercept:lastSunData.signedIntercept
+intercept:lastSunData.signedIntercept,
+worksheet:lastSunData.worksheet
 };
 
 let log=JSON.parse(localStorage.getItem("celestialLog") || "[]");
@@ -3647,6 +3668,53 @@ document.getElementById("formsResult").innerHTML=
 "Ho: calculated from sight input<br>"+
 "Intercept: "+formatFixIntercept(lastSunData.signedIntercept)+"<br>"+
 "Azimuth Zn: "+formatBearing(lastSunData.Zn);
+}
+function fillWorksheetForm(){
+
+let fixLOPs=positionFixLOPs.filter(lop=>lop!==null);
+
+if(fixLOPs.length===0){
+document.getElementById("formsResult").innerHTML=
+"Save at least one LOP first.";
+return;
+}
+
+let html="<b>SIGHT REDUCTION WORKSHEET</b><br><br>";
+
+fixLOPs.forEach((lop,index)=>{
+
+let w=lop.worksheet;
+
+if(!w){
+html+="<b>LOP "+(index+1)+"</b><br>No worksheet data saved.<br><br>";
+return;
+}
+
+html+=
+"<div class='resultBox'>"+
+"<b>LOP "+(index+1)+" — "+lop.object+"</b><br>"+
+"Date: "+lop.date+"<br>"+
+"UTC: "+lop.time+"<br>"+
+"GHA: "+formatDM(w.GHA)+"<br>"+
+"Dec: "+formatDec(w.Dec)+"<br>"+
+"LHA: "+formatDM(w.LHA)+"<br>"+
+"Hs: "+formatAlt(w.Hs)+"<br>"+
+"IE: "+w.IE.toFixed(1)+"'<br>"+
+"Dip: "+w.Dip.toFixed(1)+"'<br>"+
+"Ha: "+formatAlt(w.Ha)+"<br>"+
+"Refraction: "+w.Refraction.toFixed(1)+"'<br>"+
+"SD: "+w.SD.toFixed(1)+"'<br>"+
+"Parallax: "+w.Parallax.toFixed(1)+"'<br>"+
+"Ho: "+formatAlt(w.Ho)+"<br>"+
+"Hc: "+formatAlt(w.Hc)+"<br>"+
+"Zn: "+formatBearing(w.Zn)+"<br>"+
+"Intercept: "+formatFixIntercept(w.Intercept)+
+"</div><br>";
+
+});
+
+document.getElementById("formsResult").innerHTML=html;
+
 }
 function drawPlottingSheet(){
 
