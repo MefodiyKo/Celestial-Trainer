@@ -3497,8 +3497,13 @@ if(p)intersections.push(p);
 }
 
 }
-let fixX=cx+dx*scale;
-let fixY=cy-dy*scale;
+let fixX=(pairPoints[0].x+
+          pairPoints[1].x+
+          pairPoints[2].x)/3;
+
+let fixY=(pairPoints[0].y+
+          pairPoints[1].y+
+          pairPoints[2].y)/3;
 if(intersections.length===3){
 
 ctx.fillStyle="rgba(255,255,0,0.15)";
@@ -3962,11 +3967,46 @@ let distance=Math.sqrt(dx*dx+dy*dy);
 let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
 /* Cocked Hat */
 
+let cockedHatAreaText="";
+
 if(pairPoints.length===3){
 
 ctx.fillStyle="rgba(255,215,0,0.20)";
 ctx.strokeStyle="#ffd966";
 ctx.lineWidth=2;
+
+ctx.beginPath();
+
+ctx.moveTo(pairPoints[0].x,pairPoints[0].y);
+ctx.lineTo(pairPoints[1].x,pairPoints[1].y);
+ctx.lineTo(pairPoints[2].x,pairPoints[2].y);
+
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+
+/* Cocked Hat area in NM² */
+let areaPixels =
+Math.abs(
+pairPoints[0].x*(pairPoints[1].y-pairPoints[2].y)+
+pairPoints[1].x*(pairPoints[2].y-pairPoints[0].y)+
+pairPoints[2].x*(pairPoints[0].y-pairPoints[1].y)
+)/2;
+
+let areaNm2 = areaPixels / (scale*scale);
+
+cockedHatAreaText =
+"<br>Cocked Hat Area: "+areaNm2.toFixed(2)+" sq NM";
+
+ctx.fillStyle="black";
+ctx.font="15px Arial";
+ctx.fillText(
+"Cocked Hat: "+areaNm2.toFixed(2)+" sq NM",
+40,
+610
+);
+
+}
 
 ctx.beginPath();
 
@@ -4015,7 +4055,7 @@ fixText=
 "Lon: "+formatLatLon(fixLon,false)+"<br>"+
 "From AP: "+distance.toFixed(1)+" NM / "+
 bearing.toFixed(0)+"°";
-
+cockedHatAreaText;
 }
 
 }
