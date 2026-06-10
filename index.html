@@ -1089,20 +1089,40 @@ return value;
 }
 
 function getInputData(){
+
 let date=document.getElementById("dateUTC").value;
-let time=getTimeUTC();
-let lat=getCoord("latDeg","latMin","latDir");
-let lon=getCoord("lonDeg","lonMin","lonDir");
+
+let h=document.getElementById("utcHour").value;
+let m=document.getElementById("utcMin").value;
+let s=document.getElementById("utcSec").value;
 
 if(!date){
 return {error:"Enter Date UTC"};
 }
 
-if(lat===null||lon===null){
-return {error:"Enter Latitude and Longitude"};
+if(h==="" || m==="" || s===""){
+return {error:"Enter Time UTC"};
 }
 
-return {date:date,time:time,lat:lat,lon:lon};
+let time=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+let lat=getCoord("latDeg","latMin","latDir");
+let lon=getCoord("lonDeg","lonMin","lonDir");
+
+if(lat===null || lon===null){
+return {error:"Enter Latitude and Longitude or press Get GPS"};
+}
+
+return {
+date:date,
+time:time,
+lat:lat,
+lon:lon
+};
+
 }
 
 function gmstFromJD(JD){
@@ -1644,14 +1664,18 @@ gpsButton.style.opacity="1";
 }
 
 function getGPSPosition(){
-document.getElementById("positionSource").value="gps";   
+
 if(!navigator.geolocation){
-alert("GPS not supported.");
+alert("GPS not supported by this browser.");
 return;
 }
 
+document.getElementById("positionSource").value="gps";
+
 navigator.geolocation.getCurrentPosition(
+
 function(position){
+
 let lat=position.coords.latitude;
 let lon=position.coords.longitude;
 
@@ -1676,18 +1700,36 @@ document.getElementById("lonMin").value=lonMin.toFixed(1);
 document.getElementById("lonDir").value=lonDir;
 
 setNowUTC();
-autoUpdateVisibleStars();
+
 calculateObject();
+autoUpdateVisibleStars();
+drawSkyView();
+
+alert("GPS position received.");
+
 },
+
 function(error){
-alert("GPS Error Code: "+error.code+"\n"+error.message);
+
+let msg="GPS error: ";
+
+if(error.code===1) msg+="Permission denied. Allow Location in Safari settings.";
+else if(error.code===2) msg+="Position unavailable.";
+else if(error.code===3) msg+="Timeout. Try again outside or near window.";
+else msg+=error.message;
+
+alert(msg);
+
 },
+
 {
 enableHighAccuracy:true,
 timeout:30000,
 maximumAge:0
 }
+
 );
+
 }
 function updateObjectListWithVisibleStars(stars){
 
@@ -4444,11 +4486,10 @@ setNowUTC();
 togglePositionSource();
 updateBodyFields();
 setupAutoSkyUpdate();
-autoUpdateVisibleStars();
-drawSkyView();
 updatePositionFixCount();
 populateStarGuideList();
 showStarGuide();
+drawSkyView();
 
 </script>
 
