@@ -4158,6 +4158,288 @@ win.print();
 },500);
 
 }
+function getSavedLOPs(){
+return positionFixLOPs.filter(lop=>lop!==null);
+}
+
+function formatFixIntercept(value){
+let dir=value>=0?"TOWARD":"AWAY";
+return Math.abs(value).toFixed(1)+" NM "+dir;
+}
+
+function updatePositionFixCount(){
+let el=document.getElementById("positionFixCount");
+if(el){
+el.innerText=getSavedLOPs().length;
+}
+}
+
+function savePositionFixLOP(index){
+
+calculateObject();
+
+let ok=calculateSightReduction();
+
+if(!ok || !lastSunData || lastSunData.signedIntercept===undefined){
+alert("Check Object, Hs, IE and position.");
+return;
+}
+
+positionFixLOPs[index]={
+object:lastSunData.object,
+date:lastSunData.date,
+time:lastSunData.time,
+lat:lastSunData.lat,
+lon:lastSunData.lon,
+zn:lastSunData.Zn,
+hc:lastSunData.Hc,
+intercept:lastSunData.signedIntercept,
+worksheet:lastSunData.worksheet || null
+};
+
+if(index===0){
+document.getElementById("fixZn1").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixInt1").value=lastSunData.signedIntercept.toFixed(1);
+
+runningFixLOP1={
+zn:lastSunData.Zn,
+intercept:lastSunData.signedIntercept
+};
+
+document.getElementById("rfZn1").value=lastSunData.Zn.toFixed(1);
+document.getElementById("rfInt1").value=lastSunData.signedIntercept.toFixed(1);
+}
+
+if(index===1){
+document.getElementById("fixZn2").value=lastSunData.Zn.toFixed(1);
+document.getElementById("fixInt2").value=lastSunData.signedIntercept.toFixed(1);
+
+runningFixLOP2={
+zn:lastSunData.Zn,
+intercept:lastSunData.signedIntercept
+};
+
+document.getElementById("rfZn2").value=lastSunData.Zn.toFixed(1);
+document.getElementById("rfInt2").value=lastSunData.signedIntercept.toFixed(1);
+}
+
+document.getElementById("fixLatDeg").value=document.getElementById("latDeg").value;
+document.getElementById("fixLatMin").value=document.getElementById("latMin").value;
+document.getElementById("fixLatDir").value=document.getElementById("latDir").value;
+
+document.getElementById("fixLonDeg").value=document.getElementById("lonDeg").value;
+document.getElementById("fixLonMin").value=document.getElementById("lonMin").value;
+document.getElementById("fixLonDir").value=document.getElementById("lonDir").value;
+
+let log=JSON.parse(localStorage.getItem("celestialLog") || "[]");
+
+log.unshift(
+"LOP "+(index+1)+"\n"+
+"Object: "+lastSunData.object+"\n"+
+"Date: "+lastSunData.date+"\n"+
+"Time: "+lastSunData.time+"\n"+
+"Zn: "+lastSunData.Zn.toFixed(1)+"°\n"+
+"Hc: "+formatAlt(lastSunData.Hc)+"\n"+
+"Intercept: "+formatFixIntercept(lastSunData.signedIntercept)
+);
+
+localStorage.setItem("celestialLog",JSON.stringify(log));
+
+updatePositionFixCount();
+
+alert("LOP "+(index+1)+" saved");
+}
+
+function clearPositionFixLOPs(){
+positionFixLOPs=[null,null,null];
+updatePositionFixCount();
+
+document.getElementById("positionFixResult").innerHTML=
+"No position fix calculated.";
+
+document.getElementById("formsResult").innerHTML=
+"No form generated.";
+
+let c1=document.getElementById("threeLOPCanvas");
+if(c1)c1.getContext("2d").clearRect(0,0,c1.width,c1.height);
+
+let c2=document.getElementById("plottingCanvas");
+if(c2)c2.getContext("2d").clearRect(0,0,c2.width,c2.height);
+}
+
+function calculateFixSolution(fixLOPs){
+
+let Sss=0;
+let Ssc=0;
+let Scc=0;
+let Bs=0;
+let Bc=0;
+
+fixLOPs.forEach(lop=>{
+let z=degToRad(lop.zn);
+let s=Math.sin(z);
+let c=Math.cos(z);
+
+Sss+=s*s;
+Ssc+=s*c;
+Scc+=c*c;
+Bs+=lop.intercept*s;
+Bc+=lop.intercept*c;
+});
+
+let det=Sss*Scc-Ssc*Ssc;
+
+if(Math.abs(det)<0.0001){
+return null;
+}
+
+let dx=(Bs*Scc-Bc*Ssc)/det;
+let dy=(Sss*Bc-Ssc*Bs)/det;
+
+return {dx:dx,dy:dy};
+}
+
+function calculateThreeLOPFix(){
+
+let fixLOPs=getSavedLOPs();
+
+if(fixLOPs.length<3){
+document.getElementById("positionFixResult").innerHTML=
+"Save LOP 1, LOP 2 and LOP 3 first.";
+return;
+}
+
+let solution=calculateFixSolution(fixLOPs);
+
+if(!solution){
+document.getElementById("positionFixResult").innerHTML=
+"LOPs are too close to parallel. Fix quality poor.";
+return;
+}
+
+let dx=solution.dx;
+let dy=solution.dy;
+
+let apLat=fixLOPs[0].lat;
+let apLon=fixLOPs[0].lon;
+
+let fixLat=apLat+dy/60;
+let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
+
+let distance=Math.sqrt(dx*dx+dy*dy);
+let bearing=norm360(radToDeg(Math.atan2(dx,dy)));
+
+let residualText="";
+let rms=0;
+
+fixLOPs.forEach((lop,index)=>{
+let z=degToRad(lop.zn);
+
+let predicted=
+dx*Math.sin(z)+
+dy*Math.cos(z);
+
+let residual=predicted-lop.intercept;
+rms+=residual*residual;
+
+residualText+=
+"LOP "+(index+1)+
+" "+lop.object+
+" / Zn "+lop.zn.toFixed(1)+"° / "+
+formatFixIntercept(lop.intercept)+
+" / Residual "+residual.toFixed(2)+" NM<br>";
+});
+
+rms=Math.sqrt(rms/fixLOPs.length);
+
+let quality="GOOD";
+if(rms<=1)quality="EXCELLENT";
+if(rms>2)quality="POOR";
+
+document.getElementById("positionFixResult").innerHTML=
+"<b>3-LOP ASTRONOMICAL POSITION FIX</b><br><br>"+
+"<b>Assumed Position</b><br>"+
+"Lat: "+formatLatLon(apLat,true)+"<br>"+
+"Lon: "+formatLatLon(apLon,false)+"<br><br>"+
+"<b>Calculated Fix</b><br>"+
+"Lat: "+formatLatLon(fixLat,true)+"<br>"+
+"Lon: "+formatLatLon(fixLon,false)+"<br><br>"+
+"<b>Offset from AP</b><br>"+
+distance.toFixed(1)+" NM / Bearing "+bearing.toFixed(0)+"°<br><br>"+
+"<b>LOP Residuals</b><br>"+
+residualText+
+"<br><b>Fix Quality:</b> "+quality+
+"<br>RMS Error: "+rms.toFixed(2)+" NM<br><br>"+
+"<span class='small'>Training approximation. TOWARD positive, AWAY negative.</span>";
+
+drawThreeLOPDiagram(fixLOPs,dx,dy);
+}
+
+function drawThreeLOPDiagram(fixLOPs,dx,dy){
+
+let canvas=document.getElementById("threeLOPCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let cx=175;
+let cy=150;
+let scale=5;
+
+ctx.fillStyle="#0b1b2b";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="#223344";
+ctx.lineWidth=1;
+
+for(let x=25;x<=325;x+=25){
+ctx.beginPath();
+ctx.moveTo(x,20);
+ctx.lineTo(x,280);
+ctx.stroke();
+}
+
+for(let y=25;y<=275;y+=25){
+ctx.beginPath();
+ctx.moveTo(20,y);
+ctx.lineTo(330,y);
+ctx.stroke();
+}
+
+ctx.fillStyle="#ffffff";
+ctx.beginPath();
+ctx.arc(cx,cy,4,0,Math.PI*2);
+ctx.fill();
+ctx.fillText("AP",cx+8,cy-8);
+
+fixLOPs.forEach((lop,index)=>{
+let z=degToRad(lop.zn);
+let ix=cx+Math.sin(z)*lop.intercept*scale;
+let iy=cy-Math.cos(z)*lop.intercept*scale;
+let lineAngle=degToRad(lop.zn+90);
+
+ctx.strokeStyle="#9ee7ff";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.moveTo(ix-Math.sin(lineAngle)*180,iy+Math.cos(lineAngle)*180);
+ctx.lineTo(ix+Math.sin(lineAngle)*180,iy-Math.cos(lineAngle)*180);
+ctx.stroke();
+
+ctx.fillStyle="#ffffff";
+ctx.fillText("LOP "+(index+1),ix+8,iy-8);
+});
+
+let fixX=cx+dx*scale;
+let fixY=cy-dy*scale;
+
+ctx.fillStyle="#ffd966";
+ctx.beginPath();
+ctx.arc(fixX,fixY,6,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("FIX",fixX+10,fixY-10);
+}
 setNowUTC();
 togglePositionSource();
 updateBodyFields();
