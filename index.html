@@ -96,6 +96,45 @@ grid-template-columns:1fr;
 max-width:100%;
 }
 }
+@media screen and (max-width: 700px){
+
+.dateTimeRow,
+.positionRow,
+.courseRow,
+.sourceRow,
+.objectRow,
+.twoButtons{
+display:grid !important;
+grid-template-columns:1fr !important;
+gap:10px !important;
+}
+
+.timeBox,
+.coordBox{
+display:grid !important;
+grid-template-columns:1fr auto 1fr auto 1fr !important;
+gap:5px !important;
+}
+
+input,
+select,
+button.main{
+width:100% !important;
+max-width:100% !important;
+box-sizing:border-box !important;
+}
+
+#dateUTC{
+width:100% !important;
+height:44px !important;
+font-size:15px !important;
+}
+
+.card{
+overflow:hidden !important;
+}
+
+}
 </style>
 </head>
 
