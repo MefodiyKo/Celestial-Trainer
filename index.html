@@ -217,27 +217,19 @@ overflow:hidden !important;
 }
 }
 /* Make Date UTC smaller on mobile */
-@media (max-width:600px){
+/* v2.7 Clean Mobile Layout */
 
-#dateUTC{
-    width:140px !important;
-    height:42px !important;
-    font-size:13px !important;
-}
-
-}
-/* v2.7 Mobile UI Cleanup */
-
-@media (max-width: 700px){
+@media (max-width:700px){
 
   .section{
     padding:8px;
   }
 
   .card{
-    padding:12px;
     margin:10px;
+    padding:12px;
     border-radius:12px;
+    overflow:hidden;
   }
 
   label{
@@ -247,86 +239,62 @@ overflow:hidden !important;
 
   input,
   select{
-    height:40px !important;
-    padding:4px 8px !important;
-    font-size:14px !important;
-    border-radius:8px !important;
+    height:40px;
+    padding:4px 8px;
+    font-size:14px;
+    border-radius:8px;
   }
 
   button.main{
-    height:40px !important;
-    padding:5px 8px !important;
-    font-size:14px !important;
-    margin-top:8px !important;
-    border-radius:8px !important;
+    height:40px;
+    padding:5px 8px;
+    font-size:14px;
+    margin-top:8px;
+    border-radius:8px;
   }
 
   .grid2{
-    display:grid !important;
-    grid-template-columns:1fr 1fr !important;
-    gap:8px !important;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
   }
 
   .grid3{
-    display:grid !important;
-    grid-template-columns:1fr auto 1fr auto 1fr !important;
-    gap:4px !important;
-    align-items:center !important;
+    grid-template-columns:1fr auto 1fr auto 1fr;
+    gap:4px;
+    align-items:center;
   }
 
   .grid3 input,
   .grid3 select{
-    min-width:0 !important;
-    width:100% !important;
-    text-align:center !important;
+    width:100%;
+    min-width:0;
+    text-align:center;
   }
 
   #dateUTC{
-    width:100% !important;
-    height:40px !important;
-    font-size:13px !important;
+    width:100%;
+    height:40px;
+    font-size:13px;
   }
 
   .tabs button{
-    min-width:105px !important;
-    height:42px !important;
-    padding:4px 6px !important;
-    font-size:13px !important;
+    min-width:105px;
+    height:42px;
+    padding:4px 6px;
+    font-size:13px;
   }
 
   #skyCanvas{
-    height:190px !important;
+    height:190px;
   }
 
   .result{
-    font-size:14px !important;
-    line-height:1.4 !important;
+    font-size:14px;
+    line-height:1.4;
   }
 
   .small{
-    font-size:12px !important;
-  }
-}
-/* FINAL Date UTC fix */
-
-@media (max-width:700px){
-
-  .grid2:has(#dateUTC){
-    grid-template-columns:140px 1fr !important;
-    gap:8px !important;
-  }
-
-  #dateUTC{
-    width:140px !important;
-    max-width:140px !important;
-    height:40px !important;
-    font-size:12px !important;
-    padding:3px 5px !important;
-  }
-
-  #dateUTC::-webkit-calendar-picker-indicator{
-    transform:scale(0.7);
-    margin-left:-6px;
+    font-size:12px;
   }
 }
 </style>
