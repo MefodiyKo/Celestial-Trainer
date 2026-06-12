@@ -297,6 +297,38 @@ overflow:hidden !important;
     font-size:12px;
   }
 }
+/* v2.7 UTC row */
+
+.utcRow{
+  display:grid;
+  grid-template-columns:1.6fr 0.7fr auto 0.7fr auto 0.7fr;
+  gap:6px;
+  align-items:center;
+}
+
+.utcRow input{
+  width:100%;
+  text-align:center;
+}
+
+@media (max-width:700px){
+
+  .utcRow{
+    grid-template-columns:1.5fr 0.65fr auto 0.65fr auto 0.65fr;
+    gap:4px;
+  }
+
+  .utcRow input{
+    height:40px !important;
+    font-size:13px !important;
+    padding:4px 5px !important;
+  }
+
+  .utcRow span{
+    text-align:center;
+  }
+
+}
 </style>
 </head>
 
@@ -327,21 +359,16 @@ overflow:hidden !important;
 <div class="card">
 <h3>Celestial Almanac</h3>
 
-<div class="grid2">
-<div>
-<label>Date UTC</label>
-<input id="dateUTC" class="full" type="date">
-</div>
-<div>
-<label>Time UTC</label>
-<div class="grid3">
-<input id="utcHour" type="number" min="0" max="23" placeholder="HH">
-<span>:</span>
-<input id="utcMin" type="number" min="0" max="59" placeholder="MM">
-<span>:</span>
-<input id="utcSec" type="number" min="0" max="59" placeholder="SS">
-</div>
-</div>
+<label>UTC Date & Time</label>
+
+<div class="utcRow">
+  <input id="dateUTC" type="date">
+
+  <input id="utcHour" type="number" min="0" max="23" placeholder="HH">
+  <span>:</span>
+  <input id="utcMin" type="number" min="0" max="59" placeholder="MM">
+  <span>:</span>
+  <input id="utcSec" type="number" min="0" max="59" placeholder="SS">
 </div>
 
 <div class="grid2">
