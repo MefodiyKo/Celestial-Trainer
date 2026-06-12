@@ -135,6 +135,87 @@ overflow:hidden !important;
 }
 
 }
+/* Mobile compact layout fix */
+@media (max-width: 600px){
+
+  body{
+    font-size:16px;
+  }
+
+  .section{
+    padding:10px;
+  }
+
+  .card{
+    padding:12px;
+    border-radius:12px;
+  }
+
+  button.main{
+    height:48px;
+    padding:8px 10px;
+    font-size:15px;
+    margin-top:10px;
+  }
+
+  input,
+  select{
+    height:48px;
+    padding:6px 8px;
+    font-size:15px;
+  }
+
+  .tabs button{
+    min-width:120px;
+    height:48px;
+    padding:6px;
+    font-size:14px;
+  }
+
+  .dateTimeRow,
+  .positionRow,
+  .courseRow,
+  .sourceRow,
+  .objectRow{
+    gap:8px;
+  }
+
+  .timeBox,
+  .coordBox{
+    gap:4px;
+  }
+
+  .timeBox input{
+    min-width:54px;
+  }
+
+  .coordBox input{
+    min-width:54px;
+  }
+
+  #dateUTC{
+    width:100%;
+    height:48px;
+    font-size:14px;
+  }
+
+  .twoButtons{
+    gap:8px;
+  }
+
+  .twoButtons button.main{
+    height:48px;
+  }
+
+  .result{
+    font-size:15px;
+    line-height:1.45;
+  }
+
+  #skyCanvas{
+    height:210px;
+  }
+}
 </style>
 </head>
 
