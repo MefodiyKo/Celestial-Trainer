@@ -860,17 +860,75 @@ logResult.innerHTML="No saved observations.";
 document.getElementById(id).addEventListener("change",autoUpdateSky);
 });
 function populateObjectList(){
+
 let select=document.getElementById("celestialObject");
 
+select.innerHTML=`
+<option value="Sun">☀️ Sun</option>
+<option value="Moon">🌙 Moon</option>
+`;
+
+let data=getInputData();
+
+if(data.error){
 Object.keys(STAR_CATALOG).forEach(name=>{
 let option=document.createElement("option");
 option.value=name;
 option.textContent="⭐ "+name;
 select.appendChild(option);
 });
+return;
+}
+
+let sun=sunAlmanac(data.date,data.time);
+
+Object.keys(STAR_CATALOG).forEach(name=>{
+
+let star=STAR_CATALOG[name];
+
+let GHA=norm360(sun.GHAAries+star.SHA);
+
+let result=calculateHcZn(
+data.lat,
+star.Dec,
+norm360(GHA+data.lon)
+);
+
+if(result.Hc>5){
+
+let option=document.createElement("option");
+
+option.value=name;
+
+option.textContent=
+"⭐ "+name+
+" ("+result.Hc.toFixed(0)+"°)";
+
+select.appendChild(option);
+
+}
+
+});
+
 }
 setNowUTC();
 populateObjectList();
+
+[
+"dateUTC",
+"utcHour",
+"utcMin",
+"utcSec",
+"latDeg",
+"latMin",
+"latDir",
+"lonDeg",
+"lonMin",
+"lonDir"
+].forEach(id=>{
+document.getElementById(id)
+.addEventListener("change",populateObjectList);
+});
 updateSightCorrections();
 autoUpdateSky();
 </script>
