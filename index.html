@@ -27,159 +27,7 @@ button.main{width:100%;padding:11px;margin-top:12px;border:0;border-radius:8px;b
 .grid3 input,.grid3 select{text-align:center;width:100%}
 #skyCanvas{width:100%;height:220px;background:#06152a;border-radius:8px;border:1px solid #31506a}
 canvas{touch-action:manipulation}
-@media (max-width: 600px){
-
-body{
-font-size:15px;
-}
-
-header h2{
-font-size:22px;
-}
-
-.skyCard{
-margin:10px;
-padding:10px;
-}
-
-.section{
-padding:10px;
-}
-
-.card{
-padding:12px;
-}
-
-.dateTimeRow,
-.positionRow,
-.courseRow,
-.sourceRow,
-.objectRow{
-grid-template-columns:1fr;
-gap:10px;
-}
-
-.timeBox,
-.coordBox{
-grid-template-columns:1fr auto 1fr auto 1fr;
-}
-
-input,select{
-font-size:15px;
-padding:9px;
-min-width:0;
-}
-
-button.main{
-font-size:15px;
-padding:11px;
-}
-
-.tabs button{
-min-width:110px;
-font-size:13px;
-padding:10px 8px;
-}
-
-#dateUTC{
-width:100%;
-font-size:15px;
-}
-
-.lopButtons{
-grid-template-columns:1fr;
-}
-
-#plottingCanvas,
-#threeLOPCanvas,
-#runningFixCanvas{
-max-width:100%;
-}
-}
-
-/* Mobile compact layout fix */
-@media (max-width: 600px){
-
-  body{
-    font-size:16px;
-  }
-
-  .section{
-    padding:10px;
-  }
-
-  .card{
-    padding:12px;
-    border-radius:12px;
-  }
-
-  button.main{
-    height:48px;
-    padding:8px 10px;
-    font-size:15px;
-    margin-top:10px;
-  }
-
-  input,
-  select{
-    height:48px;
-    padding:6px 8px;
-    font-size:15px;
-  }
-
-  .tabs button{
-    min-width:120px;
-    height:48px;
-    padding:6px;
-    font-size:14px;
-  }
-
-  .dateTimeRow,
-  .positionRow,
-  .courseRow,
-  .sourceRow,
-  .objectRow{
-    gap:8px;
-  }
-
-  .timeBox,
-  .coordBox{
-    gap:4px;
-  }
-
-  .timeBox input{
-    min-width:54px;
-  }
-
-  .coordBox input{
-    min-width:54px;
-  }
-
-  #dateUTC{
-    width:100%;
-    height:48px;
-    font-size:14px;
-  }
-
-  .twoButtons{
-    gap:8px;
-  }
-
-  .twoButtons button.main{
-    height:48px;
-  }
-
-  .result{
-    font-size:15px;
-    line-height:1.45;
-  }
-
-  #skyCanvas{
-    height:210px;
-}
-}
-/* Make Date UTC smaller on mobile */
-/* v2.7 Clean Mobile Layout */
+/* MOBILE CLEAN LAYOUT */
 
 @media (max-width:700px){
 
@@ -202,7 +50,7 @@ max-width:100%;
   input,
   select{
     height:40px;
-    padding:4px 8px;
+    padding:4px 6px;
     font-size:14px;
     border-radius:8px;
   }
@@ -233,10 +81,24 @@ max-width:100%;
     text-align:center;
   }
 
-  #dateUTC{
-    width:100%;
+  .utcRow{
+    display:grid;
+    grid-template-columns:120px 50px 8px 50px 8px 50px;
+    gap:4px;
+    align-items:center;
+  }
+
+  .utcRow input{
     height:40px;
     font-size:13px;
+    padding:4px 5px;
+    text-align:center;
+  }
+
+  #dateUTC{
+    width:120px;
+    min-width:120px;
+    max-width:120px;
   }
 
   .tabs button{
@@ -257,66 +119,6 @@ max-width:100%;
 
   .small{
     font-size:12px;
-  }
-}
-/* v2.7 UTC row */
-
-.utcRow{
-  display:grid;
-  grid-template-columns:1.6fr 0.7fr auto 0.7fr auto 0.7fr;
-  gap:6px;
-  align-items:center;
-}
-
-.utcRow input{
-  width:100%;
-  text-align:center;
-}
-
-@media (max-width:700px){
-
-  .utcRow{
-    grid-template-columns:1.5fr 0.65fr auto 0.65fr auto 0.65fr;
-    gap:4px;
-  }
-
-  .utcRow input{
-    height:40px !important;
-    font-size:13px !important;
-    padding:4px 5px !important;
-  }
-
-  .utcRow span{
-    text-align:center;
-  }
-
-}
-/* FINAL UTC ROW FIX */
-
-.utcRow{
-  display:grid !important;
-  grid-template-columns: 145px 58px 10px 58px 10px 58px !important;
-  gap:4px !important;
-  align-items:center !important;
-}
-
-.utcRow input{
-  height:42px !important;
-  font-size:14px !important;
-  padding:4px 6px !important;
-  text-align:center !important;
-  box-sizing:border-box !important;
-}
-
-#dateUTC{
-  width:145px !important;
-  min-width:145px !important;
-  max-width:145px !important;
-}
-
-@media (max-width:700px){
-  .utcRow{
-    grid-template-columns: 145px 58px 10px 58px 10px 58px !important;
   }
 }
 </style>
