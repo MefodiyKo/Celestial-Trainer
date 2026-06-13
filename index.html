@@ -971,13 +971,15 @@ populateObjectList();
 "latDir",
 "lonDeg",
 "lonMin",
-"lonDir"
+"lonDir",
+"skyCourse",
+"skyMode"
 ].forEach(id=>{
-document.getElementById(id)
-.addEventListener("change",populateObjectList);
-});
-updateSightCorrections();
+document.getElementById(id).addEventListener("change",function(){
+populateObjectList();
 autoUpdateSky();
+});
+});
 </script>
 
 </body>
