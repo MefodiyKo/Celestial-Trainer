@@ -856,9 +856,6 @@ localStorage.removeItem("celestialLog");
 logResult.innerHTML="No saved observations.";
 }
 
-["dateUTC","utcHour","utcMin","utcSec","latDeg","latMin","latDir","lonDeg","lonMin","lonDir","skyCourse","skyMode"].forEach(id=>{
-document.getElementById(id).addEventListener("change",autoUpdateSky);
-});
 function populateObjectList(){
 
 let select=document.getElementById("celestialObject");
