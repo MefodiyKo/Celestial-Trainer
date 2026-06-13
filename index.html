@@ -463,24 +463,41 @@ return {JD,GHA,Dec,GHAAries:GMST};
 function moonAlmanac(date,time){
 let JD=julianDate(date,time);
 let D=JD-2451545.0;
+
 let L=norm360(218.316+13.176396*D);
 let M=norm360(134.963+13.064993*D);
 let F=norm360(93.272+13.229350*D);
+
 let lon=L+6.289*Math.sin(degToRad(M));
 let lat=5.128*Math.sin(degToRad(F));
+
 let eps=23.439-0.0000004*D;
+
 let RA=radToDeg(Math.atan2(
-Math.sin(degToRad(lon))*Math.cos(degToRad(eps))-Math.tan(degToRad(lat))*Math.sin(degToRad(eps)),
+Math.sin(degToRad(lon))*Math.cos(degToRad(eps))-
+Math.tan(degToRad(lat))*Math.sin(degToRad(eps)),
 Math.cos(degToRad(lon))
 ));
 RA=norm360(RA);
+
 let Dec=radToDeg(Math.asin(
 Math.sin(degToRad(lat))*Math.cos(degToRad(eps))+
 Math.cos(degToRad(lat))*Math.sin(degToRad(eps))*Math.sin(degToRad(lon))
 ));
+
 let GMST=gmstFromJD(JD);
 let GHA=norm360(GMST-RA);
-return {JD,GHA,Dec};
+
+/* approximate Moon distance km */
+let distance=385001-20905*Math.cos(degToRad(M));
+
+/* Horizontal Parallax in minutes */
+let HP=radToDeg(Math.asin(6378.14/distance))*60;
+
+/* Semi-diameter in minutes */
+let SD=0.2725*HP;
+
+return {JD,GHA,Dec,HP,SD};
 }
 
 function calculateHcZn(lat,dec,LHA){
@@ -510,7 +527,9 @@ let obj=celestialObject.value;
 let alm;
 
 if(obj==="Sun") alm=sunAlmanac(data.date,data.time);
-else if(obj==="Moon") alm=moonAlmanac(data.date,data.time);
+else if(obj==="Moon"){
+  alm=moonAlmanac(data.date,data.time);
+}
 else{
 let sun=sunAlmanac(data.date,data.time);
 let star=STAR_CATALOG[obj];
@@ -648,7 +667,18 @@ observationResult.innerHTML=
 function updateSightCorrections(){
 let obj=celestialObject.value;
 if(obj==="Sun"){sightBody.value="sunLL";sdValue.value="16.0";parallaxValue.value="0.0";}
-else if(obj==="Moon"){sightBody.value="moonLL";sdValue.value="15.0";parallaxValue.value="57.0";}
+else if(obj==="Moon"){
+sightBody.value="moonLL";
+
+if(lastSunData && lastSunData.object==="Moon"){
+  let moon=moonAlmanac(lastSunData.date,lastSunData.time);
+  sdValue.value=moon.SD.toFixed(1);
+  parallaxValue.value=moon.HP.toFixed(1);
+}else{
+  sdValue.value="15.0";
+  parallaxValue.value="57.0";
+}
+}
 else{sightBody.value="star";sdValue.value="0.0";parallaxValue.value="0.0";}
 }
 
