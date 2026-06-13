@@ -609,7 +609,7 @@ function drawSkyView(){
 let canvas=document.getElementById("skyCanvas");
 let ctx=canvas.getContext("2d");
 ctx.clearRect(0,0,canvas.width,canvas.height);
-skyObjects=[];
+
 let data=getInputData();
 ctx.fillStyle="#06152a";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -668,12 +668,7 @@ ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fill();
 ctx.fillStyle="#ffffff";
 ctx.font="10px Arial";
 ctx.fillText(o.name,x+7,y+4);
-skyObjects.push({
-name:o.name,
-x:x,
-y:y,
-r:18
-});
+
 
 });
 
@@ -915,49 +910,7 @@ select.appendChild(option);
 });
 
 }
-function selectObjectFromSky(event){
 
-let canvas=document.getElementById("skyCanvas");
-let rect=canvas.getBoundingClientRect();
-
-let x=(event.clientX-rect.left)*(canvas.width/rect.width);
-let y=(event.clientY-rect.top)*(canvas.height/rect.height);
-
-for(let obj of skyObjects){
-
-let dx=x-obj.x;
-let dy=y-obj.y;
-let dist=Math.sqrt(dx*dx+dy*dy);
-
-if(dist<=obj.r){
-
-let select=document.getElementById("celestialObject");
-
-let exists=false;
-
-for(let i=0;i<select.options.length;i++){
-if(select.options[i].value===obj.name){
-exists=true;
-break;
-}
-}
-
-if(!exists){
-let option=document.createElement("option");
-option.value=obj.name;
-option.textContent="⭐ "+obj.name;
-select.appendChild(option);
-}
-
-select.value=obj.name;
-calculateObject();
-return;
-}
-
-}
-
-}
-document.getElementById("skyCanvas").addEventListener("click",selectObjectFromSky);
 setNowUTC();
 populateObjectList();
 
