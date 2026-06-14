@@ -468,11 +468,11 @@ Zn: <span id="sightZn">--</span>
 </tr>
 <tr><td>Object</td><td id="fwObj1"></td><td id="fwObj2"></td><td id="fwObj3"></td></tr>
 <tr><td>UTC</td><td id="fwTime1"></td><td id="fwTime2"></td><td id="fwTime3"></td></tr>
-<tr><td>Hs</td><td></td><td></td><td></td></tr>
-<tr><td>IE</td><td></td><td></td><td></td></tr>
-<tr><td>Dip</td><td></td><td></td><td></td></tr>
-<tr><td>SD / PA</td><td></td><td></td><td></td></tr>
-<tr><td>Ho</td><td></td><td></td><td></td></tr>
+<tr><td>Hs</td><td id="fwHs1"></td><td id="fwHs2"></td><td id="fwHs3"></td></tr>
+<tr><td>IE</td><td id="fwIE1"></td><td id="fwIE2"></td><td id="fwIE3"></td></tr>
+<tr><td>Dip</td><td id="fwDip1"></td><td id="fwDip2"></td><td id="fwDip3"></td></tr>
+<tr><td>SD / PA</td><td id="fwSDPA1"></td><td id="fwSDPA2"></td><td id="fwSDPA3"></td></tr>
+<tr><td>Ho</td><td id="fwHo1"></td><td id="fwHo2"></td><td id="fwHo3"></td></tr>
 <tr><td>GHA</td><td id="fwGha1"></td><td id="fwGha2"></td><td id="fwGha3"></td></tr>
 <tr><td>Dec</td><td id="fwDec1"></td><td id="fwDec2"></td><td id="fwDec3"></td></tr>
 <tr><td>LHA</td><td id="fwLha1"></td><td id="fwLha2"></td><td id="fwLha3"></td></tr>
@@ -1065,9 +1065,21 @@ date:lastSunData.date,
 time:lastSunData.time,
 lat:lastSunData.lat,
 lon:lastSunData.lon,
+
+GHA:lastSunData.GHA,
+Dec:lastSunData.Dec,
+LHA:lastSunData.LHA,
+
 zn:lastSunData.Zn,
 hc:lastSunData.Hc,
-intercept:lastSunData.signedIntercept
+intercept:lastSunData.signedIntercept,
+
+Hs:lastSunData.worksheet ? lastSunData.worksheet.Hs : null,
+IE:lastSunData.worksheet ? lastSunData.worksheet.IE : null,
+Dip:lastSunData.worksheet ? lastSunData.worksheet.Dip : null,
+SD:lastSunData.worksheet ? lastSunData.worksheet.SD : null,
+Parallax:lastSunData.worksheet ? lastSunData.worksheet.Parallax : null,
+Ho:lastSunData.worksheet ? lastSunData.worksheet.Ho : null
 };
 updatePositionFixCount();
 
@@ -1448,7 +1460,22 @@ let lop=lops[i];
 
 document.getElementById("fwObj"+n).innerText=lop.object;
 document.getElementById("fwTime"+n).innerText=lop.time;
+document.getElementById("fwHs"+n).innerText=
+lop.Hs!==null ? formatAlt(lop.Hs) : "";
 
+document.getElementById("fwIE"+n).innerText=
+lop.IE!==null ? lop.IE.toFixed(1)+"'" : "";
+
+document.getElementById("fwDip"+n).innerText=
+lop.Dip!==null ? lop.Dip.toFixed(1)+"'" : "";
+
+document.getElementById("fwSDPA"+n).innerText=
+(lop.SD!==null ? lop.SD.toFixed(1)+"'" : "")+
+" / "+
+(lop.Parallax!==null ? lop.Parallax.toFixed(1)+"'" : "");
+
+document.getElementById("fwHo"+n).innerText=
+lop.Ho!==null ? formatAlt(lop.Ho) : "";
 document.getElementById("fwHc"+n).innerText=
 formatAlt(lop.hc);
 
@@ -1461,9 +1488,9 @@ Math.abs(lop.intercept).toFixed(1);
 document.getElementById("fwTA"+n).innerText=
 lop.intercept>=0?"Toward":"Away";
 
-document.getElementById("fwGha"+n).innerText="-";
-document.getElementById("fwDec"+n).innerText="-";
-document.getElementById("fwLha"+n).innerText="-";
+document.getElementById("fwGha"+n).innerText=formatDM(lop.GHA);
+document.getElementById("fwDec"+n).innerText=formatDec(lop.Dec);
+document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 }
 
 drawWorksheetPlot(lops);
