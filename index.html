@@ -473,6 +473,18 @@ Zn: <span id="sightZn">--</span>
 <tr><td>Dip</td><td id="fwDip1"></td><td id="fwDip2"></td><td id="fwDip3"></td></tr>
 <tr><td>SD / PA</td><td id="fwSDPA1"></td><td id="fwSDPA2"></td><td id="fwSDPA3"></td></tr>
 <tr><td>Ho</td><td id="fwHo1"></td><td id="fwHo2"></td><td id="fwHo3"></td></tr>
+<tr><td>Pressure</td><td id="fwPressure1"></td><td id="fwPressure2"></td><td id="fwPressure3"></td></tr>
+<tr><td>Temperature</td><td id="fwTemp1"></td><td id="fwTemp2"></td><td id="fwTemp3"></td></tr>
+<tr><td>Ha</td><td id="fwHa1"></td><td id="fwHa2"></td><td id="fwHa3"></td></tr>
+<tr><td>Refraction</td><td id="fwRef1"></td><td id="fwRef2"></td><td id="fwRef3"></td></tr>
+<tr><td>NP303 Lat</td><td id="fwNpLat1"></td><td id="fwNpLat2"></td><td id="fwNpLat3"></td></tr>
+<tr><td>NP303 LHA</td><td id="fwNpLha1"></td><td id="fwNpLha2"></td><td id="fwNpLha3"></td></tr>
+<tr><td>NP303 Dec</td><td id="fwNpDec1"></td><td id="fwNpDec2"></td><td id="fwNpDec3"></td></tr>
+<tr><td>Same / Contrary</td><td id="fwSame1"></td><td id="fwSame2"></td><td id="fwSame3"></td></tr>
+<tr><td>Table Hc</td><td id="fwTableHc1"></td><td id="fwTableHc2"></td><td id="fwTableHc3"></td></tr>
+<tr><td>d</td><td id="fwD1"></td><td id="fwD2"></td><td id="fwD3"></td></tr>
+<tr><td>Table 5 Corr.</td><td id="fwT5Corr1"></td><td id="fwT5Corr2"></td><td id="fwT5Corr3"></td></tr>
+<tr><td>Z</td><td id="fwZ1"></td><td id="fwZ2"></td><td id="fwZ3"></td></tr>
 <tr><td>GHA</td><td id="fwGha1"></td><td id="fwGha2"></td><td id="fwGha3"></td></tr>
 <tr><td>Dec</td><td id="fwDec1"></td><td id="fwDec2"></td><td id="fwDec3"></td></tr>
 <tr><td>LHA</td><td id="fwLha1"></td><td id="fwLha2"></td><td id="fwLha3"></td></tr>
@@ -1080,6 +1092,20 @@ Dip:lastSunData.worksheet ? lastSunData.worksheet.Dip : null,
 SD:lastSunData.worksheet ? lastSunData.worksheet.SD : null,
 Parallax:lastSunData.worksheet ? lastSunData.worksheet.Parallax : null,
 Ho:lastSunData.worksheet ? lastSunData.worksheet.Ho : null
+Ha:lastSunData.worksheet ? lastSunData.worksheet.Ha : null,
+Refraction:lastSunData.worksheet ? lastSunData.worksheet.Refraction : null,
+Pressure:parseFloat(pressure.value)||1010,
+Temperature:parseFloat(temperature.value)||10,
+
+npLat:Math.round(Math.abs(lastSunData.lat)),
+npLha:Math.round(lastSunData.LHA),
+npDec:Math.round(Math.abs(lastSunData.Dec)),
+sameContrary:((lastSunData.lat>=0 && lastSunData.Dec>=0) || (lastSunData.lat<0 && lastSunData.Dec<0)) ? "Same" : "Contrary",
+
+tableHc:lastSunData.Hc,
+dValue:"calc",
+table5Corr:"calc",
+Z:lastSunData.Zn
 };
 updatePositionFixCount();
 
@@ -1476,6 +1502,41 @@ document.getElementById("fwSDPA"+n).innerText=
 
 document.getElementById("fwHo"+n).innerText=
 lop.Ho!==null ? formatAlt(lop.Ho) : "";
+document.getElementById("fwPressure"+n).innerText=
+lop.Pressure ? lop.Pressure+" hPa" : "";
+
+document.getElementById("fwTemp"+n).innerText=
+lop.Temperature ? lop.Temperature+" °C" : "";
+
+document.getElementById("fwHa"+n).innerText=
+lop.Ha!==null ? formatAlt(lop.Ha) : "";
+
+document.getElementById("fwRef"+n).innerText=
+lop.Refraction!==null ? lop.Refraction.toFixed(1)+"'" : "";
+
+document.getElementById("fwNpLat"+n).innerText=
+lop.npLat!==undefined ? lop.npLat+"°" : "";
+
+document.getElementById("fwNpLha"+n).innerText=
+lop.npLha!==undefined ? lop.npLha+"°" : "";
+
+document.getElementById("fwNpDec"+n).innerText=
+lop.npDec!==undefined ? lop.npDec+"°" : "";
+
+document.getElementById("fwSame"+n).innerText=
+lop.sameContrary || "";
+
+document.getElementById("fwTableHc"+n).innerText=
+lop.tableHc!==undefined ? formatAlt(lop.tableHc) : "";
+
+document.getElementById("fwD"+n).innerText=
+lop.dValue || "";
+
+document.getElementById("fwT5Corr"+n).innerText=
+lop.table5Corr || "";
+
+document.getElementById("fwZ"+n).innerText=
+lop.Z!==undefined ? lop.Z.toFixed(1)+"°" : "";
 document.getElementById("fwHc"+n).innerText=
 formatAlt(lop.hc);
 
