@@ -124,6 +124,86 @@ canvas{touch-action:manipulation}
 .hiddenBlock{
   display:none;
 }
+.printSheet{
+  background:white;
+  color:black;
+  padding:12px;
+  border-radius:6px;
+  font-family:Arial;
+  font-size:12px;
+}
+
+.printSheet h2,
+.printSheet h3{
+  text-align:center;
+  margin:6px 0;
+}
+
+.formTop{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin:6px 0;
+}
+
+.fixTable{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+
+.fixTable th,
+.fixTable td{
+  border:1px solid black;
+  padding:4px;
+  height:20px;
+  text-align:center;
+}
+
+.fixTable th{
+  background:#e6eef8;
+}
+
+#worksheetPlotCanvas{
+  width:100%;
+  max-width:520px;
+  display:block;
+  margin:8px auto;
+  border:1px solid black;
+}
+
+.formFooter{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+
+@media print{
+  body *{
+    visibility:hidden;
+  }
+
+  #fixWorksheet,
+  #fixWorksheet *{
+    visibility:visible;
+  }
+
+  #fixWorksheet{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    box-shadow:none;
+  }
+
+  .tabs,
+  header,
+  .warning,
+  button{
+    display:none !important;
+  }
+}
 </style>
 </head>
 
@@ -163,6 +243,7 @@ No planets calculated.
 <button class="tab" onclick="openTab('observation',this)">Compass Obs</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
+<button class="tab" onclick="openTab('forms',this)">Forms</button>
 <button class="tab" onclick="openTab('log',this)">Log</button>
 </div>
 
@@ -355,7 +436,63 @@ Zn: <span id="sightZn">--</span>
 <canvas id="fixCanvas" width="350" height="350" style="width:100%;background:white;border-radius:8px;margin-top:15px"></canvas>
 </div>
 </div>
+<div id="forms" class="section">
+<div class="card">
+<h3>3-Object Celestial Fix Worksheet</h3>
 
+<button class="main" onclick="fillFixWorksheet()">Fill From Saved LOPs</button>
+<button class="main" onclick="printFixWorksheet()">Print Worksheet</button>
+
+<div id="fixWorksheet" class="printSheet">
+
+<h2>CELESTIAL FIX WORKSHEET — 3 OBJECTS</h2>
+
+<div class="formTop">
+<div>Date UTC: <span id="fwDate">__________</span></div>
+<div>Vessel: __________________</div>
+<div>Officer: __________________</div>
+</div>
+
+<div class="formTop">
+<div>AP / DR Lat: <span id="fwLat">__________</span></div>
+<div>AP / DR Lon: <span id="fwLon">__________</span></div>
+<div>Course / Speed: __________</div>
+</div>
+
+<table class="fixTable">
+<tr>
+<th>Item</th>
+<th>Object 1</th>
+<th>Object 2</th>
+<th>Object 3</th>
+</tr>
+<tr><td>Object</td><td id="fwObj1"></td><td id="fwObj2"></td><td id="fwObj3"></td></tr>
+<tr><td>UTC</td><td id="fwTime1"></td><td id="fwTime2"></td><td id="fwTime3"></td></tr>
+<tr><td>Hs</td><td></td><td></td><td></td></tr>
+<tr><td>IE</td><td></td><td></td><td></td></tr>
+<tr><td>Dip</td><td></td><td></td><td></td></tr>
+<tr><td>SD / PA</td><td></td><td></td><td></td></tr>
+<tr><td>Ho</td><td></td><td></td><td></td></tr>
+<tr><td>GHA</td><td id="fwGha1"></td><td id="fwGha2"></td><td id="fwGha3"></td></tr>
+<tr><td>Dec</td><td id="fwDec1"></td><td id="fwDec2"></td><td id="fwDec3"></td></tr>
+<tr><td>LHA</td><td id="fwLha1"></td><td id="fwLha2"></td><td id="fwLha3"></td></tr>
+<tr><td>Hc</td><td id="fwHc1"></td><td id="fwHc2"></td><td id="fwHc3"></td></tr>
+<tr><td>Zn</td><td id="fwZn1"></td><td id="fwZn2"></td><td id="fwZn3"></td></tr>
+<tr><td>Intercept</td><td id="fwInt1"></td><td id="fwInt2"></td><td id="fwInt3"></td></tr>
+<tr><td>Toward / Away</td><td id="fwTA1"></td><td id="fwTA2"></td><td id="fwTA3"></td></tr>
+</table>
+
+<h3>Plotting Sheet</h3>
+<canvas id="worksheetPlotCanvas" width="520" height="520"></canvas>
+
+<div class="formFooter">
+<div>Fix Position: __________________________</div>
+<div>Remarks: _____________________________</div>
+</div>
+
+</div>
+</div>
+</div>
 <div id="log" class="section">
 <div class="card">
 <h3>Observation Log</h3>
@@ -1290,6 +1427,151 @@ return;
 }
 
 document.getElementById("skyCanvas").addEventListener("click",selectObjectFromSky);
+function fillFixWorksheet(){
+
+let lops=positionFixLOPs.filter(x=>x!==null);
+
+if(lops.length<3){
+alert("Save 3 LOPs first");
+return;
+}
+
+fwDate.innerText=lops[0].date;
+
+fwLat.innerText=formatLatLon(lops[0].lat,true);
+fwLon.innerText=formatLatLon(lops[0].lon,false);
+
+for(let i=0;i<3;i++){
+
+let n=i+1;
+let lop=lops[i];
+
+document.getElementById("fwObj"+n).innerText=lop.object;
+document.getElementById("fwTime"+n).innerText=lop.time;
+
+document.getElementById("fwHc"+n).innerText=
+formatAlt(lop.hc);
+
+document.getElementById("fwZn"+n).innerText=
+formatBearing(lop.zn);
+
+document.getElementById("fwInt"+n).innerText=
+Math.abs(lop.intercept).toFixed(1);
+
+document.getElementById("fwTA"+n).innerText=
+lop.intercept>=0?"Toward":"Away";
+
+document.getElementById("fwGha"+n).innerText="-";
+document.getElementById("fwDec"+n).innerText="-";
+document.getElementById("fwLha"+n).innerText="-";
+}
+
+drawWorksheetPlot(lops);
+
+alert("Worksheet filled");
+}
+
+function drawWorksheetPlot(lops){
+
+let canvas=document.getElementById("worksheetPlotCanvas");
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="white";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+let cx=260;
+let cy=260;
+
+ctx.strokeStyle="#cccccc";
+
+for(let x=20;x<500;x+=40){
+ctx.beginPath();
+ctx.moveTo(x,20);
+ctx.lineTo(x,500);
+ctx.stroke();
+}
+
+for(let y=20;y<500;y+=40){
+ctx.beginPath();
+ctx.moveTo(20,y);
+ctx.lineTo(500,y);
+ctx.stroke();
+}
+
+ctx.strokeStyle="black";
+
+ctx.beginPath();
+ctx.moveTo(cx,20);
+ctx.lineTo(cx,500);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(20,cy);
+ctx.lineTo(500,cy);
+ctx.stroke();
+
+ctx.fillStyle="black";
+ctx.fillText("AP",cx+8,cy-8);
+
+let scale=4;
+
+lops.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+
+let ix=
+cx+
+Math.sin(z)*
+lop.intercept*
+scale;
+
+let iy=
+cy-
+Math.cos(z)*
+lop.intercept*
+scale;
+
+let a=degToRad(lop.zn+90);
+
+ctx.strokeStyle="blue";
+
+ctx.beginPath();
+
+ctx.moveTo(
+ix-Math.sin(a)*260,
+iy+Math.cos(a)*260
+);
+
+ctx.lineTo(
+ix+Math.sin(a)*260,
+iy-Math.cos(a)*260
+);
+
+ctx.stroke();
+
+ctx.fillStyle="blue";
+ctx.fillText(
+"LOP "+(index+1),
+ix+5,
+iy-5
+);
+
+});
+
+ctx.fillStyle="red";
+
+ctx.beginPath();
+ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("AP",cx+8,cy+15);
+}
+
+function printFixWorksheet(){
+window.print();
+}
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
