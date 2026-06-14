@@ -1107,9 +1107,6 @@ html+=
 starPlannerResult.innerHTML=html;
 
 }
-setNowUTC();
-populateObjectList();
-
 [
 "dateUTC",
 "utcHour",
@@ -1124,11 +1121,24 @@ populateObjectList();
 "skyCourse",
 "skyMode"
 ].forEach(id=>{
+
 document.getElementById(id).addEventListener("change",function(){
+
 populateObjectList();
+
 autoUpdateSky();
+
+showStarPlanner();
+
 });
+
 });
+
+setNowUTC();
+populateObjectList();
+updateSightCorrections();
+autoUpdateSky();
+showStarPlanner();
 </script>
 
 </body>
