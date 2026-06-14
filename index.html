@@ -136,6 +136,11 @@ canvas{touch-action:manipulation}
 <div class="card">
 <h3>Sky View</h3>
 <canvas id="skyCanvas" width="360" height="220"></canvas>
+
+<div id="selectedObjectInfo" class="result">
+Selected: —
+</div>
+
 <p class="small">Shows calculated Sun/Moon/stars according to UTC, position and course.</p>
 </div>
 <div class="card">
@@ -701,6 +706,7 @@ let ctx=canvas.getContext("2d");
 ctx.clearRect(0,0,canvas.width,canvas.height);
 skyObjects=[];
 let selectedObject=celestialObject.value;
+let selectedInfo=null;
 let data=getInputData();
 ctx.fillStyle="#06152a";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -795,6 +801,7 @@ ctx.arc(x,y,size,0,Math.PI*2);
 ctx.fill();
 
 if(o.name===selectedObject){
+  selectedInfo=o;
 ctx.strokeStyle="#ffd966";
 ctx.lineWidth=2;
 ctx.beginPath();
@@ -815,7 +822,14 @@ r:22
 });
 
 });
+if(selectedInfo){
 
+document.getElementById("selectedObjectInfo").innerHTML=
+"<b>Selected:</b> "+selectedInfo.name+
+" | Hc "+selectedInfo.hc.toFixed(1)+"°"+
+" | Zn "+selectedInfo.zn.toFixed(1)+"°";
+
+}
 ctx.fillStyle="#9ee7ff";
 ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,210);
 }
