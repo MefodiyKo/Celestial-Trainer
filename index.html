@@ -138,7 +138,11 @@ canvas{touch-action:manipulation}
 <canvas id="skyCanvas" width="360" height="220"></canvas>
 <p class="small">Shows calculated Sun/Moon/stars according to UTC, position and course.</p>
 </div>
-
+<div class="card">
+<h3>Star Planner</h3>
+<button class="main" onclick="showStarPlanner()">Show Best Stars</button>
+<div class="result" id="starPlannerResult">No plan calculated.</div>
+</div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Obs</button>
@@ -1025,7 +1029,84 @@ select.appendChild(option);
 });
 
 }
+function showStarPlanner(){
 
+let data=getInputData();
+
+if(data.error){
+starPlannerResult.innerHTML=data.error;
+return;
+}
+
+let sun=sunAlmanac(data.date,data.time);
+let sunR=calculateHcZn(
+data.lat,
+sun.Dec,
+norm360(sun.GHA+data.lon)
+);
+
+let stars=[];
+
+Object.keys(STAR_CATALOG).forEach(name=>{
+
+let star=STAR_CATALOG[name];
+let GHA=norm360(sun.GHAAries+star.SHA);
+
+let r=calculateHcZn(
+data.lat,
+star.Dec,
+norm360(GHA+data.lon)
+);
+
+if(r.Hc>=15 && r.Hc<=70){
+
+stars.push({
+name:name,
+hc:r.Hc,
+zn:r.Zn,
+mag:star.Mag
+});
+
+}
+
+});
+
+stars.sort((a,b)=>{
+return a.mag-b.mag;
+});
+
+let title="STAR PLANNER";
+
+if(sunR.Hc>-6){
+title="DAYLIGHT — stars not recommended";
+}else if(sunR.Hc<=-6 && sunR.Hc>-12){
+title="CIVIL / NAUTICAL TWILIGHT — good for star sights";
+}else if(sunR.Hc<=-12){
+title="NIGHT — stars visible";
+}
+
+let html=
+"<b>"+title+"</b><br><br>"+
+"Sun Hc: "+sunR.Hc.toFixed(1)+"°<br><br>";
+
+if(stars.length===0){
+html+="No suitable stars found.";
+}else{
+html+="<b>Best Stars:</b><br><br>";
+
+stars.slice(0,10).forEach(s=>{
+html+=
+"⭐ "+s.name+
+" — Hc "+s.hc.toFixed(0)+"°"+
+" / Zn "+s.zn.toFixed(0)+"°"+
+" / Mag "+s.mag+
+"<br>";
+});
+}
+
+starPlannerResult.innerHTML=html;
+
+}
 setNowUTC();
 populateObjectList();
 
