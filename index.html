@@ -121,6 +121,9 @@ canvas{touch-action:manipulation}
     font-size:12px;
   }
 }
+.hiddenBlock{
+  display:none;
+}
 </style>
 </head>
 
@@ -143,13 +146,13 @@ Selected: —
 
 <p class="small">Shows calculated Sun/Moon/stars according to UTC, position and course.</p>
 </div>
-<div class="card">
+<div class="card hiddenBlock">
 <h3>Star Planner</h3>
 <button class="main" onclick="showStarPlanner()">Show Best Stars</button>
 <div class="result" id="starPlannerResult">No plan calculated.
 </div>
 </div>
-<div class="card">
+<div class="card hiddenBlock">
 <h3>Planet Finder</h3>
 <div class="result" id="planetFinderResult">
 No planets calculated.
