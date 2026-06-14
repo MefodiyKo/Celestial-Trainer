@@ -206,7 +206,7 @@ canvas{touch-action:manipulation}
 </div>
 
 <div class="grid2">
-<button class="main" onclick="setNowUTC(); autoUpdateSky();">Set UTC</button>
+<button class="main" onclick="setNowUTC(); populateObjectList(); autoUpdateSky(); showStarPlanner();">Set UTC</button>
 <button class="main" onclick="getGPSPosition()">Get GPS</button>
 </div>
 
@@ -680,6 +680,8 @@ latDeg.value=ld;latMin.value=lm.toFixed(1);
 lonDeg.value=od;lonMin.value=om.toFixed(1);
 setNowUTC();
 calculateObject();
+populateObjectList();
+showStarPlanner();
 },err=>{
 alert("GPS Error: "+err.message);
 },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
@@ -1122,14 +1124,18 @@ starPlannerResult.innerHTML=html;
 "skyMode"
 ].forEach(id=>{
 
-document.getElementById(id).addEventListener("change",function(){
+let el=document.getElementById(id);
 
+el.addEventListener("change",function(){
 populateObjectList();
-
 autoUpdateSky();
-
 showStarPlanner();
+});
 
+el.addEventListener("input",function(){
+populateObjectList();
+autoUpdateSky();
+showStarPlanner();
 });
 
 });
