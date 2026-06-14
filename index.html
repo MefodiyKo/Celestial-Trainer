@@ -213,7 +213,7 @@ No planets calculated.
 </div>
 
 <div class="grid2">
-<button class="main" onclick="setNowUTC(); populateObjectList(); autoUpdateSky(); showStarPlanner();" showPlanetFinder();">Set UTC</button>
+<button class="main" onclick="setNowUTC(); populateObjectList(); autoUpdateSky(); showStarPlanner(); showPlanetFinder();">Set UTC</button>
 <button class="main" onclick="getGPSPosition()">Get GPS</button>
 </div>
 
@@ -777,6 +777,41 @@ let y=horizonY-(o.hc/90)*(horizonY-topY);
 if(y<topY)y=topY;
 if(y>horizonY)y=horizonY;
 
+let size=
+o.type==="sun" ? 8 :
+o.type==="moon" ? 7 :
+o.type==="planet" ? 5 :
+4;
+
+ctx.fillStyle=
+o.type==="sun" ? "#ffd966" :
+o.type==="moon" ? "#dddddd" :
+o.type==="planet" ? "#88ff88" :
+"#ffffff";
+
+ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fill();
+
+if(o.name===selectedObject){
+ctx.strokeStyle="#ffd966";
+ctx.lineWidth=2;
+ctx.beginPath();
+ctx.arc(x,y,size+7,0,Math.PI*2);
+ctx.stroke();
+ctx.lineWidth=1;
+}
+
+ctx.fillStyle="#ffffff";
+ctx.font="10px Arial";
+ctx.fillText(o.name,x+7,y+4);
+
+skyObjects.push({
+name:o.name,
+x:x,
+y:y,
+r:22
+});
 
 });
 
@@ -1188,7 +1223,53 @@ html+="No visible planets.";
 planetFinderResult.innerHTML=html;
 
 }
+function selectObjectFromSky(event){
 
+let canvas=document.getElementById("skyCanvas");
+let rect=canvas.getBoundingClientRect();
+
+let x=(event.clientX-rect.left)*(canvas.width/rect.width);
+let y=(event.clientY-rect.top)*(canvas.height/rect.height);
+
+for(let obj of skyObjects){
+
+let dx=x-obj.x;
+let dy=y-obj.y;
+let dist=Math.sqrt(dx*dx+dy*dy);
+
+if(dist<=obj.r){
+
+let select=document.getElementById("celestialObject");
+
+let exists=false;
+
+for(let i=0;i<select.options.length;i++){
+if(select.options[i].value===obj.name){
+exists=true;
+break;
+}
+}
+
+if(!exists){
+let option=document.createElement("option");
+option.value=obj.name;
+option.textContent="⭐ "+obj.name;
+select.appendChild(option);
+}
+
+select.value=obj.name;
+calculateObject();
+updateSightCorrections();
+drawSkyView();
+
+return;
+}
+
+}
+
+}
+
+document.getElementById("skyCanvas").addEventListener("click",selectObjectFromSky);
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
