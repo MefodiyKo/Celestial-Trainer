@@ -213,7 +213,7 @@ No planets calculated.
 </div>
 
 <div class="grid2">
-<button class="main" onclick="setNowUTC(); populateObjectList(); autoUpdateSky(); showStarPlanner();">Set UTC</button>
+<button class="main" onclick="setNowUTC(); populateObjectList(); autoUpdateSky(); showStarPlanner();" showPlanetFinder();">Set UTC</button>
 <button class="main" onclick="getGPSPosition()">Get GPS</button>
 </div>
 
@@ -1137,12 +1137,14 @@ el.addEventListener("change",function(){
 populateObjectList();
 autoUpdateSky();
 showStarPlanner();
+showPlanetFinder();
 });
 
 el.addEventListener("input",function(){
 populateObjectList();
 autoUpdateSky();
 showStarPlanner();
+showPlanetFinder();
 });
 
 });
