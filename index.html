@@ -770,7 +770,8 @@ o.type==="sun" ? "#ffd966" :
 o.type==="moon" ? "#dddddd" :
 o.type==="planet" ? "#88ff88" :
 "#ffffff";
-ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fill();
 ctx.fillStyle="#ffffff";
 ctx.font="10px Arial";
 ctx.fillText(o.name,x+7,y+4);
