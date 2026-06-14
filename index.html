@@ -210,6 +210,10 @@ canvas{touch-action:manipulation}
 <select id="celestialObject" class="full" onchange="updateSightCorrections()">
 <option value="Sun">☀️ Sun</option>
 <option value="Moon">🌙 Moon</option>
+<option value="Venus">♀ Venus</option>
+<option value="Mars">♂ Mars</option>
+<option value="Jupiter">♃ Jupiter</option>
+<option value="Saturn">♄ Saturn</option>
 </select>
 
 <button class="main" onclick="calculateObject()">Calculate Object</button>
@@ -550,7 +554,68 @@ sightObject.innerText=object;
 sightHc.innerText=formatAlt(Hc);
 sightZn.innerText=formatBearing(Zn);
 }
+function planetAlmanac(date,time,planet){
 
+let sun=sunAlmanac(date,time);
+let JD=sun.JD;
+let d=JD-2451545.0;
+
+const P={
+Venus:{N:76.680,I:3.394,w:54.884,a:0.723,e:0.0068,M:50.115,n:1.602130},
+Mars:{N:49.558,I:1.849,w:286.502,a:1.524,e:0.0934,M:19.373,n:0.524020},
+Jupiter:{N:100.454,I:1.303,w:273.877,a:5.203,e:0.0485,M:20.020,n:0.083085},
+Saturn:{N:113.663,I:2.489,w:339.393,a:9.537,e:0.0555,M:317.020,n:0.033444}
+};
+
+let p=P[planet];
+
+let N=degToRad(p.N);
+let i=degToRad(p.I);
+let w=degToRad(p.w);
+let a=p.a;
+let e=p.e;
+let M=degToRad(norm360(p.M+p.n*d));
+
+let E=M+e*Math.sin(M)*(1+e*Math.cos(M));
+
+let xv=a*(Math.cos(E)-e);
+let yv=a*(Math.sqrt(1-e*e)*Math.sin(E));
+
+let v=Math.atan2(yv,xv);
+let r=Math.sqrt(xv*xv+yv*yv);
+
+let xh=r*(Math.cos(N)*Math.cos(v+w)-Math.sin(N)*Math.sin(v+w)*Math.cos(i));
+let yh=r*(Math.sin(N)*Math.cos(v+w)+Math.cos(N)*Math.sin(v+w)*Math.cos(i));
+let zh=r*(Math.sin(v+w)*Math.sin(i));
+
+/* Earth position approx from Sun */
+let sunLong=norm360(280.46646+0.98564736*d);
+let earthX=-Math.cos(degToRad(sunLong));
+let earthY=-Math.sin(degToRad(sunLong));
+let earthZ=0;
+
+let xg=xh-earthX;
+let yg=yh-earthY;
+let zg=zh-earthZ;
+
+let eps=degToRad(23.4393-0.0000004*d);
+
+let xe=xg;
+let ye=yg*Math.cos(eps)-zg*Math.sin(eps);
+let ze=yg*Math.sin(eps)+zg*Math.cos(eps);
+
+let RA=norm360(radToDeg(Math.atan2(ye,xe)));
+let Dec=radToDeg(Math.atan2(ze,Math.sqrt(xe*xe+ye*ye)));
+
+let GHA=norm360(gmstFromJD(JD)-RA);
+
+return {
+JD:JD,
+GHA:GHA,
+Dec:Dec
+};
+
+}
 function calculateObject(){
 let data=getInputData();
 if(data.error){sunResult.innerHTML=data.error;drawSkyView();return false;}
@@ -559,9 +624,20 @@ let obj=celestialObject.value;
 let alm;
 
 if(obj==="Sun") alm=sunAlmanac(data.date,data.time);
+
 else if(obj==="Moon"){
   alm=moonAlmanac(data.date,data.time);
 }
+
+else if(
+obj==="Venus" ||
+obj==="Mars" ||
+obj==="Jupiter" ||
+obj==="Saturn"
+){
+  alm=planetAlmanac(data.date,data.time,obj);
+}
+
 else{
 let sun=sunAlmanac(data.date,data.time);
 let star=STAR_CATALOG[obj];
@@ -713,7 +789,11 @@ if(lastSunData && lastSunData.object==="Moon"){
   parallaxValue.value="57.0";
 }
 }
-else{sightBody.value="star";sdValue.value="0.0";parallaxValue.value="0.0";}
+else{
+sightBody.value="star";
+sdValue.value="0.0";
+parallaxValue.value="0.0";
+}
 }
 
 function calculateDip(h){return h>0?-1.76*Math.sqrt(h):0}
