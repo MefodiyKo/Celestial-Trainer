@@ -141,7 +141,14 @@ canvas{touch-action:manipulation}
 <div class="card">
 <h3>Star Planner</h3>
 <button class="main" onclick="showStarPlanner()">Show Best Stars</button>
-<div class="result" id="starPlannerResult">No plan calculated.</div>
+<div class="result" id="starPlannerResult">No plan calculated.
+</div>
+</div>
+<div class="card">
+<h3>Planet Finder</h3>
+<div class="result" id="planetFinderResult">
+No planets calculated.
+</div>
 </div>
 <div class="tabs">
 <button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
@@ -1139,12 +1146,65 @@ showStarPlanner();
 });
 
 });
+function showPlanetFinder(){
+
+let data=getInputData();
+
+if(data.error){
+planetFinderResult.innerHTML=data.error;
+return;
+}
+
+let planets=["Venus","Mars","Jupiter","Saturn"];
+
+let html="<b>VISIBLE PLANETS</b><br><br>";
+
+let found=0;
+
+planets.forEach(name=>{
+
+let p=planetAlmanac(data.date,data.time,name);
+
+let r=calculateHcZn(
+data.lat,
+p.Dec,
+norm360(p.GHA+data.lon)
+);
+
+if(r.Hc>0){
+
+found++;
+
+let symbol="";
+
+if(name==="Venus") symbol="♀";
+if(name==="Mars") symbol="♂";
+if(name==="Jupiter") symbol="♃";
+if(name==="Saturn") symbol="♄";
+
+html+=
+symbol+" "+name+
+" — Hc "+r.Hc.toFixed(1)+"°"+
+" / Zn "+r.Zn.toFixed(1)+"°<br>";
+
+}
+
+});
+
+if(found===0){
+html+="No visible planets.";
+}
+
+planetFinderResult.innerHTML=html;
+
+}
 
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
 autoUpdateSky();
 showStarPlanner();
+showPlanetFinder();
 </script>
 
 </body>
