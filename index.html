@@ -698,7 +698,8 @@ function drawSkyView(){
 let canvas=document.getElementById("skyCanvas");
 let ctx=canvas.getContext("2d");
 ctx.clearRect(0,0,canvas.width,canvas.height);
-
+skyObjects=[];
+let selectedObject=celestialObject.value;
 let data=getInputData();
 ctx.fillStyle="#06152a";
 ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -772,22 +773,9 @@ if(rr.Hc>5)objects.push({name,type:"star",hc:rr.Hc,zn:rr.Zn,mag:st.Mag});
 objects.forEach(o=>{
 let x=azToX(o.zn);
 let y=horizonY-(o.hc/90)*(horizonY-topY);
+
 if(y<topY)y=topY;
-let size=
-o.type==="sun" ? 8 :
-o.type==="moon" ? 7 :
-o.type==="planet" ? 5 :
-4;
-ctx.fillStyle=
-o.type==="sun" ? "#ffd966" :
-o.type==="moon" ? "#dddddd" :
-o.type==="planet" ? "#88ff88" :
-"#ffffff";
-ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);
-ctx.fill();
-ctx.fillStyle="#ffffff";
-ctx.font="10px Arial";
-ctx.fillText(o.name,x+7,y+4);
+if(y>h
 
 
 });
