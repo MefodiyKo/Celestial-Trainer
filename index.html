@@ -689,6 +689,7 @@ setNowUTC();
 calculateObject();
 populateObjectList();
 showStarPlanner();
+showPlanetFinder();
 },err=>{
 alert("GPS Error: "+err.message);
 },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
@@ -1260,7 +1261,9 @@ select.appendChild(option);
 select.value=obj.name;
 calculateObject();
 updateSightCorrections();
-drawSkyView();
+autoUpdateSky();
+showStarPlanner();
+showPlanetFinder();
 
 return;
 }
