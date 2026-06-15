@@ -1583,14 +1583,24 @@ let s12=sep(b1,b2);
 let s23=sep(b2,b3);
 let s31=sep(b3,b1);
 
-let assessment="GOOD";
+let assessment="EXCELLENT";
 
-if(
-s12<30 || s23<30 || s31<30 ||
-s12>150 || s23>150 || s31>150
-){
+let arr=[s12,s23,s31];
+
+arr.forEach(v=>{
+
+if(v<60 || v>150){
 assessment="POOR";
 }
+
+else if(
+assessment!=="POOR" &&
+(v<80 || v>140)
+){
+assessment="FAIR";
+}
+
+});
 
 document.getElementById("geometryResult").innerHTML=
 "1-2: "+s12.toFixed(0)+"° | "+
