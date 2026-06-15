@@ -127,10 +127,12 @@ canvas{touch-action:manipulation}
 .printSheet{
   background:white;
   color:black;
-  padding:12px;
-  border-radius:6px;
+  padding:10px;
+  border-radius:0;
   font-family:Arial;
-  font-size:12px;
+  font-size:11px;
+  width:780px;
+  margin:0 auto;
 }
 
 .printSheet h2,
@@ -197,8 +199,10 @@ canvas{touch-action:manipulation}
     width:100%;
     box-shadow:none;
 
-    transform:scale(0.82);
+    transform:scale(0.72);
     transform-origin:top left;
+    background:white !important;
+overflow:hidden;
   }
 
   .fixTable{
@@ -465,7 +469,7 @@ Zn: <span id="sightZn">--</span>
 <div id="fixWorksheet" class="printSheet">
 
 <h3>Circular Plotting Sheet</h3>
-<canvas id="circularPlotCanvas" width="560" height="560"></canvas>
+<canvas id="circularPlotCanvas" width="500" height="500"></canvas>
 
 <div class="resultBox" id="geometryResult">
 Geometry check waiting...
