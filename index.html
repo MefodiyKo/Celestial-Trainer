@@ -180,6 +180,7 @@ canvas{touch-action:manipulation}
 }
 
 @media print{
+
   body *{
     visibility:hidden;
   }
@@ -195,6 +196,24 @@ canvas{touch-action:manipulation}
     top:0;
     width:100%;
     box-shadow:none;
+
+    transform:scale(0.82);
+    transform-origin:top left;
+  }
+
+  .fixTable{
+    font-size:9px;
+  }
+
+  .fixTable th,
+  .fixTable td{
+    padding:2px;
+    height:14px;
+  }
+
+  #circularPlotCanvas{
+    width:520px;
+    height:520px;
   }
 
   .tabs,
@@ -445,7 +464,12 @@ Zn: <span id="sightZn">--</span>
 
 <div id="fixWorksheet" class="printSheet">
 
+<h3>Circular Plotting Sheet</h3>
+<canvas id="circularPlotCanvas" width="560" height="560"></canvas>
 
+<div class="resultBox" id="geometryResult">
+Geometry check waiting...
+</div>
 
 <table class="fixTable">
 <tr>
@@ -483,12 +507,7 @@ Zn: <span id="sightZn">--</span>
 <tr><td>Toward / Away</td><td id="fwTA1"></td><td id="fwTA2"></td><td id="fwTA3"></td></tr>
 </table>
 
-<h3>Circular Plotting Sheet</h3>
-<canvas id="circularPlotCanvas" width="560" height="560"></canvas>
 
-<div class="resultBox" id="geometryResult">
-Geometry check waiting...
-</div>
 <div class="formFooter">
 <div>
 <b>Fix Position:</b>
@@ -2038,10 +2057,7 @@ formatLatLon(fixLat,true)+" / "+formatLatLon(fixLon,false);
 }
 
 /* title / scale note */
-ctx.fillStyle="black";
-ctx.font="12px Arial";
-ctx.fillText("Conventional circular plotting sheet",20,525);
-ctx.fillText("Scale: 1 ring = 2 NM | Outer circle = 10 NM",20,542);
+
 
 }
 function printFixWorksheet(){
