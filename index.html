@@ -1857,35 +1857,37 @@ let cx=280;
 let cy=280;
 let R=240;
 
-let maxInt=Math.max(
-1,
-Math.abs(lops[0].intercept),
-Math.abs(lops[1].intercept),
-Math.abs(lops[2].intercept)
-);
-
-let scale=(R*0.45)/maxInt;
+/* fixed scale */
+let ringStepNM=2;
+let ringStepPx=R/5;
+let scale=ringStepPx/ringStepNM; // pixels per NM
 
 /* outer circle */
 ctx.strokeStyle="black";
-ctx.lineWidth=1.2;
+ctx.lineWidth=2;
 ctx.beginPath();
 ctx.arc(cx,cy,R,0,Math.PI*2);
 ctx.stroke();
 
-/* inner distance rings */
+/* distance rings: 2,4,6,8,10 NM */
 ctx.strokeStyle="#dddddd";
-ctx.lineWidth=1;
+ctx.lineWidth=0.6;
+ctx.fillStyle="black";
+ctx.font="11px Arial";
 
-for(let rr=R/5;rr<R;rr+=R/5){
+for(let i=1;i<=5;i++){
+let rr=ringStepPx*i;
+
 ctx.beginPath();
 ctx.arc(cx,cy,rr,0,Math.PI*2);
 ctx.stroke();
+
+ctx.fillText((i*ringStepNM)+" NM",cx+rr-28,cy-5);
 }
 
 /* azimuth ticks */
 ctx.strokeStyle="black";
-ctx.fillStyle="black";
+ctx.lineWidth=1;
 ctx.font="12px Arial";
 
 for(let a=0;a<360;a+=5){
@@ -1911,9 +1913,9 @@ ctx.fillText(String(a).padStart(3,"0"),tx-13,ty+4);
 
 }
 
-/* N-E-S-W axes */
+/* axes */
 ctx.strokeStyle="#666666";
-ctx.lineWidth=1.5;
+ctx.lineWidth=1.3;
 
 ctx.beginPath();
 ctx.moveTo(cx,cy-R);
@@ -1928,21 +1930,21 @@ ctx.stroke();
 /* AP */
 ctx.fillStyle="red";
 ctx.beginPath();
-ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.arc(cx,cy,4,0,Math.PI*2);
 ctx.fill();
-ctx.fillText("AP",cx+8,cy+16);
+ctx.fillText("AP",cx+8,cy+15);
 
-/* draw azimuths and LOPs */
+/* draw azimuths, intercept points and LOPs */
 lops.forEach((lop,index)=>{
 
 let z=degToRad(lop.zn);
 
-/* azimuth ray */
+/* Zn ray */
 let ax=cx+Math.sin(z)*R;
 let ay=cy-Math.cos(z)*R;
 
-ctx.strokeStyle="#9999ff";
-ctx.lineWidth=1;
+ctx.strokeStyle="#b5b5ff";
+ctx.lineWidth=0.8;
 
 ctx.beginPath();
 ctx.moveTo(cx,cy);
@@ -1953,11 +1955,21 @@ ctx.stroke();
 let ix=cx+Math.sin(z)*lop.intercept*scale;
 let iy=cy-Math.cos(z)*lop.intercept*scale;
 
-/* LOP line perpendicular to Zn */
+/* intercept point mark */
+ctx.fillStyle="orange";
+ctx.beginPath();
+ctx.arc(ix,iy,4,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="black";
+ctx.font="11px Arial";
+ctx.fillText("I"+(index+1),ix+6,iy-6);
+
+/* LOP perpendicular to Zn */
 let a=degToRad(lop.zn+90);
 
 ctx.strokeStyle="blue";
-ctx.lineWidth=1.5;
+ctx.lineWidth=1.2;
 
 ctx.beginPath();
 ctx.moveTo(
@@ -1970,9 +1982,10 @@ iy-Math.cos(a)*R
 );
 ctx.stroke();
 
-/* label */
+/* object label */
 ctx.fillStyle="blue";
 ctx.font="12px Arial";
+
 ctx.fillText(
 lop.object+" / Zn "+lop.zn.toFixed(1)+"°",
 cx+Math.sin(z)*(R*0.55),
@@ -2007,12 +2020,24 @@ let dy=(Sss*Bc-Ssc*Bs)/det;
 let fx=cx+dx*scale;
 let fy=cy-dy*scale;
 
-ctx.fillStyle="green";
+/* FIX */
+ctx.fillStyle="darkblue";
 ctx.beginPath();
-ctx.arc(fx,fy,8,0,Math.PI*2);
+ctx.arc(fx,fy,7,0,Math.PI*2);
 ctx.fill();
 
+ctx.fillStyle="darkblue";
+ctx.font="12px Arial";
 ctx.fillText("FIX",fx+10,fy-10);
+
+/* AP to FIX line */
+ctx.strokeStyle="darkblue";
+ctx.lineWidth=1;
+
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(fx,fy);
+ctx.stroke();
 
 let apLat=lops[0].lat;
 let apLon=lops[0].lon;
@@ -2025,11 +2050,11 @@ formatLatLon(fixLat,true)+" / "+formatLatLon(fixLon,false);
 
 }
 
-/* scale note */
+/* title / scale note */
 ctx.fillStyle="black";
 ctx.font="12px Arial";
 ctx.fillText("Conventional circular plotting sheet",20,525);
-ctx.fillText("Scale auto: "+(1/scale).toFixed(2)+" NM per pixel",20,542);
+ctx.fillText("Scale: 1 ring = 2 NM | Outer circle = 10 NM",20,542);
 
 }
 function printFixWorksheet(){
