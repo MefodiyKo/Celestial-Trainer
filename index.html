@@ -1655,6 +1655,38 @@ ctx.arc(cx,cy,5,0,Math.PI*2);
 ctx.fill();
 
 ctx.fillText("AP",cx+8,cy+15);
+let Sss=0,Ssc=0,Scc=0,Bs=0,Bc=0;
+
+lops.forEach(l=>{
+let z=degToRad(l.zn);
+let s=Math.sin(z);
+let c=Math.cos(z);
+
+Sss+=s*s;
+Ssc+=s*c;
+Scc+=c*c;
+
+Bs+=l.intercept*s;
+Bc+=l.intercept*c;
+});
+
+let det=Sss*Scc-Ssc*Ssc;
+
+if(Math.abs(det)>0.0001){
+
+let dx=(Bs*Scc-Bc*Ssc)/det;
+let dy=(Sss*Bc-Ssc*Bs)/det;
+
+let fx=cx+dx*scale;
+let fy=cy-dy*scale;
+
+ctx.fillStyle="green";
+ctx.beginPath();
+ctx.arc(fx,fy,6,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText("FIX",fx+8,fy-8);
+}
 }
 
 function printFixWorksheet(){
