@@ -498,7 +498,7 @@ Zn: <span id="sightZn">--</span>
 <canvas id="worksheetPlotCanvas" width="520" height="520"></canvas>
 
 <div class="formFooter">
-<div>Fix Position: __________________________</div>
+<div>Fix Position: <span id="fwFixPosition">__________________________</span></div>
 <div>Remarks: _____________________________</div>
 </div>
 
@@ -1686,6 +1686,14 @@ ctx.arc(fx,fy,10,0,Math.PI*2);
 ctx.fill();
 
 ctx.fillText("FIX",fx+14,fy-14);
+let apLat=lops[0].lat;
+let apLon=lops[0].lon;
+
+let fixLat=apLat+dy/60;
+let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
+
+document.getElementById("fwFixPosition").innerText=
+formatLatLon(fixLat,true)+" / "+formatLatLon(fixLon,false);
 }
 }
 
