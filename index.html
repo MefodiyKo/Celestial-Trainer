@@ -445,19 +445,7 @@ Zn: <span id="sightZn">--</span>
 
 <div id="fixWorksheet" class="printSheet">
 
-<h2>CELESTIAL FIX WORKSHEET — 3 OBJECTS</h2>
 
-<div class="formTop">
-<div>Date UTC: <span id="fwDate">__________</span></div>
-<div>Vessel: __________________</div>
-<div>Officer: __________________</div>
-</div>
-
-<div class="formTop">
-<div>AP / DR Lat: <span id="fwLat">__________</span></div>
-<div>AP / DR Lon: <span id="fwLon">__________</span></div>
-<div>Course / Speed: __________</div>
-</div>
 
 <table class="fixTable">
 <tr>
@@ -502,8 +490,10 @@ Zn: <span id="sightZn">--</span>
 Geometry check waiting...
 </div>
 <div class="formFooter">
-<div>Fix Position: <span id="fwFixPosition">__________________________</span></div>
-<div>Remarks: _____________________________</div>
+<div>
+<b>Fix Position:</b>
+<span id="fwFixPosition">__________________________</span>
+</div>
 </div>
 
 </div>
@@ -1483,10 +1473,7 @@ alert("Save 3 LOPs first");
 return;
 }
 
-fwDate.innerText=lops[0].date;
 
-fwLat.innerText=formatLatLon(lops[0].lat,true);
-fwLon.innerText=formatLatLon(lops[0].lon,false);
 
 for(let i=0;i<3;i++){
 
