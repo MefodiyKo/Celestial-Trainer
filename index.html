@@ -484,6 +484,7 @@ Zn: <span id="sightZn">--</span>
 <tr><td>Table Hc</td><td id="fwTableHc1"></td><td id="fwTableHc2"></td><td id="fwTableHc3"></td></tr>
 <tr><td>d</td><td id="fwD1"></td><td id="fwD2"></td><td id="fwD3"></td></tr>
 <tr><td>Table 5 Corr.</td><td id="fwT5Corr1"></td><td id="fwT5Corr2"></td><td id="fwT5Corr3"></td></tr>
+<tr><td>Hc Corrected</td><td id="fwHcCorr1"></td><td id="fwHcCorr2"></td><td id="fwHcCorr3"></td></tr>
 <tr><td>Z</td><td id="fwZ1"></td><td id="fwZ2"></td><td id="fwZ3"></td></tr>
 <tr><td>GHA</td><td id="fwGha1"></td><td id="fwGha2"></td><td id="fwGha3"></td></tr>
 <tr><td>Dec</td><td id="fwDec1"></td><td id="fwDec2"></td><td id="fwDec3"></td></tr>
@@ -496,7 +497,8 @@ Zn: <span id="sightZn">--</span>
 
 <h3>Plotting Sheet</h3>
 <canvas id="worksheetPlotCanvas" width="520" height="520"></canvas>
-
+<h3>Azimuth Plotting Sheet</h3>
+<canvas id="azimuthPlotCanvas" width="520" height="520"></canvas>
 <div class="formFooter">
 <div>Fix Position: <span id="fwFixPosition">__________________________</span></div>
 <div>Remarks: _____________________________</div>
@@ -1103,8 +1105,13 @@ npDec:Math.round(Math.abs(lastSunData.Dec)),
 sameContrary:((lastSunData.lat>=0 && lastSunData.Dec>=0) || (lastSunData.lat<0 && lastSunData.Dec<0)) ? "Same" : "Contrary",
 
 tableHc:lastSunData.Hc,
-dValue:"calc",
-table5Corr:"calc",
+
+dValue:Math.abs(lastSunData.Dec-Math.round(lastSunData.Dec))*60,
+
+table5Corr:0,
+
+hcCorrected:lastSunData.Hc,
+
 Z:lastSunData.Zn
 };
 updatePositionFixCount();
@@ -1530,10 +1537,13 @@ document.getElementById("fwTableHc"+n).innerText=
 lop.tableHc!==undefined ? formatAlt(lop.tableHc) : "";
 
 document.getElementById("fwD"+n).innerText=
-lop.dValue || "";
+lop.dValue!==undefined ? lop.dValue.toFixed(1)+"'" : "";
 
 document.getElementById("fwT5Corr"+n).innerText=
-lop.table5Corr || "";
+lop.table5Corr!==undefined ? lop.table5Corr.toFixed(1)+"'" : "";
+
+document.getElementById("fwHcCorr"+n).innerText=
+lop.hcCorrected!==undefined ? formatAlt(lop.hcCorrected) : "";
 
 document.getElementById("fwZ"+n).innerText=
 lop.Z!==undefined ? lop.Z.toFixed(1)+"°" : "";
@@ -1555,7 +1565,7 @@ document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 }
 
 drawWorksheetPlot(lops);
-
+drawAzimuthPlot(lops);
 alert("Worksheet filled");
 }
 
@@ -1696,7 +1706,104 @@ document.getElementById("fwFixPosition").innerText=
 formatLatLon(fixLat,true)+" / "+formatLatLon(fixLon,false);
 }
 }
+function drawAzimuthPlot(lops){
 
+let canvas=document.getElementById("azimuthPlotCanvas");
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="white";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+let cx=260;
+let cy=260;
+let r=220;
+
+ctx.strokeStyle="black";
+ctx.lineWidth=1;
+
+ctx.beginPath();
+ctx.arc(cx,cy,r,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(cx,cy-r);
+ctx.lineTo(cx,cy+r);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(cx-r,cy);
+ctx.lineTo(cx+r,cy);
+ctx.stroke();
+
+ctx.fillStyle="black";
+ctx.font="14px Arial";
+ctx.fillText("000",cx-12,cy-r-8);
+ctx.fillText("090",cx+r+6,cy+5);
+ctx.fillText("180",cx-12,cy+r+18);
+ctx.fillText("270",cx-r-34,cy+5);
+
+for(let a=0;a<360;a+=10){
+
+let rad=degToRad(a);
+let inner=a%30===0 ? r-18 : r-10;
+
+let x1=cx+Math.sin(rad)*inner;
+let y1=cy-Math.cos(rad)*inner;
+let x2=cx+Math.sin(rad)*r;
+let y2=cy-Math.cos(rad)*r;
+
+ctx.beginPath();
+ctx.moveTo(x1,y1);
+ctx.lineTo(x2,y2);
+ctx.stroke();
+
+if(a%30===0 && a!==0 && a!==90 && a!==180 && a!==270){
+let tx=cx+Math.sin(rad)*(r-35);
+let ty=cy-Math.cos(rad)*(r-35);
+ctx.fillText(String(a).padStart(3,"0"),tx-12,ty+4);
+}
+
+}
+
+ctx.fillStyle="red";
+ctx.beginPath();
+ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.fill();
+ctx.fillText("AP",cx+8,cy+15);
+
+lops.forEach((lop,index)=>{
+
+let z=degToRad(lop.zn);
+
+let x=cx+Math.sin(z)*r;
+let y=cy-Math.cos(z)*r;
+
+ctx.strokeStyle="blue";
+ctx.beginPath();
+ctx.moveTo(cx,cy);
+ctx.lineTo(x,y);
+ctx.stroke();
+
+ctx.fillStyle="blue";
+ctx.beginPath();
+ctx.arc(x,y,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+lop.object+" / Zn "+lop.zn.toFixed(1)+"°",
+cx+Math.sin(z)*(r*0.55),
+cy-Math.cos(z)*(r*0.55)
+);
+
+});
+
+ctx.fillStyle="black";
+ctx.font="12px Arial";
+ctx.fillText("Azimuth plot for visual check only",20,500);
+
+}
 function printFixWorksheet(){
 window.print();
 }
