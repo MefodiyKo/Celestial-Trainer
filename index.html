@@ -1603,7 +1603,7 @@ ctx.stroke();
 ctx.fillStyle="black";
 ctx.fillText("AP",cx+8,cy-8);
 
-let scale=4;
+let scale=12;
 
 lops.forEach((lop,index)=>{
 
@@ -1651,7 +1651,7 @@ iy-5
 ctx.fillStyle="red";
 
 ctx.beginPath();
-ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.arc(cx,cy,3,0,Math.PI*2);
 ctx.fill();
 
 ctx.fillText("AP",cx+8,cy+15);
@@ -1682,10 +1682,10 @@ let fy=cy-dy*scale;
 
 ctx.fillStyle="green";
 ctx.beginPath();
-ctx.arc(fx,fy,6,0,Math.PI*2);
+ctx.arc(fx,fy,10,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillText("FIX",fx+8,fy-8);
+ctx.fillText("FIX",fx+14,fy-14);
 }
 }
 
