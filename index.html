@@ -181,41 +181,74 @@ canvas{touch-action:manipulation}
 
 @media print{
 
+  @page{
+    size:A4 portrait;
+    margin:8mm;
+  }
+
+  html,
+  body{
+    background:white !important;
+  }
+
   body *{
     visibility:hidden;
   }
 
+  #forms,
+  #forms .card,
   #fixWorksheet,
   #fixWorksheet *{
     visibility:visible;
+  }
+
+  #forms,
+  #forms .card{
+    background:white !important;
+    padding:0 !important;
+    margin:0 !important;
   }
 
   #fixWorksheet{
     position:absolute;
     left:0;
     top:0;
-    width:100%;
-    box-shadow:none;
-
-    transform:scale(0.72);
-    transform-origin:top left;
+    width:700px;
+    max-width:700px;
     background:white !important;
-overflow:hidden;
-  }
-
-  .fixTable{
-    font-size:9px;
-  }
-
-  .fixTable th,
-  .fixTable td{
-    padding:2px;
-    height:14px;
+    box-shadow:none;
+    transform:scale(0.80);
+    transform-origin:top left;
+    overflow:hidden;
   }
 
   #circularPlotCanvas{
     width:520px;
     height:520px;
+    display:block;
+    margin:0 auto;
+  }
+
+  .fixTable{
+    font-size:8.5px;
+    margin-top:4px;
+  }
+
+  .fixTable th,
+  .fixTable td{
+    padding:1px;
+    height:12px;
+  }
+
+  .resultBox{
+    font-size:10px;
+    padding:4px;
+    margin-top:2px;
+  }
+
+  .formFooter{
+    font-size:10px;
+    margin-top:3px;
   }
 
   .tabs,
