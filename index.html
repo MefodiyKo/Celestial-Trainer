@@ -497,6 +497,9 @@ Zn: <span id="sightZn">--</span>
 
 <h3>Plotting Sheet</h3>
 <canvas id="worksheetPlotCanvas" width="520" height="520"></canvas>
+<div class="resultBox" id="geometryResult">
+Geometry check waiting...
+</div>
 <h3>Azimuth Plotting Sheet</h3>
 <canvas id="azimuthPlotCanvas" width="520" height="520"></canvas>
 <div class="formFooter">
@@ -1566,6 +1569,34 @@ document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 
 drawWorksheetPlot(lops);
 drawAzimuthPlot(lops);
+let b1=lops[0].zn;
+let b2=lops[1].zn;
+let b3=lops[2].zn;
+
+function sep(a,b){
+let d=Math.abs(a-b);
+if(d>180)d=360-d;
+return d;
+}
+
+let s12=sep(b1,b2);
+let s23=sep(b2,b3);
+let s31=sep(b3,b1);
+
+let assessment="GOOD";
+
+if(
+s12<30 || s23<30 || s31<30 ||
+s12>150 || s23>150 || s31>150
+){
+assessment="POOR";
+}
+
+document.getElementById("geometryResult").innerHTML=
+"1-2: "+s12.toFixed(0)+"° | "+
+"2-3: "+s23.toFixed(0)+"° | "+
+"3-1: "+s31.toFixed(0)+"°<br>"+
+"<b>"+assessment+"</b>";
 alert("Worksheet filled");
 }
 
