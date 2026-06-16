@@ -543,10 +543,17 @@ Geometry check waiting...
 
 
 <div class="formFooter">
+
 <div>
-<b>Fix Position:</b>
+<b>AP Position:</b><br>
+<span id="fwAPPosition">__________________________</span>
+</div>
+
+<div>
+<b>FIX Position:</b><br>
 <span id="fwFixPosition">__________________________</span>
 </div>
+
 </div>
 
 </div>
@@ -1871,9 +1878,9 @@ ctx.arc(x,y,5,0,Math.PI*2);
 ctx.fill();
 
 ctx.fillText(
-lop.object+" / Zn "+lop.zn.toFixed(1)+"°",
-cx+Math.sin(z)*(r*0.55),
-cy-Math.cos(z)*(r*0.55)
+lop.object,
+cx+Math.sin(z)*(R*0.55),
+cy-Math.cos(z)*(R*0.55)
 );
 
 });
@@ -2027,7 +2034,7 @@ ctx.fillStyle="blue";
 ctx.font="12px Arial";
 
 ctx.fillText(
-lop.object+" / Zn "+lop.zn.toFixed(1)+"°",
+lop.object,
 cx+Math.sin(z)*(R*0.55),
 cy-Math.cos(z)*(R*0.55)
 );
@@ -2085,13 +2092,29 @@ let apLon=lops[0].lon;
 let fixLat=apLat+dy/60;
 let fixLon=apLon+dx/(60*Math.cos(degToRad(apLat)));
 
+document.getElementById("fwAPPosition").innerText=
+formatLatLon(apLat,true)+" / "+formatLatLon(apLon,false);
+
 document.getElementById("fwFixPosition").innerText=
 formatLatLon(fixLat,true)+" / "+formatLatLon(fixLon,false);
 
 }
 
 /* title / scale note */
+ctx.fillStyle="black";
+ctx.font="12px Arial";
 
+ctx.fillText(
+"Conventional circular plotting sheet",
+20,
+490
+);
+
+ctx.fillText(
+"Scale: 1 ring = 2 NM | Outer circle = 10 NM",
+20,
+506
+);
 
 }
 function printFixWorksheet(){
