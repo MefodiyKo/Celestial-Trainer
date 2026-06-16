@@ -332,6 +332,7 @@ No planets calculated.
 <button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Obs</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
+<button class="tab" onclick="openTab('meridian',this)">Meridian</button>
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
 <button class="tab" onclick="openTab('forms',this)">Forms</button>
 <button class="tab" onclick="openTab('log',this)">Log</button>
@@ -510,6 +511,38 @@ Zn: <span id="sightZn">--</span>
 <button class="main" onclick="savePositionFixLOP(2)">Save LOP 3</button>
 
 <div class="result" id="sightResult">Calculate object first.</div>
+</div>
+</div>
+
+<div id="meridian" class="section">
+<div class="card">
+<h3>Meridian Passage</h3>
+<p class="small">For training only. Calculates approximate meridian passage time and latitude by meridian altitude.</p>
+
+<div class="resultBox">
+Object: <span id="merObject">Sun</span><br>
+GHA: <span id="merGha">--</span><br>
+Dec: <span id="merDec">--</span>
+</div>
+
+<label>Observed Meridian Altitude Ho</label>
+<div class="grid3">
+<input id="merHoDeg" type="number" placeholder="71">
+<span>°</span>
+<input id="merHoMin" type="number" step="0.1" placeholder="23.4">
+<span>'</span>
+<select disabled><option></option></select>
+</div>
+
+<label>Body Bearing at Noon</label>
+<select id="merBearing" class="full">
+<option value="S">Body South of observer</option>
+<option value="N">Body North of observer</option>
+</select>
+
+<button class="main" onclick="calculateMeridianPassage()">Calculate Meridian Passage</button>
+
+<div class="result" id="meridianResult">Waiting for calculation...</div>
 </div>
 </div>
 
@@ -2145,6 +2178,79 @@ ctx.fillText(
 20,
 506
 );
+
+}
+
+function calculateMeridianPassage(){
+
+let data=getInputData();
+
+if(data.error){
+meridianResult.innerHTML=data.error;
+return;
+}
+
+let alm=sunAlmanac(data.date,"12:00:00");
+let lon=data.lon;
+
+/* Approximate meridian passage UTC:
+   Sun on meridian when GHA + Lon = 0 / 360
+*/
+let ghaNoon=alm.GHA;
+let correction=norm360(ghaNoon+lon);
+
+if(correction>180) correction-=360;
+
+/* Sun GHA changes approx 15 deg per hour */
+let hoursCorrection=correction/15;
+let approxUTC=12-hoursCorrection;
+
+while(approxUTC<0) approxUTC+=24;
+while(approxUTC>=24) approxUTC-=24;
+
+let hh=Math.floor(approxUTC);
+let mm=Math.floor((approxUTC-hh)*60);
+let ss=Math.round((((approxUTC-hh)*60)-mm)*60);
+
+let timeStr=
+String(hh).padStart(2,"0")+":"+
+String(mm).padStart(2,"0")+":"+
+String(ss).padStart(2,"0");
+
+/* Recalculate Sun at approximate meridian time */
+let sun=sunAlmanac(data.date,timeStr);
+let Dec=sun.Dec;
+
+let d=parseFloat(merHoDeg.value);
+let m=parseFloat(merHoMin.value);
+
+if(isNaN(d)||isNaN(m)){
+meridianResult.innerHTML="Enter observed meridian altitude Ho.";
+return;
+}
+
+let Ho=d+m/60;
+let zenithDistance=90-Ho;
+
+let lat;
+
+if(merBearing.value==="S"){
+  lat=Dec+zenithDistance;
+}else{
+  lat=Dec-zenithDistance;
+}
+
+merGha.innerText=formatDM(sun.GHA);
+merDec.innerText=formatDec(Dec);
+
+meridianResult.innerHTML=
+"<b>MERIDIAN PASSAGE</b><br><br>"+
+"Approx. Meridian Passage UTC: "+timeStr+"<br>"+
+"Sun Dec: "+formatDec(Dec)+"<br>"+
+"Ho: "+formatAlt(Ho)+"<br>"+
+"Zenith Distance: "+formatAlt(zenithDistance)+"<br><br>"+
+"<b>Latitude by Meridian Altitude:</b><br>"+
+formatLatLon(lat,true);
 
 }
 function printFixWorksheet(){
