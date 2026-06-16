@@ -434,7 +434,10 @@ No planets calculated.
 
 <div id="observation" class="section">
 <div class="card">
-<h3>Compass Observation</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Compass Observation</h3>
+  <button onclick="openTheoryTopic('compass')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 <p class="small">Uses last calculated object.</p>
 
 <div class="resultBox">
@@ -462,7 +465,10 @@ True Bearing / Zn: <span id="obsZn">--</span>
 
 <div id="sight" class="section">
 <div class="card">
-<h3>Sight Reduction</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Sight Reduction</h3>
+  <button onclick="openTheoryTopic('sight')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 
 <div class="resultBox">
 Object: <span id="sightObject">--</span><br>
@@ -535,7 +541,10 @@ Zn: <span id="sightZn">--</span>
 
 <div id="meridian" class="section">
 <div class="card">
-<h3>Meridian Passage</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Meridian Passage</h3>
+  <button onclick="openTheoryTopic('meridian')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 <p class="small">For training only. Calculates approximate meridian passage time and latitude by meridian altitude.</p>
 
 <div class="resultBox">
@@ -569,7 +578,10 @@ Dec: <span id="merDec">--</span>
 
 <div id="polaris" class="section">
 <div class="card">
-<h3>Latitude by Polaris</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Latitude by Polaris</h3>
+  <button onclick="openTheoryTopic('polaris')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 <p class="small">Training calculation. Approximate Polaris correction.</p>
 
 <label>Hs Polaris</label>
@@ -601,7 +613,10 @@ Dec: <span id="merDec">--</span>
 <div id="runningfix" class="section">
 <div class="card">
 
-<h3>Running Fix</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Running Fix</h3>
+  <button onclick="openTheoryTopic('runningfix')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 
 <div class="resultBox">
 LOP 1 → Save in slot 1<br>
@@ -636,7 +651,10 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 
 <div id="fix" class="section">
 <div class="card">
-<h3>3-LOP Fix</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">3-LOP Fix</h3>
+  <button onclick="openTheoryTopic('lopfix')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 <div class="resultBox">Saved LOPs: <span id="positionFixCount">0</span> / 3</div>
 
 <button class="main" onclick="calculateThreeLOPFix()">Calculate 3-LOP Fix</button>
@@ -649,7 +667,10 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 </div>
 <div id="forms" class="section">
 <div class="card">
-<h3>3-Object Celestial Fix Worksheet</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">3-Object Celestial Fix Worksheet</h3>
+  <button onclick="openTheoryTopic('forms')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
+</div>
 
 <button class="main" onclick="fillFixWorksheet()">Fill From Saved LOPs</button>
 <button class="main" onclick="printFixWorksheet()">Print Worksheet</button>
