@@ -178,7 +178,43 @@ canvas{touch-action:manipulation}
   gap:8px;
   margin-top:8px;
 }
+.worksheetTop{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:10px;
+  align-items:start;
+}
 
+.plotArea{
+  text-align:center;
+}
+
+#circularPlotCanvas{
+  width:100%;
+  max-width:520px;
+  display:block;
+  margin:0 auto;
+}
+
+.sideInfo{
+  border:1px solid #31506a;
+  font-size:10px;
+  color:black;
+}
+
+.sideBlock{
+  border-bottom:1px solid #31506a;
+  padding:6px;
+  line-height:1.5;
+}
+
+.sideBlock:last-child{
+  border-bottom:0;
+}
+
+.sideBlock b{
+  color:#001b8f;
+}
 @media print{
 
   @page{
@@ -499,7 +535,50 @@ Zn: <span id="sightZn">--</span>
 
 <div id="fixWorksheet" class="printSheet">
 
-<canvas id="circularPlotCanvas" width="460" height="460"></canvas>
+<div class="worksheetTop">
+
+  <div class="plotArea">
+    <canvas id="circularPlotCanvas" width="520" height="520"></canvas>
+  </div>
+
+  <div class="sideInfo">
+
+    <div class="sideBlock">
+      <b>NAVIGATION DATA</b><br>
+      Date / UTC:<br>
+      <span id="fwDateTime">__________</span>
+    </div>
+
+    <div class="sideBlock">
+      <b>OFFICER</b><br>
+      Name: __________________<br>
+      Signature: ______________
+    </div>
+
+    <div class="sideBlock">
+      <b>VESSEL DATA</b><br>
+      Course: __________<br>
+      Speed: __________
+    </div>
+
+    <div class="sideBlock">
+      <b>AP POSITION</b><br>
+      <span id="fwAPPosition">__________</span>
+    </div>
+
+    <div class="sideBlock">
+      <b>ENVIRONMENT</b><br>
+      <span id="fwPressTemp">__________</span>
+    </div>
+
+    <div class="sideBlock">
+      <b>FIX RESULT</b><br>
+      <span id="fwFixPosition">__________</span>
+    </div>
+
+  </div>
+
+</div>
 
 <div class="resultBox" id="geometryResult">
 Geometry check waiting...
@@ -541,15 +620,6 @@ Geometry check waiting...
 <tr><td>Toward / Away</td><td id="fwTA1"></td><td id="fwTA2"></td><td id="fwTA3"></td></tr>
 </table>
 
-
-<div class="formFooter">
-
-<div>
-<b>AP Position:</b><br>
-<span id="fwAPPosition">__________________________</span>
-</div>
-
-<div>
 <b>FIX Position:</b><br>
 <span id="fwFixPosition">__________________________</span>
 </div>
@@ -1532,7 +1602,16 @@ if(lops.length<3){
 alert("Save 3 LOPs first");
 return;
 }
+document.getElementById("fwDateTime").innerText=
+lops[0].date+" / "+lops[0].time+" UTC";
 
+document.getElementById("fwAPPosition").innerText=
+formatLatLon(lops[0].lat,true)+" / "+
+formatLatLon(lops[0].lon,false);
+
+document.getElementById("fwPressTemp").innerText=
+(lops[0].Pressure || "")+" hPa / "+
+(lops[0].Temperature || "")+" °C";
 
 
 for(let i=0;i<3;i++){
@@ -1900,9 +1979,9 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="white";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-let cx=280;
-let cy=280;
-let R=240;
+let cx=260;
+let cy=260;
+let R=230;
 
 /* fixed scale */
 let ringStepNM=2;
