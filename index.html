@@ -777,7 +777,10 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 </table>
 
 </div>
+
 <div id="meridianWorksheet" class="printSheet formSheet">
+
+<h2>MERIDIAN PASSAGE WORKSHEET</h2>
 
 <div class="worksheetTop">
 
@@ -786,12 +789,65 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
   </div>
 
   <div class="sideInfo">
-    <div class="sideBlock"><b>MERIDIAN PASSAGE</b><br>Date /
+    <div class="sideBlock"><b>MERIDIAN PASSAGE</b><br>Date / UTC:<br><span id="mfDateTime">__________</span></div>
+    <div class="sideBlock"><b>OFFICER</b><br>Name: __________________<br>Signature: ______________</div>
+    <div class="sideBlock"><b>VESSEL DATA</b><br>Course: __________<br>Speed: __________</div>
+    <div class="sideBlock"><b>AP POSITION</b><br><span id="mfAPPosition">__________</span></div>
+    <div class="sideBlock"><b>ENVIRONMENT</b><br><span id="mfPressTemp">__________</span></div>
+    <div class="sideBlock"><b>LATITUDE RESULT</b><br><span id="mfLatitude">__________</span></div>
+  </div>
+
+</div>
+
+<table class="fixTable">
+<tr><th>Item</th><th>Value</th></tr>
+<tr><td>Body</td><td id="mfBody"></td></tr>
+<tr><td>LAN / Meridian Time UTC</td><td id="mfTime"></td></tr>
+<tr><td>Hs</td><td id="mfHs"></td></tr>
+<tr><td>IE</td><td id="mfIE"></td></tr>
+<tr><td>Dip</td><td id="mfDip"></td></tr>
+<tr><td>Refraction</td><td id="mfRef"></td></tr>
+<tr><td>SD / PA</td><td id="mfSDPA"></td></tr>
+<tr><td>Ho</td><td id="mfHo"></td></tr>
+<tr><td>Declination</td><td id="mfDec"></td></tr>
+<tr><td>Co-altitude</td><td id="mfCoAlt"></td></tr>
+<tr><td>Same / Contrary</td><td id="mfSC"></td></tr>
+<tr><td>Latitude</td><td id="mfLatResult"></td></tr>
+</table>
+
+</div>
+
+<div id="runningWorksheet" class="printSheet formSheet">
+
+<h2>RUNNING FIX WORKSHEET</h2>
+
+<div class="worksheetTop">
+
+  <div class="plotArea">
+    <canvas id="runningWorksheetCanvas" width="520" height="520"></canvas>
+  </div>
+
+  <div class="sideInfo">
+    <div class="sideBlock"><b>RUNNING FIX DATA</b><br>Date / UTC:<br><span id="rfwDateTime">__________</span></div>
+    <div class="sideBlock"><b>DR RUN</b><br>Course: ________<br>Speed: ________<br>Time: ________<br>Distance: ________</div>
+    <div class="sideBlock"><b>RESULT</b><br><span id="rfwResult">__________</span></div>
+  </div>
+
+</div>
+
+<table class="fixTable">
+<tr><th>Item</th><th>LOP 1</th><th>LOP 2</th></tr>
+<tr><td>Object</td><td id="rfObj1"></td><td id="rfObj2"></td></tr>
+<tr><td>UTC</td><td id="rfTime1"></td><td id="rfTime2"></td></tr>
+<tr><td>Zn</td><td id="rfZn1"></td><td id="rfZn2"></td></tr>
+<tr><td>Intercept</td><td id="rfInt1"></td><td id="rfInt2"></td></tr>
+</table>
+
 </div>
 
 </div>
 </div>
-</div>
+
 <div id="log" class="section">
 <div class="card">
 <h3>Observation Log</h3>
