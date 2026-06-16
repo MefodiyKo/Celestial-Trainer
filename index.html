@@ -752,6 +752,8 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 <option value="runningfix">Running Fix</option>
 <option value="lopfix">3-LOP Fix</option>
 <option value="sky">Sky View</option>
+<option value="polaris">Polaris</option>
+<option value="forms">Forms / Worksheet</option>
 
 </select>
 
@@ -2816,6 +2818,31 @@ Shows Sun, Moon, Planets and Stars.<br><br>
 Hc = altitude above horizon<br>
 Zn = true azimuth<br><br>
 Tap object to select it.
+`;
+}
+
+if(t==="polaris"){
+html=`
+<b>LATITUDE BY POLARIS</b><br><br>
+Polaris is close to the North Celestial Pole.<br><br>
+Observed altitude of Polaris gives approximate latitude.<br><br>
+Corrections:<br>
+Hs → IE → Dip → Refraction → Ho<br><br>
+Training formula:<br>
+Latitude ≈ Ho + Polaris Correction<br><br>
+Used mainly in the Northern Hemisphere.
+`;
+}
+
+if(t==="forms"){
+html=`
+<b>FORMS / WORKSHEET</b><br><br>
+Worksheet is used to record celestial observations in proper order.<br><br>
+Typical order:<br>
+Object → UTC → Hs → IE → Dip → Refraction → SD/PA → Ho → GHA → Dec → LHA → Hc → Zn → Intercept<br><br>
+Intercept rule:<br>
+Ho greater than Hc = Toward<br>
+Ho less than Hc = Away
 `;
 }
 
