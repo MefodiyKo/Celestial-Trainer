@@ -2149,7 +2149,22 @@ ctx.fillText(
 
 }
 function printFixWorksheet(){
-window.print();
+
+  try{
+    let lops=positionFixLOPs.filter(x=>x!==null);
+
+    if(lops.length>=3){
+      fillFixWorksheet();
+    }
+
+    setTimeout(function(){
+      window.print();
+    },300);
+
+  }catch(e){
+    alert("Print error: "+e.message);
+  }
+
 }
 setNowUTC();
 populateObjectList();
