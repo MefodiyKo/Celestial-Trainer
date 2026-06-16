@@ -344,7 +344,9 @@ No planets calculated.
 <div id="almanac" class="section active">
 <div class="card">
 <h3>Celestial Almanac</h3>
-
+<button class="main" onclick="openTheoryTopic('almanac')">
+📘 Theory
+</button>
 <label>UTC Date & Time</label>
 
 <div class="utcRow">
@@ -2850,6 +2852,31 @@ document.getElementById("theoryContent").innerHTML=html;
 
 }
 
+function openTheoryTopic(topic){
+
+document.querySelectorAll(".section")
+.forEach(s=>s.classList.remove("active"));
+
+document.querySelectorAll(".tab")
+.forEach(t=>t.classList.remove("active"));
+
+document.getElementById("theory").classList.add("active");
+
+let theoryTab=[...document.querySelectorAll(".tab")]
+.find(b=>b.textContent.includes("Theory"));
+
+if(theoryTab) theoryTab.classList.add("active");
+
+document.getElementById("theorySelect").value=topic;
+
+showTheory();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
