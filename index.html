@@ -2148,7 +2148,20 @@ ctx.fillText(
 
 }
 function printFixWorksheet(){
-  window.print();
+
+  let lops=positionFixLOPs.filter(x=>x!==null);
+
+  if(lops.length<3){
+    alert("Save 3 LOPs first");
+    return;
+  }
+
+  fillFixWorksheet();
+
+  setTimeout(function(){
+    window.print();
+  },800);
+
 }
 
 }
