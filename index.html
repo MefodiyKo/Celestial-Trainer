@@ -2793,59 +2793,199 @@ LHA = GHA + Longitude
 }
 
 if(t==="compass"){
+
 html=`
 <b>COMPASS OBSERVATION</b><br><br>
+
 Used to determine Gyro Error and Compass Error.<br><br>
-True = Gyro + Gyro Error<br>
-True = Compass + Compass Error<br><br>
-Compass Error = Variation + Deviation
+
+<b>Definitions</b><br>
+
+True Bearing (T)<br>
+Gyro Bearing (G)<br>
+Compass Bearing (C)<br>
+Variation (Var)<br>
+Deviation (Dev)<br><br>
+
+<b>Formulas</b><br>
+
+T = G + GE<br>
+T = C + CE<br><br>
+
+CE = Var + Dev<br><br>
+
+<b>Worked Example</b><br>
+
+Zn = 112.5°<br>
+Gyro Bearing = 111.0°<br><br>
+
+Gyro Error = 112.5 − 111.0<br>
+GE = 1.5°E<br><br>
+
+Variation = 1.0°W<br><br>
+
+Deviation = CE − Var<br><br>
+
+<b>Remember</b><br>
+
+East = Positive (+)<br>
+West = Negative (-)
 `;
+
 }
 
 if(t==="sight"){
+
 html=`
 <b>SIGHT REDUCTION</b><br><br>
-Hs = Sextant Altitude<br>
-IE = Index Error<br>
-Dip = Height of Eye Correction<br>
-Ref = Refraction<br>
-SD = Semi Diameter<br>
-PA = Parallax<br><br>
+
+Converts Sextant Altitude into Observed Altitude (Ho).<br><br>
+
+<b>Sequence</b><br>
+
+Hs<br>
+↓<br>
+Index Error<br>
+↓<br>
+Dip<br>
+↓<br>
+Refraction<br>
+↓<br>
+SD / Parallax<br>
+↓<br>
+Ho<br><br>
+
+<b>Formula</b><br>
+
 Ho = Hs + IE + Dip + Ref + SD + PA<br><br>
-Intercept = (Ho − Hc) × 60
+
+Intercept = (Ho − Hc) × 60<br><br>
+
+<b>Worked Example</b><br>
+
+Ho = 42°15.8'<br>
+Hc = 42°10.2'<br><br>
+
+Difference = 5.6'<br><br>
+
+Intercept = 5.6 NM Toward<br><br>
+
+<b>Rule</b><br>
+
+Ho > Hc → Toward<br>
+Ho < Hc → Away
 `;
+
 }
 
 if(t==="meridian"){
+
 html=`
 <b>MERIDIAN PASSAGE</b><br><br>
-Latitude by Meridian Altitude.<br><br>
-Co-altitude = 90° − Ho<br><br>
-Same Name:<br>
-Lat = Dec + Co-altitude<br><br>
-Contrary Name:<br>
-Lat = Co-altitude − Dec
+
+Meridian Passage occurs when the Sun crosses the observer's meridian.<br><br>
+
+<b>Purpose:</b><br>
+Determine Latitude from the Sun's maximum altitude.<br><br>
+
+<b>Co-altitude</b><br>
+Co-alt = 90° − Ho<br><br>
+
+<b>Same Name</b><br>
+Latitude and Declination have same name (N/N or S/S)<br>
+Lat = Dec + Co-alt<br><br>
+
+<b>Contrary Name</b><br>
+Latitude and Declination have opposite names<br>
+Lat = Co-alt − Dec<br><br>
+
+<b>Worked Example</b><br>
+Ho = 78°24.5'<br>
+Dec = 21°31.2' N<br><br>
+
+Co-alt = 11°35.5'<br><br>
+
+Lat = 21°31.2' + 11°35.5'<br>
+Lat = 33°06.7' N<br><br>
+
+<b>Common Errors</b><br>
+• Wrong declination sign<br>
+• Not using maximum altitude<br>
+• Wrong UTC date
 `;
+
 }
 
 if(t==="runningfix"){
+
 html=`
 <b>RUNNING FIX</b><br><br>
+
+Running Fix uses two observations of the same celestial body taken at different times.<br><br>
+
+<b>Procedure</b><br>
+
 1. Obtain LOP1<br>
-2. Advance LOP1 by DR distance<br>
-3. Obtain LOP2<br>
-4. Intersection gives Running Fix<br><br>
-Distance = Speed × Time
+2. Run on DR course and speed<br>
+3. Advance LOP1<br>
+4. Obtain LOP2<br>
+5. Intersection = Running Fix<br><br>
+
+Distance = Speed × Time<br><br>
+
+<b>Worked Example</b><br>
+
+LOP1 at 0800<br>
+Course 090°<br>
+Speed 12 kn<br>
+LOP2 at 0900<br><br>
+
+Distance Run = 12 NM<br><br>
+
+Advance LOP1 by 12 NM on DR track.<br>
+Intersection with LOP2 gives RFIX.<br><br>
+
+<b>Common Errors</b><br>
+• Wrong DR distance<br>
+• Wrong course<br>
+• Large time interval
 `;
+
 }
 
 if(t==="lopfix"){
+
 html=`
 <b>3-LOP FIX</b><br><br>
-Three Lines Of Position are plotted.<br><br>
-Their intersection gives vessel position.<br><br>
-Small triangle between lines is called Cocked Hat.
+
+Three Lines Of Position are plotted simultaneously.<br><br>
+
+<b>Procedure</b><br>
+
+1. Take three sights<br>
+2. Calculate three intercepts<br>
+3. Plot three LOPs<br>
+4. Determine fix position<br><br>
+
+<b>Cocked Hat</b><br>
+
+Small triangle formed when LOPs do not intersect at one point.<br><br>
+
+Centre of Cocked Hat is normally used as fix.<br><br>
+
+<b>Advantages</b><br>
+
+• High accuracy<br>
+• Error cross-check<br><br>
+
+<b>Common Errors</b><br>
+
+• Incorrect AP<br>
+• Wrong time<br>
+• Wrong sight correction<br>
+• Plotting error
 `;
+
 }
 
 if(t==="sky"){
@@ -2859,16 +2999,35 @@ Tap object to select it.
 }
 
 if(t==="polaris"){
+
 html=`
 <b>LATITUDE BY POLARIS</b><br><br>
-Polaris is close to the North Celestial Pole.<br><br>
-Observed altitude of Polaris gives approximate latitude.<br><br>
-Corrections:<br>
+
+Polaris is located close to the North Celestial Pole.<br><br>
+
+Observed altitude of Polaris is approximately equal to Latitude.<br><br>
+
+<b>Procedure</b><br>
 Hs → IE → Dip → Refraction → Ho<br><br>
-Training formula:<br>
+
 Latitude ≈ Ho + Polaris Correction<br><br>
-Used mainly in the Northern Hemisphere.
+
+<b>Worked Example</b><br>
+
+Ho = 41°12.4'<br>
+Polaris Correction = +0°41.0'<br><br>
+
+Latitude = 41°53.4' N<br><br>
+
+<b>Advantages</b><br>
+• Fast latitude determination<br>
+• No exact LAN required<br><br>
+
+<b>Limitations</b><br>
+• Northern Hemisphere only<br>
+• Requires visible Polaris
 `;
+
 }
 
 if(t==="forms"){
