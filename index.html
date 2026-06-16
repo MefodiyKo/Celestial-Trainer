@@ -2399,6 +2399,77 @@ function calculatePolaris(){
 
 }
 
+function calculateRunningFixIntersection(
+lop1,
+lop2,
+dx,
+dy
+){
+
+let x1=dx;
+let y1=dy;
+
+let a1=Math.sin(
+degToRad(lop1.zn)
+);
+
+let b1=Math.cos(
+degToRad(lop1.zn)
+);
+
+let a2=Math.sin(
+degToRad(lop2.zn)
+);
+
+let b2=Math.cos(
+degToRad(lop2.zn)
+);
+
+/*
+Advanced LOP1:
+a1(x-x1)+b1(y-y1)=0
+
+LOP2:
+a2x+b2y=0
+*/
+
+let det=
+a1*b2-
+a2*b1;
+
+if(Math.abs(det)<0.0001){
+
+return {
+x:0,
+y:0
+};
+
+}
+
+let rhs1=
+a1*x1+
+b1*y1;
+
+let rhs2=0;
+
+let x=
+(
+rhs1*b2-
+rhs2*b1
+)/det;
+
+let y=
+(
+a1*rhs2-
+a2*rhs1
+)/det;
+
+return {
+x:x,
+y:y
+};
+
+}
 function calculateRunningFix(){
 
 let lop1=positionFixLOPs[0];
@@ -2429,25 +2500,40 @@ let run=speed*(minutes/60);
 let dx=run*Math.sin(degToRad(course));
 let dy=run*Math.cos(degToRad(course));
 
+let fix=calculateRunningFixIntersection(
+lop1,
+lop2,
+dx,
+dy
+);
+
 runningFixResult.innerHTML=
 "<b>RUNNING FIX</b><br><br>"+
 "Run: "+run.toFixed(1)+" NM<br>"+
 "Course: "+course.toFixed(1)+"°T<br>"+
 "Speed: "+speed.toFixed(1)+" kn<br>"+
 "Interval: "+minutes.toFixed(0)+" min<br><br>"+
-"Advance LOP1 by:<br>"+
-dx.toFixed(1)+" NM E/W<br>"+
-dy.toFixed(1)+" NM N/S";
+"Fix Offset from AP:<br>"+
+fix.x.toFixed(1)+" NM E/W<br>"+
+fix.y.toFixed(1)+" NM N/S";
 
-drawRunningFixCanvas(lop1,lop2,dx,dy);
+drawRunningFixCanvas(
+lop1,
+lop2,
+dx,
+dy,
+fix
+);
 
 }
 function drawRunningFixCanvas(
 lop1,
 lop2,
 dx,
-dy
-){
+dy,
+fix
+)
+{
 
 let canvas=document.getElementById(
 "runningFixCanvas"
@@ -2577,7 +2663,33 @@ ctx.fillText(
 110,
 20
 );
+/* Running Fix position */
 
+let fx=
+cx+
+fix.x*scale;
+
+let fy=
+cy-
+fix.y*scale;
+
+ctx.fillStyle="purple";
+
+ctx.beginPath();
+ctx.arc(
+fx,
+fy,
+7,
+0,
+Math.PI*2
+);
+ctx.fill();
+
+ctx.fillText(
+"RFIX",
+fx+10,
+fy-10
+);
 }
 function printFixWorksheet(){
 
