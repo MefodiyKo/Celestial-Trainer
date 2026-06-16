@@ -1843,6 +1843,15 @@ return;
 }
 
 document.getElementById("skyCanvas").addEventListener("click",selectObjectFromSky);
+function showFormSheet(id){
+
+  document.querySelectorAll(".formSheet").forEach(s=>{
+    s.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+}
 function fillFixWorksheet(){
 
 let lops=positionFixLOPs.filter(x=>x!==null);
