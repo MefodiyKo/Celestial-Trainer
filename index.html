@@ -534,6 +534,8 @@ Dec: <span id="merDec">--</span>
 <select disabled><option></option></select>
 </div>
 
+<button class="main" onclick="useLastHoForMeridian()">Use Last Ho</button>
+
 <label>Body Bearing at Noon</label>
 <select id="merBearing" class="full">
 <option value="S">Body South of observer</option>
@@ -2179,6 +2181,22 @@ ctx.fillText(
 506
 );
 
+}
+function useLastHoForMeridian(){
+
+  if(!lastSunData || !lastSunData.worksheet || lastSunData.worksheet.Ho===undefined){
+    alert("Calculate Sight Reduction first.");
+    return;
+  }
+
+  let Ho=lastSunData.worksheet.Ho;
+  let d=Math.floor(Math.abs(Ho));
+  let m=(Math.abs(Ho)-d)*60;
+
+  merHoDeg.value=d;
+  merHoMin.value=m.toFixed(1);
+
+  alert("Last Ho inserted.");
 }
 
 function calculateMeridianPassage(){
