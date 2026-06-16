@@ -1692,11 +1692,6 @@ document.getElementById("fwDec"+n).innerText=formatDec(lop.Dec);
 document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 }
 
-drawCircularPlot(lops);
-let b1=lops[0].zn;
-let b2=lops[1].zn;
-let b3=lops[2].zn;
-
 function sep(a,b){
 let d=Math.abs(a-b);
 if(d>180)d=360-d;
