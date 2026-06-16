@@ -799,7 +799,9 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 Select topic.
 
 </div>
-
+<canvas id="theoryCanvas" width="520" height="320"
+style="width:100%;background:white;border-radius:8px;margin-top:15px">
+</canvas>
 </div>
 
 </div>
@@ -2773,7 +2775,191 @@ function printFixWorksheet(){
   },800);
 
 }
+function drawTheoryCanvas(topic){
 
+let canvas=document.getElementById("theoryCanvas");
+if(!canvas)return;
+
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="white";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.strokeStyle="black";
+ctx.fillStyle="black";
+ctx.lineWidth=2;
+ctx.font="14px Arial";
+
+if(topic==="sight"){
+  ctx.fillText("Sight Reduction: Ho vs Hc",20,25);
+  ctx.beginPath();
+  ctx.moveTo(40,180);
+  ctx.lineTo(480,180);
+  ctx.stroke();
+
+  ctx.strokeStyle="blue";
+  ctx.beginPath();
+  ctx.moveTo(80,130);
+  ctx.lineTo(460,130);
+  ctx.stroke();
+  ctx.fillText("LOP",465,134);
+
+  ctx.strokeStyle="red";
+  ctx.beginPath();
+  ctx.moveTo(260,180);
+  ctx.lineTo(260,130);
+  ctx.stroke();
+  ctx.fillText("Intercept",270,155);
+
+  ctx.fillStyle="black";
+  ctx.fillText("AP",248,198);
+}
+
+else if(topic==="meridian"){
+  ctx.fillText("Meridian Passage",20,25);
+
+  ctx.beginPath();
+  ctx.arc(260,170,100,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(260,60);
+  ctx.lineTo(260,280);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(140,170);
+  ctx.lineTo(380,170);
+  ctx.stroke();
+
+  ctx.fillText("Observer Meridian",270,90);
+  ctx.fillText("Maximum altitude at LAN",170,305);
+
+  ctx.fillStyle="orange";
+  ctx.beginPath();
+  ctx.arc(260,80,10,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle="black";
+  ctx.fillText("Sun",275,85);
+}
+
+else if(topic==="runningfix"){
+  ctx.fillText("Running Fix",20,25);
+
+  ctx.strokeStyle="blue";
+  ctx.beginPath();
+  ctx.moveTo(60,230);
+  ctx.lineTo(260,80);
+  ctx.stroke();
+  ctx.fillText("LOP1",65,220);
+
+  ctx.strokeStyle="green";
+  ctx.beginPath();
+  ctx.moveTo(130,260);
+  ctx.lineTo(330,110);
+  ctx.stroke();
+  ctx.fillText("Advanced LOP1",145,250);
+
+  ctx.strokeStyle="orange";
+  ctx.beginPath();
+  ctx.moveTo(230,60);
+  ctx.lineTo(430,260);
+  ctx.stroke();
+  ctx.fillText("LOP2",400,245);
+
+  ctx.fillStyle="purple";
+  ctx.beginPath();
+  ctx.arc(280,150,7,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillText("RFIX",292,145);
+}
+
+else if(topic==="lopfix"){
+  ctx.fillText("3-LOP Fix / Cocked Hat",20,25);
+
+  ctx.strokeStyle="blue";
+  ctx.beginPath();
+  ctx.moveTo(80,240);
+  ctx.lineTo(420,80);
+  ctx.stroke();
+
+  ctx.strokeStyle="orange";
+  ctx.beginPath();
+  ctx.moveTo(100,80);
+  ctx.lineTo(440,240);
+  ctx.stroke();
+
+  ctx.strokeStyle="green";
+  ctx.beginPath();
+  ctx.moveTo(260,40);
+  ctx.lineTo(260,280);
+  ctx.stroke();
+
+  ctx.fillStyle="purple";
+  ctx.beginPath();
+  ctx.arc(260,160,6,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillText("Cocked Hat / Fix Area",275,165);
+}
+
+else if(topic==="compass"){
+  ctx.fillText("Compass Observation",20,25);
+
+  let cx=260,cy=170,r=90;
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.fillText("N",cx-5,cy-r-10);
+  ctx.fillText("E",cx+r+10,cy+5);
+  ctx.fillText("S",cx-5,cy+r+20);
+  ctx.fillText("W",cx-r-25,cy+5);
+
+  ctx.strokeStyle="blue";
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.lineTo(cx+70,cy-45);
+  ctx.stroke();
+  ctx.fillText("True Zn",cx+75,cy-45);
+
+  ctx.strokeStyle="red";
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.lineTo(cx+55,cy-60);
+  ctx.stroke();
+  ctx.fillText("Gyro/Compass",cx+60,cy-65);
+}
+
+else if(topic==="polaris"){
+  ctx.fillText("Latitude by Polaris",20,25);
+
+  ctx.beginPath();
+  ctx.moveTo(60,260);
+  ctx.lineTo(460,260);
+  ctx.stroke();
+  ctx.fillText("Horizon",465,264);
+
+  ctx.strokeStyle="blue";
+  ctx.beginPath();
+  ctx.moveTo(260,260);
+  ctx.lineTo(260,70);
+  ctx.stroke();
+  ctx.fillText("Altitude ≈ Latitude",270,165);
+
+  ctx.fillStyle="gold";
+  ctx.beginPath();
+  ctx.arc(260,70,7,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle="black";
+  ctx.fillText("Polaris",275,75);
+}
+
+else{
+  ctx.fillText("Celestial Navigation Theory",20,25);
+  ctx.fillText("Select a topic to see diagram.",20,55);
+}
+
+}
 function showTheory(){
 
 let t=document.getElementById("theorySelect").value;
@@ -3043,6 +3229,7 @@ Ho less than Hc = Away
 }
 
 document.getElementById("theoryContent").innerHTML=html;
+drawTheoryCanvas(t);
 
 }
 
