@@ -333,6 +333,7 @@ No planets calculated.
 <button class="tab" onclick="openTab('observation',this)">Compass Obs</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('meridian',this)">Meridian</button>
+<button class="tab" onclick="openTab('polaris',this)">Polaris</button>
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
 <button class="tab" onclick="openTab('forms',this)">Forms</button>
 <button class="tab" onclick="openTab('log',this)">Log</button>
@@ -545,6 +546,37 @@ Dec: <span id="merDec">--</span>
 <button class="main" onclick="calculateMeridianPassage()">Calculate Meridian Passage</button>
 
 <div class="result" id="meridianResult">Waiting for calculation...</div>
+</div>
+</div>
+
+<div id="polaris" class="section">
+<div class="card">
+<h3>Latitude by Polaris</h3>
+<p class="small">Training calculation. Approximate Polaris correction.</p>
+
+<label>Hs Polaris</label>
+<div class="grid3">
+<input id="polHsDeg" type="number" placeholder="09">
+<span>°</span>
+<input id="polHsMin" type="number" step="0.1" placeholder="43.5">
+<span>'</span>
+<select disabled><option></option></select>
+</div>
+
+<div class="grid2">
+<div>
+<label>Index Error (')</label>
+<input id="polIE" class="full" type="number" step="0.1" value="0">
+</div>
+<div>
+<label>Height of Eye (m)</label>
+<input id="polHE" class="full" type="number" step="0.1" value="15">
+</div>
+</div>
+
+<button class="main" onclick="calculatePolaris()">Calculate Polaris Latitude</button>
+
+<div class="result" id="polarisResult">Waiting for calculation...</div>
 </div>
 </div>
 
@@ -2269,6 +2301,64 @@ meridianResult.innerHTML=
 "Zenith Distance: "+formatAlt(zenithDistance)+"<br><br>"+
 "<b>Latitude by Meridian Altitude:</b><br>"+
 formatLatLon(lat,true);
+
+}
+function calculatePolaris(){
+
+  let data=getInputData();
+
+  if(data.error){
+    polarisResult.innerHTML=data.error;
+    return;
+  }
+
+  let d=parseFloat(polHsDeg.value);
+  let m=parseFloat(polHsMin.value);
+  let ie=parseFloat(polIE.value);
+  let he=parseFloat(polHE.value);
+
+  if(isNaN(d)||isNaN(m)||isNaN(ie)){
+    polarisResult.innerHTML="Enter Hs and Index Error.";
+    return;
+  }
+
+  if(isNaN(he)) he=0;
+
+  let Hs=d+m/60;
+  let dip=calculateDip(he);
+  let Ha=Hs+ie/60+dip/60;
+
+  let ref=calculateRefraction(Ha,1010,10);
+  let Ho=Ha+ref/60;
+
+  let sun=sunAlmanac(data.date,data.time);
+  let polaris=STAR_CATALOG["Polaris"];
+
+  let GHA=norm360(sun.GHAAries+polaris.SHA);
+  let LHA=norm360(GHA+data.lon);
+
+  /*
+    Approximate Polaris correction.
+    Polaris is about 0.7° from celestial pole.
+    Correction depends mainly on LHA Aries / Polaris.
+    Training approximation only.
+  */
+  let polarDistance=90-polaris.Dec;
+  let correction=polarDistance*Math.cos(degToRad(LHA));
+
+  let lat=Ho+correction;
+
+  polarisResult.innerHTML=
+  "<b>LATITUDE BY POLARIS</b><br><br>"+
+  "Hs: "+formatAlt(Hs)+"<br>"+
+  "Dip: "+dip.toFixed(1)+"'<br>"+
+  "Refraction: "+ref.toFixed(1)+"'<br>"+
+  "Ho: "+formatAlt(Ho)+"<br><br>"+
+  "GHA Polaris: "+formatDM(GHA)+"<br>"+
+  "LHA Polaris: "+formatDM(LHA)+"<br>"+
+  "Polaris Correction: "+(correction*60).toFixed(1)+"'<br><br>"+
+  "<b>Latitude:</b><br>"+
+  formatLatLon(lat,true);
 
 }
 function printFixWorksheet(){
