@@ -580,9 +580,6 @@ Zn: <span id="sightZn">--</span>
 
 </div>
 
-<div class="resultBox" id="geometryResult">
-Geometry check waiting...
-</div>
 
 <table class="fixTable">
 <tr>
@@ -620,8 +617,6 @@ Geometry check waiting...
 <tr><td>Toward / Away</td><td id="fwTA1"></td><td id="fwTA2"></td><td id="fwTA3"></td></tr>
 </table>
 
-<b>FIX Position:</b><br>
-<span id="fwFixPosition">__________________________</span>
 </div>
 
 </div>
@@ -1692,40 +1687,7 @@ document.getElementById("fwDec"+n).innerText=formatDec(lop.Dec);
 document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 }
 
-function sep(a,b){
-let d=Math.abs(a-b);
-if(d>180)d=360-d;
-return d;
-}
-
-let s12=sep(b1,b2);
-let s23=sep(b2,b3);
-let s31=sep(b3,b1);
-
-let assessment="EXCELLENT";
-
-let arr=[s12,s23,s31];
-
-arr.forEach(v=>{
-
-if(v<60 || v>150){
-assessment="POOR";
-}
-
-else if(
-assessment!=="POOR" &&
-(v<80 || v>140)
-){
-assessment="FAIR";
-}
-
-});
-
-document.getElementById("geometryResult").innerHTML=
-"1-2: "+s12.toFixed(0)+"° | "+
-"2-3: "+s23.toFixed(0)+"° | "+
-"3-1: "+s31.toFixed(0)+"°<br>"+
-"<b>"+assessment+"</b>";
+drawCircularPlot(lops);
 alert("Worksheet filled");
 }
 
