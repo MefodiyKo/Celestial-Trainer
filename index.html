@@ -1688,7 +1688,6 @@ document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 }
 
 drawCircularPlot(lops);
-alert("Worksheet filled");
 }
 
 function drawWorksheetPlot(lops){
@@ -2150,20 +2149,20 @@ ctx.fillText(
 }
 function printFixWorksheet(){
 
-  try{
-    let lops=positionFixLOPs.filter(x=>x!==null);
+  let lops=positionFixLOPs.filter(x=>x!==null);
 
-    if(lops.length>=3){
-      fillFixWorksheet();
-    }
-
-    setTimeout(function(){
-      window.print();
-    },300);
-
-  }catch(e){
-    alert("Print error: "+e.message);
+  if(lops.length<3){
+    alert("Save 3 LOPs first");
+    return;
   }
+
+  fillFixWorksheet();
+
+  setTimeout(function(){
+    window.print();
+  },800);
+
+}
 
 }
 setNowUTC();
