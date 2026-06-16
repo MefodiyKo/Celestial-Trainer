@@ -338,6 +338,7 @@ No planets calculated.
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
 <button class="tab" onclick="openTab('forms',this)">Forms</button>
 <button class="tab" onclick="openTab('log',this)">Log</button>
+<button class="tab" onclick="openTab('theory',this)">📘 Theory</button>
 </div>
 
 <div id="almanac" class="section active">
@@ -736,7 +737,33 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 <div class="result" id="logResult">No saved observations.</div>
 </div>
 </div>
+<div id="theory" class="section">
 
+<div class="card">
+
+<h3>📘 Celestial Navigation Theory</h3>
+
+<select id="theorySelect" class="full" onchange="showTheory()">
+
+<option value="almanac">Almanac</option>
+<option value="compass">Compass Observation</option>
+<option value="sight">Sight Reduction</option>
+<option value="meridian">Meridian Passage</option>
+<option value="runningfix">Running Fix</option>
+<option value="lopfix">3-LOP Fix</option>
+<option value="sky">Sky View</option>
+
+</select>
+
+<div id="theoryContent" class="resultBox" style="margin-top:15px">
+
+Select topic.
+
+</div>
+
+</div>
+
+</div>
 <script>
 let lastSunData=null;
 let positionFixLOPs=[null,null,null];
@@ -2708,12 +2735,101 @@ function printFixWorksheet(){
 
 }
 
+function showTheory(){
+
+let t=document.getElementById("theorySelect").value;
+let html="";
+
+if(t==="almanac"){
+html=`
+<b>ALMANAC</b><br><br>
+GHA = Greenwich Hour Angle<br>
+Dec = Declination<br>
+LHA = Local Hour Angle<br>
+Hc = Computed Altitude<br>
+Zn = True Azimuth<br><br>
+Formula:<br>
+LHA = GHA + Longitude
+`;
+}
+
+if(t==="compass"){
+html=`
+<b>COMPASS OBSERVATION</b><br><br>
+Used to determine Gyro Error and Compass Error.<br><br>
+True = Gyro + Gyro Error<br>
+True = Compass + Compass Error<br><br>
+Compass Error = Variation + Deviation
+`;
+}
+
+if(t==="sight"){
+html=`
+<b>SIGHT REDUCTION</b><br><br>
+Hs = Sextant Altitude<br>
+IE = Index Error<br>
+Dip = Height of Eye Correction<br>
+Ref = Refraction<br>
+SD = Semi Diameter<br>
+PA = Parallax<br><br>
+Ho = Hs + IE + Dip + Ref + SD + PA<br><br>
+Intercept = (Ho − Hc) × 60
+`;
+}
+
+if(t==="meridian"){
+html=`
+<b>MERIDIAN PASSAGE</b><br><br>
+Latitude by Meridian Altitude.<br><br>
+Co-altitude = 90° − Ho<br><br>
+Same Name:<br>
+Lat = Dec + Co-altitude<br><br>
+Contrary Name:<br>
+Lat = Co-altitude − Dec
+`;
+}
+
+if(t==="runningfix"){
+html=`
+<b>RUNNING FIX</b><br><br>
+1. Obtain LOP1<br>
+2. Advance LOP1 by DR distance<br>
+3. Obtain LOP2<br>
+4. Intersection gives Running Fix<br><br>
+Distance = Speed × Time
+`;
+}
+
+if(t==="lopfix"){
+html=`
+<b>3-LOP FIX</b><br><br>
+Three Lines Of Position are plotted.<br><br>
+Their intersection gives vessel position.<br><br>
+Small triangle between lines is called Cocked Hat.
+`;
+}
+
+if(t==="sky"){
+html=`
+<b>SKY VIEW</b><br><br>
+Shows Sun, Moon, Planets and Stars.<br><br>
+Hc = altitude above horizon<br>
+Zn = true azimuth<br><br>
+Tap object to select it.
+`;
+}
+
+document.getElementById("theoryContent").innerHTML=html;
+
+}
+
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
 autoUpdateSky();
 showStarPlanner();
 showPlanetFinder();
+showTheory();
 </script>
 
 </body>
