@@ -334,6 +334,7 @@ No planets calculated.
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('meridian',this)">Meridian</button>
 <button class="tab" onclick="openTab('polaris',this)">Polaris</button>
+<button class="tab" onclick="openTab('runningfix',this)">Running Fix</button>
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
 <button class="tab" onclick="openTab('forms',this)">Forms</button>
 <button class="tab" onclick="openTab('log',this)">Log</button>
@@ -577,6 +578,42 @@ Dec: <span id="merDec">--</span>
 <button class="main" onclick="calculatePolaris()">Calculate Polaris Latitude</button>
 
 <div class="result" id="polarisResult">Waiting for calculation...</div>
+</div>
+</div>
+
+<div id="runningfix" class="section">
+<div class="card">
+
+<h3>Running Fix</h3>
+
+<div class="resultBox">
+LOP 1 → Save in slot 1<br>
+LOP 2 → Save in slot 2
+</div>
+
+<label>Course Steered (°T)</label>
+<input id="rfCourse" class="full" type="number" step="0.1">
+
+<label>Speed (knots)</label>
+<input id="rfSpeed" class="full" type="number" step="0.1">
+
+<label>Time Interval (minutes)</label>
+<input id="rfMinutes" class="full" type="number" step="1">
+
+<button class="main" onclick="calculateRunningFix()">
+Calculate Running Fix
+</button>
+
+<div class="result" id="runningFixResult">
+Save LOP1 and LOP2 first.
+</div>
+
+<canvas id="runningFixCanvas"
+width="350"
+height="350"
+style="width:100%;background:white;border-radius:8px;margin-top:15px">
+</canvas>
+
 </div>
 </div>
 
@@ -2359,6 +2396,187 @@ function calculatePolaris(){
   "Polaris Correction: "+(correction*60).toFixed(1)+"'<br><br>"+
   "<b>Latitude:</b><br>"+
   formatLatLon(lat,true);
+
+}
+
+function calculateRunningFix(){
+
+let lop1=positionFixLOPs[0];
+let lop2=positionFixLOPs[1];
+
+if(!lop1 || !lop2){
+runningFixResult.innerHTML=
+"Save LOP1 and LOP2 first.";
+return;
+}
+
+let course=parseFloat(rfCourse.value);
+let speed=parseFloat(rfSpeed.value);
+let minutes=parseFloat(rfMinutes.value);
+
+if(
+isNaN(course) ||
+isNaN(speed) ||
+isNaN(minutes)
+){
+runningFixResult.innerHTML=
+"Enter Course, Speed and Time.";
+return;
+}
+
+let run=speed*(minutes/60);
+
+let dx=run*Math.sin(degToRad(course));
+let dy=run*Math.cos(degToRad(course));
+
+runningFixResult.innerHTML=
+"<b>RUNNING FIX</b><br><br>"+
+"Run: "+run.toFixed(1)+" NM<br>"+
+"Course: "+course.toFixed(1)+"°T<br>"+
+"Speed: "+speed.toFixed(1)+" kn<br>"+
+"Interval: "+minutes.toFixed(0)+" min<br><br>"+
+"Advance LOP1 by:<br>"+
+dx.toFixed(1)+" NM E/W<br>"+
+dy.toFixed(1)+" NM N/S";
+
+drawRunningFixCanvas(lop1,lop2,dx,dy);
+
+}
+function drawRunningFixCanvas(
+lop1,
+lop2,
+dx,
+dy
+){
+
+let canvas=document.getElementById(
+"runningFixCanvas"
+);
+
+let ctx=canvas.getContext("2d");
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+ctx.fillStyle="white";
+ctx.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+let cx=175;
+let cy=175;
+
+let scale=10;
+
+ctx.strokeStyle="#cccccc";
+
+for(let x=25;x<=325;x+=25){
+ctx.beginPath();
+ctx.moveTo(x,25);
+ctx.lineTo(x,325);
+ctx.stroke();
+}
+
+for(let y=25;y<=325;y+=25){
+ctx.beginPath();
+ctx.moveTo(25,y);
+ctx.lineTo(325,y);
+ctx.stroke();
+}
+
+ctx.strokeStyle="black";
+
+ctx.beginPath();
+ctx.moveTo(cx,25);
+ctx.lineTo(cx,325);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(25,cy);
+ctx.lineTo(325,cy);
+ctx.stroke();
+
+ctx.fillStyle="red";
+ctx.beginPath();
+ctx.arc(cx,cy,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+"LOP1 Origin",
+cx+8,
+cy-8
+);
+
+/* advanced position */
+
+let acx=cx+dx*scale;
+let acy=cy-dy*scale;
+
+ctx.fillStyle="green";
+
+ctx.beginPath();
+ctx.arc(acx,acy,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillText(
+"Advanced",
+acx+8,
+acy-8
+);
+
+/* LOP1 advanced */
+
+let z1=degToRad(lop1.zn+90);
+
+ctx.strokeStyle="blue";
+
+ctx.beginPath();
+
+ctx.moveTo(
+acx-Math.sin(z1)*250,
+acy+Math.cos(z1)*250
+);
+
+ctx.lineTo(
+acx+Math.sin(z1)*250,
+acy-Math.cos(z1)*250
+);
+
+ctx.stroke();
+
+/* LOP2 */
+
+let z2=degToRad(lop2.zn+90);
+
+ctx.strokeStyle="orange";
+
+ctx.beginPath();
+
+ctx.moveTo(
+cx-Math.sin(z2)*250,
+cy+Math.cos(z2)*250
+);
+
+ctx.lineTo(
+cx+Math.sin(z2)*250,
+cy-Math.cos(z2)*250
+);
+
+ctx.stroke();
+
+ctx.fillStyle="black";
+ctx.fillText(
+"Running Fix Plot",
+110,
+20
+);
 
 }
 function printFixWorksheet(){
