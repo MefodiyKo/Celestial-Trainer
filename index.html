@@ -2852,19 +2852,18 @@ fy-10
 }
 function printFixWorksheet(){
 
-  let lops=positionFixLOPs.filter(x=>x!==null);
+  let active=document.querySelector(".formSheet.active");
 
-  if(lops.length<3){
-    alert("Save 3 LOPs first");
+  if(!active){
+    alert("Select form first.");
     return;
   }
 
-  fillFixWorksheet();
+  if(active.id==="fixWorksheet"){
+    fillFixWorksheet();
+  }
 
-  setTimeout(function(){
-    window.print();
-  },800);
-
+  window.print();
 }
 function drawTheoryCanvas(topic){
 
