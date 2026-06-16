@@ -343,7 +343,23 @@ No planets calculated.
 
 <div id="almanac" class="section active">
 <div class="card">
-<h3>Celestial Almanac</h3>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Celestial Almanac</h3>
+
+  <button
+    onclick="openTheoryTopic('almanac')"
+    style="
+      padding:4px 10px;
+      border:0;
+      border-radius:6px;
+      background:#1f8ac0;
+      color:white;
+      font-size:13px;
+      cursor:pointer;
+    ">
+    📘 Theory
+  </button>
+</div>
 <button class="main" onclick="openTheoryTopic('almanac')">
 📘 Theory
 </button>
