@@ -215,6 +215,19 @@ canvas{touch-action:manipulation}
 .sideBlock b{
   color:#001b8f;
 }
+.grid3forms{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+}
+
+.formSheet{
+  display:none;
+}
+
+.formSheet.active{
+  display:block;
+}
 @media print{
 
   @page{
@@ -671,11 +684,15 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
   <h3 style="margin:0;">3-Object Celestial Fix Worksheet</h3>
   <button onclick="openTheoryTopic('forms')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
 </div>
-
+<div class="grid3forms">
+  <button class="main" onclick="showFormSheet('fixWorksheet')">3-LOP Form</button>
+  <button class="main" onclick="showFormSheet('meridianWorksheet')">Meridian Form</button>
+  <button class="main" onclick="showFormSheet('runningWorksheet')">Running Fix Form</button>
+</div>
 <button class="main" onclick="fillFixWorksheet()">Fill From Saved LOPs</button>
 <button class="main" onclick="printFixWorksheet()">Print Worksheet</button>
 
-<div id="fixWorksheet" class="printSheet">
+<div id="fixWorksheet" class="printSheet formSheet active">
 
 <div class="worksheetTop">
 
@@ -760,7 +777,16 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 </table>
 
 </div>
+<div id="meridianWorksheet" class="printSheet formSheet">
 
+<div class="worksheetTop">
+
+  <div class="plotArea">
+    <canvas id="meridianPlotCanvas" width="520" height="520"></canvas>
+  </div>
+
+  <div class="sideInfo">
+    <div class="sideBlock"><b>MERIDIAN PASSAGE</b><br>Date /
 </div>
 
 </div>
