@@ -4254,8 +4254,10 @@ document.getElementById("theoryContent").innerHTML=html;
 drawTheoryCanvas(t);
 
 if(t==="stars"){
-  populateTheoryStars();
-  showTheoryStar();
+  setTimeout(function(){
+    populateTheoryStars();
+    showTheoryStar();
+  },100);
 }
 
 }
