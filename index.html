@@ -347,6 +347,7 @@ No planets calculated.
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
 <button class="tab" onclick="openTab('meridian',this)">Meridian</button>
 <button class="tab" onclick="openTab('polaris',this)">Polaris</button>
+<button class="tab" onclick="openTab('twilight',this)">Twilight</button>
 <button class="tab" onclick="openTab('runningfix',this)">Running Fix</button>
 <button class="tab" onclick="openTab('fix',this)">3-LOP Fix</button>
 <button class="tab" onclick="openTab('forms',this)">Forms</button>
@@ -622,7 +623,24 @@ Dec: <span id="merDec">--</span>
 <div class="result" id="polarisResult">Waiting for calculation...</div>
 </div>
 </div>
+<div id="twilight" class="section">
 
+<div class="card">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <h3 style="margin:0;">Sunrise / Sunset</h3>
+</div>
+
+<button class="main" onclick="calculateTwilight()">
+Calculate Twilight
+</button>
+
+<div class="result" id="twilightResult">
+Waiting for calculation...
+</div>
+
+</div>
+</div>
 <div id="runningfix" class="section">
 <div class="card">
 
@@ -2884,7 +2902,19 @@ function calculatePolaris(){
 
   let GHA=norm360(sun.GHAAries+polaris.SHA);
   let LHA=norm360(GHA+data.lon);
+let LHAAries=norm360(sun.GHAAries+data.lon);
 
+let polarDistance=
+90-polaris.Dec;
+
+let correction=
+polarDistance*
+Math.cos(
+degToRad(LHAAries)
+);
+
+let latitudeByPolaris=
+Ho+correction;
   /*
     Approximate Polaris correction.
     Polaris is about 0.7° from celestial pole.
@@ -2894,7 +2924,7 @@ function calculatePolaris(){
   let polarDistance=90-polaris.Dec;
   let correction=polarDistance*Math.cos(degToRad(LHA));
 
-  let lat=Ho+correction;
+let lat=latitudeByPolaris;
 
   polarisResult.innerHTML=
   "<b>LATITUDE BY POLARIS</b><br><br>"+
@@ -2903,7 +2933,7 @@ function calculatePolaris(){
   "Refraction: "+ref.toFixed(1)+"'<br>"+
   "Ho: "+formatAlt(Ho)+"<br><br>"+
   "GHA Polaris: "+formatDM(GHA)+"<br>"+
-  "LHA Polaris: "+formatDM(LHA)+"<br>"+
+ "LHA Aries: "+formatDM(LHAAries)+"<br>"+
   "Polaris Correction: "+(correction*60).toFixed(1)+"'<br><br>"+
   "<b>Latitude:</b><br>"+
   formatLatLon(lat,true);
@@ -4236,6 +4266,85 @@ window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+function calculateTwilight(){
+
+  let data=getInputData();
+
+  if(data.error){
+    twilightResult.innerHTML=data.error;
+    return;
+  }
+
+  let sun=sunAlmanac(data.date,"12:00:00");
+
+  let lat=degToRad(data.lat);
+  let dec=degToRad(sun.Dec);
+
+  function eventTime(alt){
+
+    let h=degToRad(alt);
+
+    let cosLHA=
+      (Math.sin(h)-
+       Math.sin(lat)*Math.sin(dec))
+      /
+      (Math.cos(lat)*Math.cos(dec));
+
+    if(cosLHA>1 || cosLHA<-1){
+      return "No Event";
+    }
+
+    let LHA=radToDeg(Math.acos(cosLHA));
+
+    let noonUTC=
+      12-(data.lon/15);
+
+    let rise=
+      noonUTC-(LHA/15);
+
+    let set=
+      noonUTC+(LHA/15);
+
+    function fmt(t){
+
+      while(t<0)t+=24;
+      while(t>=24)t-=24;
+
+      let hh=Math.floor(t);
+      let mm=Math.floor((t-hh)*60);
+
+      return String(hh).padStart(2,"0")+
+      ":"+
+      String(mm).padStart(2,"0");
+    }
+
+    return {
+      rise:fmt(rise),
+      set:fmt(set)
+    };
+  }
+
+  let sunrise=eventTime(-0.833);
+  let civil=eventTime(-6);
+  let nautical=eventTime(-12);
+  let astro=eventTime(-18);
+
+  twilightResult.innerHTML=
+  "<b>TWILIGHT TIMES (UTC)</b><br><br>"+
+
+  "Sunrise: "+sunrise.rise+"<br>"+
+  "Sunset: "+sunrise.set+"<br><br>"+
+
+  "Civil Twilight AM: "+civil.rise+"<br>"+
+  "Civil Twilight PM: "+civil.set+"<br><br>"+
+
+  "Nautical Twilight AM: "+nautical.rise+"<br>"+
+  "Nautical Twilight PM: "+nautical.set+"<br><br>"+
+
+  "Astronomical Twilight AM: "+astro.rise+"<br>"+
+  "Astronomical Twilight PM: "+astro.set;
 
 }
 setNowUTC();
