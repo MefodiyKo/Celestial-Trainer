@@ -2021,7 +2021,7 @@ document.getElementById("fwDip"+n).innerText=
 lop.Dip!==null ? lop.Dip.toFixed(1)+"'" : "";
 
 document.getElementById("fwSDPA"+n).innerText=
-(lop.SD!==null ? lop.SD.toFixed(1)+"'" : "")+
+(lop.SD!==null ? (lop.SD>=0?"+":"")+lop.SD.toFixed(1)+"'" : "")+
 " / "+
 (lop.Parallax!==null ? lop.Parallax.toFixed(1)+"'" : "");
 
@@ -3205,15 +3205,15 @@ function fillRunningWorksheet(){
   rfRef1.innerText=lop1.Refraction!==null ? lop1.Refraction.toFixed(1)+"'" : "";
   rfRef2.innerText=lop2.Refraction!==null ? lop2.Refraction.toFixed(1)+"'" : "";
 
-  rfSDPA1.innerText=
-    (lop1.SD!==null ? lop1.SD.toFixed(1)+"'" : "")+
-    " / "+
-    (lop1.Parallax!==null ? lop1.Parallax.toFixed(1)+"'" : "");
+rfSDPA1.innerText=
+  (lop1.SD!==null ? (lop1.SD>=0?"+":"")+lop1.SD.toFixed(1)+"'" : "")+
+  " / "+
+  (lop1.Parallax!==null ? lop1.Parallax.toFixed(1)+"'" : "");
 
-  rfSDPA2.innerText=
-    (lop2.SD!==null ? lop2.SD.toFixed(1)+"'" : "")+
-    " / "+
-    (lop2.Parallax!==null ? lop2.Parallax.toFixed(1)+"'" : "");
+rfSDPA2.innerText=
+  (lop2.SD!==null ? (lop2.SD>=0?"+":"")+lop2.SD.toFixed(1)+"'" : "")+
+  " / "+
+  (lop2.Parallax!==null ? lop2.Parallax.toFixed(1)+"'" : "");
 
   rfHo1.innerText=lop1.Ho!==null ? formatAlt(lop1.Ho) : "";
   rfHo2.innerText=lop2.Ho!==null ? formatAlt(lop2.Ho) : "";
