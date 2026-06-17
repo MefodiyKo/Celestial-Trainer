@@ -4253,6 +4253,16 @@ Ho less than Hc = Away
 document.getElementById("theoryContent").innerHTML=html;
 drawTheoryCanvas(t);
 
+let oldCanvas=document.getElementById("theoryCanvas");
+
+if(oldCanvas){
+  oldCanvas.style.display = (t==="stars") ? "none" : "block";
+}
+
+if(t!=="stars"){
+  drawTheoryCanvas(t);
+}
+
 if(t==="stars"){
   setTimeout(function(){
     populateTheoryStars();
