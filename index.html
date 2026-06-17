@@ -521,7 +521,7 @@ Zn: <span id="sightZn">--</span>
 </div>
 
 <label>Body</label>
-<select id="sightBody" class="full" onchange="updateSightCorrections()">
+<select id="sightBody" class="full">
 <option value="star">Star / Planet</option>
 <option value="sunLL">Sun Lower Limb</option>
 <option value="sunUL">Sun Upper Limb</option>
@@ -1475,25 +1475,41 @@ observationResult.innerHTML=
 }
 
 function updateSightCorrections(){
-let obj=celestialObject.value;
-if(obj==="Sun"){sightBody.value="sunLL";sdValue.value="16.0";parallaxValue.value="0.0";}
-else if(obj==="Moon"){
-sightBody.value="moonLL";
 
-if(lastSunData && lastSunData.object==="Moon"){
-  let moon=moonAlmanac(lastSunData.date,lastSunData.time);
-  sdValue.value=moon.SD.toFixed(1);
-  parallaxValue.value=moon.HP.toFixed(1);
-}else{
-  sdValue.value="15.0";
-  parallaxValue.value="57.0";
-}
-}
-else{
-sightBody.value="star";
-sdValue.value="0.0";
-parallaxValue.value="0.0";
-}
+  let obj=celestialObject.value;
+
+  if(obj==="Sun"){
+
+    if(sightBody.value!=="sunLL" && sightBody.value!=="sunUL"){
+      sightBody.value="sunLL";
+    }
+
+    sdValue.value="16.0";
+    parallaxValue.value="0.0";
+  }
+
+  else if(obj==="Moon"){
+
+    if(sightBody.value!=="moonLL" && sightBody.value!=="moonUL"){
+      sightBody.value="moonLL";
+    }
+
+    if(lastSunData && lastSunData.object==="Moon"){
+      let moon=moonAlmanac(lastSunData.date,lastSunData.time);
+      sdValue.value=moon.SD.toFixed(1);
+      parallaxValue.value=moon.HP.toFixed(1);
+    }else{
+      sdValue.value="15.0";
+      parallaxValue.value="57.0";
+    }
+  }
+
+  else{
+    sightBody.value="star";
+    sdValue.value="0.0";
+    parallaxValue.value="0.0";
+  }
+
 }
 
 function calculateDip(h){return h>0?-1.76*Math.sqrt(h):0}
