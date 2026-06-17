@@ -685,13 +685,59 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
   <button onclick="openTheoryTopic('forms')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
 </div>
 <div class="grid3forms">
-  <button class="main" onclick="showFormSheet('fixWorksheet')">3-LOP Form</button>
-  <button class="main" onclick="showFormSheet('meridianWorksheet')">Meridian Form</button>
-  <button class="main" onclick="showFormSheet('runningWorksheet')">Running Fix Form</button>
+
+<button class="main" onclick="showFormSheet('fixWorksheet')">
+3-LOP Form
+</button>
+
+<button class="main" onclick="showFormSheet('meridianWorksheet')">
+Meridian Form
+</button>
+
+<button class="main" onclick="showFormSheet('runningWorksheet')">
+Running Fix Form
+</button>
+
+
+<button class="main" onclick="fillFixWorksheet()">
+Fill 3-LOP
+</button>
+
+<button class="main" onclick="fillMeridianWorksheet()">
+Fill Meridian
+</button>
+
+<button class="main" onclick="fillRunningWorksheet()">
+Fill RF
+</button>
+
+
+<button class="main" onclick="printFixWorksheet()">
+Print 3-LOP
+</button>
+
+<button class="main" onclick="printMeridianWorksheet()">
+Print Meridian
+</button>
+
+<button class="main" onclick="printRunningWorksheet()">
+Print RF
+</button>
+
+
+<button class="main" onclick="blankFixWorksheet()">
+Blank 3-LOP
+</button>
+
+<button class="main" onclick="blankMeridianWorksheet()">
+Blank Meridian
+</button>
+
+<button class="main" onclick="blankRunningWorksheet()">
+Blank RF
+</button>
+
 </div>
-<button class="main" onclick="fillFixWorksheet()">Fill From Saved LOPs</button>
-<button class="main" onclick="fillMeridianWorksheet()">Fill Meridian Form</button>
-<button class="main" onclick="printFixWorksheet()">Print Worksheet</button>
 
 <div id="fixWorksheet" class="printSheet formSheet active">
 
@@ -779,31 +825,55 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 
 </div>
 
-<div id="meridianWorksheet" class="printSheet formSheet">
+<div <div id="meridianWorksheet" class="printSheet formSheet">
 
 <h2>MERIDIAN PASSAGE WORKSHEET</h2>
 
 <div class="worksheetTop">
 
-  <div class="plotArea">
-    <canvas id="meridianPlotCanvas" width="520" height="520"></canvas>
-  </div>
+<div class="plotArea">
+<canvas id="meridianPlotCanvas"
+width="520"
+height="520">
+</canvas>
+</div>
 
-  <div class="sideInfo">
-    <div class="sideBlock"><b>MERIDIAN PASSAGE</b><br>Date / UTC:<br><span id="mfDateTime">__________</span></div>
-    <div class="sideBlock"><b>OFFICER</b><br>Name: __________________<br>Signature: ______________</div>
-    <div class="sideBlock"><b>VESSEL DATA</b><br>Course: __________<br>Speed: __________</div>
-    <div class="sideBlock"><b>AP POSITION</b><br><span id="mfAPPosition">__________</span></div>
-    <div class="sideBlock"><b>ENVIRONMENT</b><br><span id="mfPressTemp">__________</span></div>
-    <div class="sideBlock"><b>LATITUDE RESULT</b><br><span id="mfLatitude">__________</span></div>
-  </div>
+<div class="sideInfo">
+
+<div class="sideBlock">
+<b>MERIDIAN DATA</b><br>
+Date / UTC:<br>
+<span id="mfDateTime">__________</span>
+</div>
+
+<div class="sideBlock">
+<b>AP POSITION</b><br>
+<span id="mfAPPosition">__________</span>
+</div>
+
+<div class="sideBlock">
+<b>ENVIRONMENT</b><br>
+<span id="mfPressTemp">__________</span>
+</div>
+
+<div class="sideBlock">
+<b>LATITUDE RESULT</b><br>
+<span id="mfLatResult">__________</span>
+</div>
+
+</div>
 
 </div>
 
 <table class="fixTable">
-<tr><th>Item</th><th>Value</th></tr>
+
+<tr>
+<th>Item</th>
+<th>Value</th>
+</tr>
+
 <tr><td>Body</td><td id="mfBody"></td></tr>
-<tr><td>LAN / Meridian Time UTC</td><td id="mfTime"></td></tr>
+<tr><td>UTC</td><td id="mfTime"></td></tr>
 <tr><td>Hs</td><td id="mfHs"></td></tr>
 <tr><td>IE</td><td id="mfIE"></td></tr>
 <tr><td>Dip</td><td id="mfDip"></td></tr>
@@ -811,9 +881,10 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
 <tr><td>SD / PA</td><td id="mfSDPA"></td></tr>
 <tr><td>Ho</td><td id="mfHo"></td></tr>
 <tr><td>Declination</td><td id="mfDec"></td></tr>
-<tr><td>Co-altitude</td><td id="mfCoAlt"></td></tr>
+<tr><td>Co-Altitude</td><td id="mfCoAlt"></td></tr>
 <tr><td>Same / Contrary</td><td id="mfSC"></td></tr>
-<tr><td>Latitude</td><td id="mfLatResult"></td></tr>
+<tr><td>Latitude</td><td id="mfLatitude"></td></tr>
+
 </table>
 
 </div>
@@ -2960,7 +3031,7 @@ fx+10,
 fy-10
 );
 }
-function printFixWorksheet(){
+function printActiveWorksheet(){
 
   let active=document.querySelector(".formSheet.active");
 
@@ -2969,11 +3040,210 @@ function printFixWorksheet(){
     return;
   }
 
-  if(active.id==="fixWorksheet"){
-    fillFixWorksheet();
+  window.print();
+}
+
+function printFixWorksheet(){
+
+  showFormSheet("fixWorksheet");
+  fillFixWorksheet();
+
+  setTimeout(function(){
+    window.print();
+  },300);
+}
+
+function printMeridianWorksheet(){
+
+  showFormSheet("meridianWorksheet");
+
+  setTimeout(function(){
+    window.print();
+  },300);
+}
+
+function printRunningWorksheet(){
+
+  showFormSheet("runningWorksheet");
+
+  setTimeout(function(){
+    window.print();
+  },300);
+}
+
+function clearTextFields(ids){
+
+  ids.forEach(id=>{
+    let el=document.getElementById(id);
+    if(el) el.innerText="";
+  });
+
+}
+
+function clearCanvasById(id){
+
+  let canvas=document.getElementById(id);
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+function blankFixWorksheet(){
+
+  showFormSheet("fixWorksheet");
+
+  clearTextFields([
+    "fwDateTime","fwAPPosition","fwPressTemp","fwFixPosition",
+    "fwObj1","fwObj2","fwObj3",
+    "fwTime1","fwTime2","fwTime3",
+    "fwHs1","fwHs2","fwHs3",
+    "fwIE1","fwIE2","fwIE3",
+    "fwDip1","fwDip2","fwDip3",
+    "fwSDPA1","fwSDPA2","fwSDPA3",
+    "fwHo1","fwHo2","fwHo3",
+    "fwPressure1","fwPressure2","fwPressure3",
+    "fwTemp1","fwTemp2","fwTemp3",
+    "fwHa1","fwHa2","fwHa3",
+    "fwRef1","fwRef2","fwRef3",
+    "fwNpLat1","fwNpLat2","fwNpLat3",
+    "fwNpLha1","fwNpLha2","fwNpLha3",
+    "fwNpDec1","fwNpDec2","fwNpDec3",
+    "fwSame1","fwSame2","fwSame3",
+    "fwTableHc1","fwTableHc2","fwTableHc3",
+    "fwD1","fwD2","fwD3",
+    "fwT5Corr1","fwT5Corr2","fwT5Corr3",
+    "fwHcCorr1","fwHcCorr2","fwHcCorr3",
+    "fwZ1","fwZ2","fwZ3",
+    "fwGha1","fwGha2","fwGha3",
+    "fwDec1","fwDec2","fwDec3",
+    "fwLha1","fwLha2","fwLha3",
+    "fwHc1","fwHc2","fwHc3",
+    "fwZn1","fwZn2","fwZn3",
+    "fwInt1","fwInt2","fwInt3",
+    "fwTA1","fwTA2","fwTA3"
+  ]);
+
+  clearCanvasById("circularPlotCanvas");
+}
+
+function blankMeridianWorksheet(){
+
+  showFormSheet("meridianWorksheet");
+
+  clearTextFields([
+    "mfDateTime","mfAPPosition","mfPressTemp",
+    "mfLatitude","mfLatResult",
+    "mfBody","mfTime","mfHs","mfIE",
+    "mfDip","mfRef","mfSDPA","mfHo",
+    "mfDec","mfCoAlt","mfSC"
+  ]);
+
+  drawBlankMeridianPlot();
+}
+
+function blankRunningWorksheet(){
+
+  showFormSheet("runningWorksheet");
+
+  clearTextFields([
+    "rfwDateTime","rfwResult",
+    "rfObj1","rfObj2",
+    "rfTime1","rfTime2",
+    "rfZn1","rfZn2",
+    "rfInt1","rfInt2"
+  ]);
+
+  drawBlankRunningPlot();
+}
+
+function drawBlankMeridianPlot(){
+
+  let canvas=document.getElementById("meridianPlotCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let cx=260;
+  let cy=260;
+  let R=210;
+
+  ctx.strokeStyle="black";
+  ctx.lineWidth=2;
+
+  ctx.beginPath();
+  ctx.arc(cx,cy,R,Math.PI,0);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx-R,cy);
+  ctx.lineTo(cx+R,cy);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.lineTo(cx,cy-R);
+  ctx.stroke();
+
+  ctx.fillStyle="black";
+  ctx.font="13px Arial";
+  ctx.fillText("Horizon",cx+R-55,cy+18);
+  ctx.fillText("Zenith",cx+8,cy-R+12);
+  ctx.fillText("Observer Meridian",cx+8,cy-90);
+}
+
+function drawBlankRunningPlot(){
+
+  let canvas=document.getElementById("runningWorksheetCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let cx=260;
+  let cy=260;
+
+  ctx.strokeStyle="#dddddd";
+
+  for(let x=40;x<=480;x+=40){
+    ctx.beginPath();
+    ctx.moveTo(x,40);
+    ctx.lineTo(x,480);
+    ctx.stroke();
   }
 
-  window.print();
+  for(let y=40;y<=480;y+=40){
+    ctx.beginPath();
+    ctx.moveTo(40,y);
+    ctx.lineTo(480,y);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle="black";
+
+  ctx.beginPath();
+  ctx.moveTo(cx,40);
+  ctx.lineTo(cx,480);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(40,cy);
+  ctx.lineTo(480,cy);
+  ctx.stroke();
+
+  ctx.fillStyle="black";
+  ctx.font="13px Arial";
+  ctx.fillText("RUNNING FIX PLOTTING SHEET",150,25);
+  ctx.fillText("AP / DR",cx+8,cy-8);
 }
 function drawTheoryCanvas(topic){
 
