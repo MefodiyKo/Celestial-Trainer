@@ -1546,7 +1546,19 @@ if(body==="sunUL" || body==="moonUL"){
 let Ho=Ha+ref/60+limbCorrection/60+pa/60;
 let intercept=(Ho-lastSunData.Hc)*60;
 lastSunData.signedIntercept=intercept;
-lastSunData.worksheet={Hs,IE:ie,Dip:dip,Ha,Refraction:ref,SD:sd,Parallax:pa,Ho,Hc:lastSunData.Hc,Zn:lastSunData.Zn};
+lastSunData.worksheet={
+  Hs,
+  IE:ie,
+  Dip:dip,
+  Ha,
+  Refraction:ref,
+  SD:limbCorrection,
+  Parallax:pa,
+  Ho,
+  Hc:lastSunData.Hc,
+  Zn:lastSunData.Zn,
+  Body:sightBody.value
+};
 sightResult.innerHTML=
 "<b>SIGHT REDUCTION</b><br><br>"+
 "Hs: "+formatAlt(Hs)+"<br>"+
