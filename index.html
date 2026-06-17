@@ -1516,7 +1516,18 @@ let t=parseFloat(temperature.value);if(isNaN(t))t=10;
 let ref=calculateRefraction(Ha,p,t);
 let sd=parseFloat(sdValue.value);if(isNaN(sd))sd=0;
 let pa=parseFloat(parallaxValue.value);if(isNaN(pa))pa=0;
-let Ho=Ha+ref/60+sd/60+pa/60;
+let body=sightBody.value;
+let limbCorrection=0;
+
+if(body==="sunLL" || body==="moonLL"){
+  limbCorrection=sd;
+}
+
+if(body==="sunUL" || body==="moonUL"){
+  limbCorrection=-sd;
+}
+
+let Ho=Ha+ref/60+limbCorrection/60+pa/60;
 let intercept=(Ho-lastSunData.Hc)*60;
 lastSunData.signedIntercept=intercept;
 lastSunData.worksheet={Hs,IE:ie,Dip:dip,Ha,Refraction:ref,SD:sd,Parallax:pa,Ho,Hc:lastSunData.Hc,Zn:lastSunData.Zn};
@@ -1525,7 +1536,7 @@ sightResult.innerHTML=
 "Hs: "+formatAlt(Hs)+"<br>"+
 "Dip: "+dip.toFixed(1)+"'<br>"+
 "Refraction: "+ref.toFixed(1)+"'<br>"+
-"SD: "+sd.toFixed(1)+"'<br>"+
+"SD: "+(limbCorrection>=0?"+":"")+limbCorrection.toFixed(1)+"'<br>"+
 "Parallax: "+pa.toFixed(1)+"'<br>"+
 "Ho: "+formatAlt(Ho)+"<br>"+
 "Hc: "+formatAlt(lastSunData.Hc)+"<br><br>"+
