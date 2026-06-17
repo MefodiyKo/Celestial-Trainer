@@ -4350,6 +4350,104 @@ const CONSTELLATIONS = {
     lines:[[0,3],[3,1],[3,2],[3,5],[0,4],[4,5]]
   }
 };
+function populateTheoryStars(){
+
+  let s=document.getElementById("theoryStarSelect");
+  if(!s)return;
+
+  s.innerHTML="";
+
+  Object.keys(STAR_GUIDE).forEach(name=>{
+    let opt=document.createElement("option");
+    opt.value=name;
+    opt.textContent=name+" — "+STAR_GUIDE[name].constellation;
+    s.appendChild(opt);
+  });
+}
+
+function showTheoryStar(){
+
+  let sel=document.getElementById("theoryStarSelect");
+  if(!sel)return;
+
+  let starName=sel.value;
+  let info=STAR_GUIDE[starName];
+
+  if(!info)return;
+
+  document.getElementById("theoryStarContent").innerHTML=
+  "<div class='resultBox'>"+
+  "<b>"+starName.toUpperCase()+"</b><br><br>"+
+  "Constellation: "+info.constellation+"<br>"+
+  "Magnitude: "+info.magnitude+"<br>"+
+  "Season: "+info.season+"<br><br>"+
+  "<b>How to find:</b><br>"+
+  info.howto.map((x,i)=>(i+1)+". "+x).join("<br>")+
+  "<br><br><b>Navigation notes:</b><br>"+
+  info.notes.map(x=>"• "+x).join("<br>")+
+  "</div>";
+
+  drawConstellation(info.constellation,starName);
+}
+
+function drawConstellation(constellationName,selectedStar){
+
+  let canvas=document.getElementById("constellationCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+  let data=CONSTELLATIONS[constellationName];
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#06152a";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  if(!data){
+    ctx.fillStyle="white";
+    ctx.font="20px Arial";
+    ctx.fillText("Constellation data not available yet.",40,80);
+    return;
+  }
+
+  ctx.strokeStyle="#6fb7ff";
+  ctx.lineWidth=2;
+
+  data.lines.forEach(line=>{
+    let a=data.stars[line[0]];
+    let b=data.stars[line[1]];
+
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
+  });
+
+  data.stars.forEach(star=>{
+
+    let isSelected=star.name===selectedStar;
+
+    ctx.fillStyle=isSelected ? "#ffd966" : "white";
+    ctx.beginPath();
+    ctx.arc(star.x,star.y,isSelected ? 8 : 5,0,Math.PI*2);
+    ctx.fill();
+
+    if(isSelected){
+      ctx.strokeStyle="#ffcc00";
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(star.x,star.y,15,0,Math.PI*2);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle=isSelected ? "#ffd966" : "#cfe9ff";
+    ctx.font=isSelected ? "16px Arial" : "13px Arial";
+    ctx.fillText(star.name,star.x+10,star.y-8);
+  });
+
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="18px Arial";
+  ctx.fillText(constellationName,30,35);
+}
 function openTheoryTopic(topic){
 
 document.querySelectorAll(".section")
