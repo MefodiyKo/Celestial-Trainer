@@ -4497,8 +4497,51 @@ const STAR_GUIDE = {
     "Tail of Leo.",
     "Useful with Regulus for constellation recognition."
   ]
-}
+},
 
+"Vega":{
+  constellation:"Lyra",
+  magnitude:"+0.03",
+  season:"Summer",
+  howto:[
+    "Look high in the summer sky.",
+    "Vega is the brightest star of Lyra.",
+    "Part of the Summer Triangle."
+  ],
+  notes:[
+    "One of the brightest stars in the sky.",
+    "Forms the Summer Triangle with Deneb and Altair."
+  ]
+},
+
+"Deneb":{
+  constellation:"Cygnus",
+  magnitude:"+1.25",
+  season:"Summer",
+  howto:[
+    "Find Vega first.",
+    "Look northeast for another bright star.",
+    "Deneb forms one corner of the Summer Triangle."
+  ],
+  notes:[
+    "Tail of the Swan.",
+    "Useful navigation star during northern summers."
+  ]
+},
+
+"Altair":{
+  constellation:"Aquila",
+  magnitude:"+0.77",
+  season:"Summer",
+  howto:[
+    "Find Vega and Deneb.",
+    "Altair completes the Summer Triangle."
+  ],
+  notes:[
+    "Bright star of Aquila.",
+    "Easy to identify between two smaller companion stars."
+  ]
+}
 };
 
 const CONSTELLATIONS = {
@@ -4637,6 +4680,43 @@ const CONSTELLATIONS = {
   ],
   lines:[
     [0,1],[1,2],[2,3],[2,4],[4,0]
+  ]
+},
+"Lyra":{
+  stars:[
+    {name:"Vega",x:350,y:180},
+    {name:"Sheliak",x:260,y:320},
+    {name:"Sulafat",x:450,y:320},
+    {name:"Delta Lyr",x:350,y:380}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,3]
+  ]
+},
+
+"Cygnus":{
+  stars:[
+    {name:"Deneb",x:350,y:80},
+    {name:"Sadr",x:350,y:240},
+    {name:"Albireo",x:350,y:460},
+    {name:"Gienah",x:200,y:240},
+    {name:"Delta Cyg",x:500,y:240}
+  ],
+  lines:[
+    [0,1],[1,2],[1,3],[1,4]
+  ]
+},
+
+"Aquila":{
+  stars:[
+    {name:"Altair",x:350,y:260},
+    {name:"Tarazed",x:260,y:220},
+    {name:"Alshain",x:450,y:300},
+    {name:"Eta Aql",x:200,y:380},
+    {name:"Delta Aql",x:520,y:160}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,4]
   ]
 }
 };
