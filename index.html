@@ -2733,74 +2733,85 @@ function useLastHoForMeridian(){
 
 function calculateMeridianPassage(){
 
-let data=getInputData();
+  let data=getInputData();
 
-if(data.error){
-meridianResult.innerHTML=data.error;
-return;
-}
+  if(data.error){
+    meridianResult.innerHTML=data.error;
+    return;
+  }
 
-let alm=sunAlmanac(data.date,"12:00:00");
-let lon=data.lon;
+  let d=parseFloat(merHoDeg.value);
+  let m=parseFloat(merHoMin.value);
 
-/* Approximate meridian passage UTC:
-   Sun on meridian when GHA + Lon = 0 / 360
-*/
-let ghaNoon=alm.GHA;
-let correction=norm360(ghaNoon+lon);
+  if(isNaN(d)||isNaN(m)){
+    meridianResult.innerHTML="Enter observed meridian altitude Ho.";
+    return;
+  }
 
-if(correction>180) correction-=360;
+  let Ho=d+m/60;
+  let ZD=90-Ho;
 
-/* Sun GHA changes approx 15 deg per hour */
-let hoursCorrection=correction/15;
-let approxUTC=12-hoursCorrection;
+  /*
+    TRUE MERIDIAN PASSAGE:
+    Sun on observer's meridian when:
+    LHA = GHA + Longitude = 000° / 360°
+  */
 
-while(approxUTC<0) approxUTC+=24;
-while(approxUTC>=24) approxUTC-=24;
+  let bestTime="12:00:00";
+  let bestDiff=999;
 
-let hh=Math.floor(approxUTC);
-let mm=Math.floor((approxUTC-hh)*60);
-let ss=Math.round((((approxUTC-hh)*60)-mm)*60);
+  for(let sec=0; sec<86400; sec+=10){
 
-let timeStr=
-String(hh).padStart(2,"0")+":"+
-String(mm).padStart(2,"0")+":"+
-String(ss).padStart(2,"0");
+    let hh=Math.floor(sec/3600);
+    let mm=Math.floor((sec%3600)/60);
+    let ss=sec%60;
 
-/* Recalculate Sun at approximate meridian time */
-let sun=sunAlmanac(data.date,timeStr);
-let Dec=sun.Dec;
+    let timeStr=
+      String(hh).padStart(2,"0")+":"+
+      String(mm).padStart(2,"0")+":"+
+      String(ss).padStart(2,"0");
 
-let d=parseFloat(merHoDeg.value);
-let m=parseFloat(merHoMin.value);
+    let sun=sunAlmanac(data.date,timeStr);
+    let LHA=norm360(sun.GHA+data.lon);
 
-if(isNaN(d)||isNaN(m)){
-meridianResult.innerHTML="Enter observed meridian altitude Ho.";
-return;
-}
+    let diff=Math.min(LHA,360-LHA);
 
-let Ho=d+m/60;
-let zenithDistance=90-Ho;
+    if(diff<bestDiff){
+      bestDiff=diff;
+      bestTime=timeStr;
+    }
+  }
 
-let lat;
+  let sun=sunAlmanac(data.date,bestTime);
+  let Dec=sun.Dec;
 
-if(merBearing.value==="S"){
-  lat=Dec+zenithDistance;
-}else{
-  lat=Dec-zenithDistance;
-}
+  let lat;
 
-merGha.innerText=formatDM(sun.GHA);
-merDec.innerText=formatDec(Dec);
+  if(merBearing.value==="S"){
+    lat=Dec+ZD;
+  }else{
+    lat=Dec-ZD;
+  }
 
-meridianResult.innerHTML=
-"<b>MERIDIAN PASSAGE</b><br><br>"+
-"Approx. Meridian Passage UTC: "+timeStr+"<br>"+
-"Sun Dec: "+formatDec(Dec)+"<br>"+
-"Ho: "+formatAlt(Ho)+"<br>"+
-"Zenith Distance: "+formatAlt(zenithDistance)+"<br><br>"+
-"<b>Latitude by Meridian Altitude:</b><br>"+
-formatLatLon(lat,true);
+  let sameContrary =
+    (lat>=0 && Dec>=0) || (lat<0 && Dec<0)
+    ? "Same name"
+    : "Contrary name";
+
+  merGha.innerText=formatDM(sun.GHA);
+  merDec.innerText=formatDec(Dec);
+
+  meridianResult.innerHTML=
+  "<b>MERIDIAN PASSAGE</b><br><br>"+
+  "Meridian Passage UTC: "+bestTime+"<br>"+
+  "GHA Sun: "+formatDM(sun.GHA)+"<br>"+
+  "Dec Sun: "+formatDec(Dec)+"<br><br>"+
+  "Ho: "+formatAlt(Ho)+"<br>"+
+  "Zenith Distance: "+formatAlt(ZD)+"<br>"+
+  "Body bearing: "+(merBearing.value==="S"?"South":"North")+"<br>"+
+  sameContrary+"<br><br>"+
+  "<b>Latitude by Meridian Altitude:</b><br>"+
+  formatLatLon(lat,true);
 
 }
 function calculatePolaris(){
