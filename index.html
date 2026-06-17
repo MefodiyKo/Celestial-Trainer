@@ -984,7 +984,7 @@ Date / UTC:<br>
 <option value="sky">Sky View</option>
 <option value="polaris">Polaris</option>
 <option value="forms">Forms / Worksheet</option>
-
+<option value="stars">Stars & Constellations</option>
 </select>
 
 <div id="theoryContent" class="resultBox" style="margin-top:15px">
@@ -4215,7 +4215,29 @@ Latitude = 41°53.4' N<br><br>
 `;
 
 }
+if(t==="stars"){
 
+html=`
+<b>STARS & CONSTELLATIONS</b><br><br>
+
+The 57 navigational stars are selected bright stars used for celestial navigation.<br><br>
+
+<label>Select Navigation Star</label>
+<select id="theoryStarSelect" class="full" onchange="showTheoryStar()">
+</select>
+
+<div id="theoryStarContent" style="margin-top:15px;">
+Select a star.
+</div>
+
+<canvas
+id="constellationCanvas"
+width="900"
+height="600"
+style="width:100%;background:#06152a;border:1px solid #31506a;border-radius:8px;margin-top:15px;">
+</canvas>
+`;
+}
 if(t==="forms"){
 html=`
 <b>FORMS / WORKSHEET</b><br><br>
@@ -4231,8 +4253,103 @@ Ho less than Hc = Away
 document.getElementById("theoryContent").innerHTML=html;
 drawTheoryCanvas(t);
 
+if(t==="stars"){
+  populateTheoryStars();
+  showTheoryStar();
 }
 
+}
+const STAR_GUIDE = {
+  "Sirius":{
+    constellation:"Canis Major",
+    magnitude:"-1.46",
+    season:"Winter / Tropical evenings",
+    howto:[
+      "Find Orion first.",
+      "Locate the three stars of Orion's Belt.",
+      "Extend the Belt line downward toward the south-east.",
+      "The very bright white star reached is Sirius."
+    ],
+    notes:[
+      "Brightest star in the night sky.",
+      "Very useful for twilight observations.",
+      "Easy to identify because of its brilliance."
+    ]
+  },
+
+  "Polaris":{
+    constellation:"Ursa Minor",
+    magnitude:"+1.98",
+    season:"All year in Northern Hemisphere",
+    howto:[
+      "Find Ursa Major / Big Dipper.",
+      "Use the two pointer stars at the outer side of the bowl.",
+      "Extend their line about five times the distance between them.",
+      "The star reached is Polaris."
+    ],
+    notes:[
+      "Used for Latitude by Polaris.",
+      "Close to the North Celestial Pole.",
+      "Not normally used as an azimuth star."
+    ]
+  },
+
+  "Arcturus":{
+    constellation:"Boötes",
+    magnitude:"-0.05",
+    season:"Spring / early summer",
+    howto:[
+      "Find the handle of the Big Dipper.",
+      "Follow the curve of the handle outward.",
+      "Arc to Arcturus.",
+      "Arcturus is a bright orange star."
+    ],
+    notes:[
+      "Useful bright star for evening sights.",
+      "Easy to identify by colour and brightness."
+    ]
+  }
+};
+
+const CONSTELLATIONS = {
+  "Canis Major":{
+    stars:[
+      {name:"Sirius",x:430,y:330},
+      {name:"Mirzam",x:390,y:230},
+      {name:"Muliphein",x:470,y:210},
+      {name:"Wezen",x:520,y:310},
+      {name:"Adhara",x:560,y:390},
+      {name:"Aludra",x:660,y:470},
+      {name:"Furud",x:350,y:420}
+    ],
+    lines:[[0,1],[1,2],[0,3],[3,4],[4,5],[0,6],[6,4]]
+  },
+
+  "Ursa Minor":{
+    stars:[
+      {name:"Polaris",x:220,y:360},
+      {name:"Yildun",x:300,y:310},
+      {name:"Epsilon UMi",x:370,y:260},
+      {name:"Zeta UMi",x:450,y:230},
+      {name:"Kochab",x:570,y:230},
+      {name:"Pherkad",x:610,y:310},
+      {name:"Eta UMi",x:500,y:340}
+    ],
+    lines:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3]]
+  },
+
+  "Boötes":{
+    stars:[
+      {name:"Arcturus",x:450,y:430},
+      {name:"Nekkar",x:430,y:120},
+      {name:"Seginus",x:320,y:220},
+      {name:"Izar",x:390,y:300},
+      {name:"Muphrid",x:540,y:390},
+      {name:"Delta Boo",x:560,y:240}
+    ],
+    lines:[[0,3],[3,1],[3,2],[3,5],[0,4],[4,5]]
+  }
+};
 function openTheoryTopic(topic){
 
 document.querySelectorAll(".section")
