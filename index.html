@@ -1548,13 +1548,28 @@ body==="moonUL"
 }
 let body=sightBody.value;
 let limbCorrection=0;
+let augmentedSD=sd;
 
-if(body==="sunLL" || body==="moonLL"){
+if(body==="moonLL" || body==="moonUL"){
+  augmentedSD =
+    sd *
+    (1 + Math.sin(degToRad(Ha)) / 60);
+}
+
+if(body==="sunLL"){
   limbCorrection=sd;
 }
 
-if(body==="sunUL" || body==="moonUL"){
+if(body==="sunUL"){
   limbCorrection=-sd;
+}
+
+if(body==="moonLL"){
+  limbCorrection=augmentedSD;
+}
+
+if(body==="moonUL"){
+  limbCorrection=-augmentedSD;
 }
 
 let Ho=
@@ -1571,7 +1586,9 @@ lastSunData.worksheet={
   Ha,
   Refraction:ref,
   SD:limbCorrection,
+  AugmentedSD:augmentedSD,
   Parallax:pa,
+  ParallaxAltitude:parallaxAltitude,
   Ho,
   Hc:lastSunData.Hc,
   Zn:lastSunData.Zn,
@@ -1583,6 +1600,7 @@ sightResult.innerHTML=
 "Dip: "+dip.toFixed(1)+"'<br>"+
 "Refraction: "+ref.toFixed(1)+"'<br>"+
 "SD: "+(limbCorrection>=0?"+":"")+limbCorrection.toFixed(1)+"'<br>"+
+(body==="moonLL" || body==="moonUL" ? "Augmented SD: "+augmentedSD.toFixed(1)+"'<br>" : "")+
 "HP: "+pa.toFixed(1)+"'<br>"+
 "Parallax in Altitude: "+parallaxAltitude.toFixed(1)+"'<br>"+
 "Ho: "+formatAlt(Ho)+"<br>"+
