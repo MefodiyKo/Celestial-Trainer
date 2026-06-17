@@ -690,6 +690,7 @@ style="width:100%;background:white;border-radius:8px;margin-top:15px">
   <button class="main" onclick="showFormSheet('runningWorksheet')">Running Fix Form</button>
 </div>
 <button class="main" onclick="fillFixWorksheet()">Fill From Saved LOPs</button>
+<button class="main" onclick="fillMeridianWorksheet()">Fill Meridian Form</button>
 <button class="main" onclick="printFixWorksheet()">Print Worksheet</button>
 
 <div id="fixWorksheet" class="printSheet formSheet active">
@@ -1952,7 +1953,116 @@ document.getElementById("fwLha"+n).innerText=formatDM(lop.LHA);
 
 drawCircularPlot(lops);
 }
+function fillMeridianWorksheet(){
 
+  let data=getInputData();
+
+  if(data.error){
+    alert(data.error);
+    return;
+  }
+
+  let d=parseFloat(merHoDeg.value);
+  let m=parseFloat(merHoMin.value);
+
+  if(isNaN(d)||isNaN(m)){
+    alert("Enter Meridian Ho first.");
+    return;
+  }
+
+  calculateMeridianPassage();
+
+  let Ho=d+m/60;
+  let coAlt=90-Ho;
+
+  let decText=merDec.innerText || "__________";
+  let latText=meridianResult.innerText
+    .split("Latitude by Meridian Altitude:")
+    .pop()
+    .trim();
+
+  mfDateTime.innerText=data.date+" / "+getTimeUTC()+" UTC";
+  mfAPPosition.innerText=formatLatLon(data.lat,true)+" / "+formatLatLon(data.lon,false);
+  mfPressTemp.innerText=(pressure.value||"")+" hPa / "+(temperature.value||"")+" °C";
+
+  mfBody.innerText="Sun";
+  mfTime.innerText="See calculation";
+  mfHs.innerText="—";
+  mfIE.innerText=indexError.value+"' ";
+  mfDip.innerText=calculateDip(parseFloat(heightOfEye.value)||0).toFixed(1)+"'";
+  mfRef.innerText="See sight reduction";
+  mfSDPA.innerText=sdValue.value+"' / "+parallaxValue.value+"'";
+  mfHo.innerText=formatAlt(Ho);
+  mfDec.innerText=decText;
+  mfCoAlt.innerText=formatAlt(coAlt);
+  mfSC.innerText=merBearing.value==="S" ? "Body South" : "Body North";
+  mfLatitude.innerText=latText;
+  mfLatResult.innerText=latText;
+
+  drawMeridianPlot(Ho,coAlt);
+
+  showFormSheet("meridianWorksheet");
+}
+function drawMeridianPlot(Ho,coAlt){
+
+  let canvas=document.getElementById("meridianPlotCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="white";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let cx=260;
+  let cy=260;
+  let R=210;
+
+  ctx.strokeStyle="black";
+  ctx.lineWidth=2;
+
+  ctx.beginPath();
+  ctx.arc(cx,cy,R,Math.PI,0);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx-R,cy);
+  ctx.lineTo(cx+R,cy);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.lineTo(cx,cy-R);
+  ctx.stroke();
+
+  ctx.fillStyle="black";
+  ctx.font="13px Arial";
+  ctx.fillText("Horizon",cx+R-55,cy+18);
+  ctx.fillText("Zenith",cx+8,cy-R+12);
+  ctx.fillText("Observer Meridian",cx+8,cy-90);
+
+  let altRad=degToRad(Ho);
+  let sx=cx+Math.cos(Math.PI-altRad)*R;
+  let sy=cy-Math.sin(altRad)*R;
+
+  ctx.fillStyle="orange";
+  ctx.beginPath();
+  ctx.arc(sx,sy,10,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="black";
+  ctx.fillText("Sun at LAN",sx+12,sy);
+
+  ctx.strokeStyle="orange";
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.lineTo(sx,sy);
+  ctx.stroke();
+
+  ctx.fillStyle="black";
+  ctx.fillText("Ho: "+formatAlt(Ho),40,40);
+  ctx.fillText("Co-alt: "+formatAlt(coAlt),40,60);
+}
 function drawWorksheetPlot(lops){
 
 let canvas=document.getElementById("worksheetPlotCanvas");
