@@ -843,7 +843,7 @@ Blank RF
 
 </div>
 
-<div <div id="meridianWorksheet" class="printSheet formSheet">
+<div id="meridianWorksheet" class="printSheet formSheet">
 
 <h2>MERIDIAN PASSAGE WORKSHEET</h2>
 
@@ -1550,6 +1550,9 @@ let t=parseFloat(temperature.value);if(isNaN(t))t=10;
 let ref=calculateRefraction(Ha,p,t);
 let sd=parseFloat(sdValue.value);if(isNaN(sd))sd=0;
 let pa=parseFloat(parallaxValue.value);if(isNaN(pa))pa=0;
+
+let body=sightBody.value;
+
 let parallaxAltitude=pa;
 
 if(
@@ -1564,7 +1567,7 @@ body==="moonUL"
     );
 
 }
-let body=sightBody.value;
+
 let limbCorrection=0;
 let augmentedSD=sd;
 
@@ -2902,29 +2905,15 @@ function calculatePolaris(){
 
   let GHA=norm360(sun.GHAAries+polaris.SHA);
   let LHA=norm360(GHA+data.lon);
-let LHAAries=norm360(sun.GHAAries+data.lon);
+  let LHAAries=norm360(sun.GHAAries+data.lon);
 
-let polarDistance=
-90-polaris.Dec;
-
-let correction=
-polarDistance*
-Math.cos(
-degToRad(LHAAries)
-);
-
-let latitudeByPolaris=
-Ho+correction;
-  /*
-    Approximate Polaris correction.
-    Polaris is about 0.7° from celestial pole.
-    Correction depends mainly on LHA Aries / Polaris.
-    Training approximation only.
-  */
   let polarDistance=90-polaris.Dec;
-  let correction=polarDistance*Math.cos(degToRad(LHA));
 
-let lat=latitudeByPolaris;
+  let correction=
+    polarDistance*
+    Math.cos(degToRad(LHAAries));
+
+  let lat=Ho+correction;
 
   polarisResult.innerHTML=
   "<b>LATITUDE BY POLARIS</b><br><br>"+
@@ -2933,7 +2922,8 @@ let lat=latitudeByPolaris;
   "Refraction: "+ref.toFixed(1)+"'<br>"+
   "Ho: "+formatAlt(Ho)+"<br><br>"+
   "GHA Polaris: "+formatDM(GHA)+"<br>"+
- "LHA Aries: "+formatDM(LHAAries)+"<br>"+
+  "LHA Polaris: "+formatDM(LHA)+"<br>"+
+  "LHA Aries: "+formatDM(LHAAries)+"<br>"+
   "Polaris Correction: "+(correction*60).toFixed(1)+"'<br><br>"+
   "<b>Latitude:</b><br>"+
   formatLatLon(lat,true);
