@@ -4262,20 +4262,156 @@ if(t==="stars"){
 
 }
 const STAR_GUIDE = {
+
   "Sirius":{
     constellation:"Canis Major",
     magnitude:"-1.46",
-    season:"Winter / Tropical evenings",
+    season:"Winter / tropical evenings",
     howto:[
       "Find Orion first.",
-      "Locate the three stars of Orion's Belt.",
-      "Extend the Belt line downward toward the south-east.",
-      "The very bright white star reached is Sirius."
+      "Locate Orion's Belt.",
+      "Extend the Belt downward toward the south-east.",
+      "The brilliant white star reached is Sirius."
     ],
     notes:[
       "Brightest star in the night sky.",
-      "Very useful for twilight observations.",
-      "Easy to identify because of its brilliance."
+      "Excellent star for twilight sights.",
+      "Very easy to identify by brightness."
+    ]
+  },
+
+  "Adhara":{
+    constellation:"Canis Major",
+    magnitude:"+1.50",
+    season:"Winter",
+    howto:[
+      "Find Sirius first.",
+      "Look below and to the east of Sirius.",
+      "Adhara is one of the bright stars forming the lower body of Canis Major."
+    ],
+    notes:[
+      "Useful when Sirius is already identified.",
+      "Good supporting star in the Canis Major group."
+    ]
+  },
+
+  "Rigel":{
+    constellation:"Orion",
+    magnitude:"+0.13",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Look below the Belt.",
+      "Rigel is the bright blue-white star at Orion's lower foot."
+    ],
+    notes:[
+      "Very useful navigation star.",
+      "Easy to identify from Orion."
+    ]
+  },
+
+  "Betelgeuse":{
+    constellation:"Orion",
+    magnitude:"+0.50",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Look above the Belt.",
+      "Betelgeuse is the reddish star at Orion's shoulder."
+    ],
+    notes:[
+      "Red colour helps identification.",
+      "Good star for evening observations."
+    ]
+  },
+
+  "Bellatrix":{
+    constellation:"Orion",
+    magnitude:"+1.64",
+    season:"Winter",
+    howto:[
+      "Find Orion.",
+      "Locate Betelgeuse.",
+      "Bellatrix is the opposite shoulder of Orion."
+    ],
+    notes:[
+      "Less bright than Rigel and Betelgeuse.",
+      "Useful when Orion is fully visible."
+    ]
+  },
+
+  "Aldebaran":{
+    constellation:"Taurus",
+    magnitude:"+0.85",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Extend the Belt upward toward the north-west.",
+      "The orange star reached is Aldebaran."
+    ],
+    notes:[
+      "Orange colour is a useful identifier.",
+      "Marks the eye of Taurus."
+    ]
+  },
+
+  "Capella":{
+    constellation:"Auriga",
+    magnitude:"+0.08",
+    season:"Winter",
+    howto:[
+      "Find Orion and Taurus.",
+      "Look north of Aldebaran.",
+      "Capella is the bright yellow star high in Auriga."
+    ],
+    notes:[
+      "Very bright and useful in northern skies.",
+      "Good star for high-altitude sights."
+    ]
+  },
+
+  "Procyon":{
+    constellation:"Canis Minor",
+    magnitude:"+0.38",
+    season:"Winter / spring",
+    howto:[
+      "Find Sirius.",
+      "Find Betelgeuse in Orion.",
+      "Procyon forms a large triangle with Sirius and Betelgeuse."
+    ],
+    notes:[
+      "Part of the Winter Triangle.",
+      "Useful after Sirius is identified."
+    ]
+  },
+
+  "Pollux":{
+    constellation:"Gemini",
+    magnitude:"+1.14",
+    season:"Winter / spring",
+    howto:[
+      "Find Orion first.",
+      "Look north-east of Orion.",
+      "Pollux is the brighter of the two main Gemini stars."
+    ],
+    notes:[
+      "Usually seen together with Castor.",
+      "Good identification pair in Gemini."
+    ]
+  },
+
+  "Canopus":{
+    constellation:"Carina",
+    magnitude:"-0.74",
+    season:"Southern winter / tropical skies",
+    howto:[
+      "Find Sirius.",
+      "Look well below Sirius toward the southern sky.",
+      "Canopus is the next very bright star below Sirius."
+    ],
+    notes:[
+      "Second brightest star in the night sky.",
+      "Excellent navigation star in southern and tropical latitudes."
     ]
   },
 
@@ -4284,15 +4420,14 @@ const STAR_GUIDE = {
     magnitude:"+1.98",
     season:"All year in Northern Hemisphere",
     howto:[
-      "Find Ursa Major / Big Dipper.",
-      "Use the two pointer stars at the outer side of the bowl.",
-      "Extend their line about five times the distance between them.",
+      "Find the Big Dipper.",
+      "Use the two pointer stars.",
+      "Extend their line about five times.",
       "The star reached is Polaris."
     ],
     notes:[
-      "Used for Latitude by Polaris.",
-      "Close to the North Celestial Pole.",
-      "Not normally used as an azimuth star."
+      "Used for latitude by Polaris.",
+      "Close to the North Celestial Pole."
     ]
   },
 
@@ -4302,15 +4437,15 @@ const STAR_GUIDE = {
     season:"Spring / early summer",
     howto:[
       "Find the handle of the Big Dipper.",
-      "Follow the curve of the handle outward.",
-      "Arc to Arcturus.",
-      "Arcturus is a bright orange star."
+      "Follow the curve of the handle.",
+      "Arc to Arcturus."
     ],
     notes:[
-      "Useful bright star for evening sights.",
-      "Easy to identify by colour and brightness."
+      "Bright orange star.",
+      "Very useful evening navigation star."
     ]
   }
+
 };
 
 const CONSTELLATIONS = {
@@ -4350,7 +4485,82 @@ const CONSTELLATIONS = {
       {name:"Delta Boo",x:560,y:240}
     ],
     lines:[[0,3],[3,1],[3,2],[3,5],[0,4],[4,5]]
-  }
+  },
+  "Orion":{
+  stars:[
+    {name:"Betelgeuse",x:220,y:120},
+    {name:"Bellatrix",x:420,y:140},
+    {name:"Alnitak",x:260,y:260},
+    {name:"Alnilam",x:340,y:250},
+    {name:"Mintaka",x:420,y:240},
+    {name:"Saiph",x:250,y:430},
+    {name:"Rigel",x:450,y:450}
+  ],
+  lines:[
+    [0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[5,6]
+  ]
+},
+
+"Taurus":{
+  stars:[
+    {name:"Aldebaran",x:280,y:260},
+    {name:"Elnath",x:520,y:120},
+    {name:"Hyadum I",x:180,y:180},
+    {name:"Hyadum II",x:180,y:340},
+    {name:"Ain",x:420,y:360}
+  ],
+  lines:[
+    [1,0],[0,2],[0,3],[0,4]
+  ]
+},
+
+"Auriga":{
+  stars:[
+    {name:"Capella",x:340,y:100},
+    {name:"Menkalinan",x:480,y:220},
+    {name:"Mahasim",x:420,y:400},
+    {name:"Hassaleh",x:220,y:400},
+    {name:"Almaaz",x:180,y:220}
+  ],
+  lines:[
+    [0,1],[1,2],[2,3],[3,4],[4,0]
+  ]
+},
+
+"Canis Minor":{
+  stars:[
+    {name:"Procyon",x:260,y:220},
+    {name:"Gomeisa",x:480,y:320}
+  ],
+  lines:[
+    [0,1]
+  ]
+},
+
+"Gemini":{
+  stars:[
+    {name:"Castor",x:250,y:120},
+    {name:"Pollux",x:420,y:140},
+    {name:"Alhena",x:360,y:420},
+    {name:"Wasat",x:320,y:280},
+    {name:"Mebsuta",x:220,y:260}
+  ],
+  lines:[
+    [0,3],[1,3],[3,2],[3,4]
+  ]
+},
+
+"Carina":{
+  stars:[
+    {name:"Canopus",x:350,y:180},
+    {name:"Miaplacidus",x:220,y:320},
+    {name:"Avior",x:520,y:340},
+    {name:"Aspidiske",x:360,y:440}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,3]
+  ]
+}
 };
 function populateTheoryStars(){
 
