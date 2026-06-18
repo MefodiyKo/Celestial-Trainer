@@ -5236,9 +5236,13 @@ function showTheoryStar(){
   document.getElementById("theoryStarContent").innerHTML=
   "<div class='resultBox'>"+
   "<b>"+starName.toUpperCase()+"</b><br><br>"+
-  "Constellation: "+info.constellation+"<br>"+
-  "Magnitude: "+info.magnitude+"<br>"+
-  "Season: "+info.season+"<br>"+
+"Constellation: "+info.constellation+"<br>"+
+"Magnitude: "+info.magnitude+"<br>"+
+"SHA: "+getStarSHA(starName)+"<br>"+
+"Declination: "+getStarDec(starName)+"<br>"+
+"Season: "+info.season+"<br>"+
+"Visibility: "+getStarVisibility(starName)+"<br>"+
+"Best Months: "+getBestMonths(starName)+"<br>"+
 "Best Observation: "+bestObservation(starName)+"<br><br>"+
   "<b>How to find:</b><br>"+
   info.howto.map((x,i)=>(i+1)+". "+x).join("<br>")+
@@ -5311,6 +5315,82 @@ const list={
 };
 
 return list[star] || "Twilight";
+}
+function getStarSHA(star){
+
+  if(!STAR_CATALOG[star]) return "—";
+
+  return STAR_CATALOG[star].SHA.toFixed(1)+"°";
+}
+
+function getStarDec(star){
+
+  if(!STAR_CATALOG[star]) return "—";
+
+  let dec=STAR_CATALOG[star].Dec;
+  let hemi=dec>=0 ? "N" : "S";
+
+  return Math.abs(dec).toFixed(1)+"° "+hemi;
+}
+
+function getStarVisibility(star){
+
+  const southern=[
+    "Canopus","Achernar","Acrux","Gacrux","Hadar",
+    "Rigil Kentaurus","Atria","Peacock","Alnair",
+    "Suhail","Miaplacidus","Avior","Ankaa"
+  ];
+
+  const northern=[
+    "Polaris","Kochab","Dubhe","Alioth","Alkaid",
+    "Capella","Schedar","Mirfak","Eltanin"
+  ];
+
+  if(southern.includes(star)) return "Best in Southern / Tropical latitudes";
+  if(northern.includes(star)) return "Best in Northern latitudes";
+
+  return "Visible from many latitudes depending on season";
+}
+
+function getBestMonths(star){
+
+  const months={
+
+    "Sirius":"December – March",
+    "Canopus":"December – March",
+    "Rigel":"December – March",
+    "Betelgeuse":"December – March",
+    "Aldebaran":"November – February",
+    "Capella":"October – March",
+    "Procyon":"January – April",
+    "Pollux":"January – April",
+
+    "Regulus":"February – May",
+    "Denebola":"March – June",
+    "Spica":"April – July",
+    "Arcturus":"April – July",
+    "Alphard":"February – May",
+
+    "Vega":"June – September",
+    "Deneb":"July – October",
+    "Altair":"July – October",
+    "Antares":"June – August",
+    "Shaula":"June – August",
+    "Nunki":"July – September",
+    "Kaus Australis":"July – September",
+
+    "Fomalhaut":"September – November",
+    "Markab":"September – December",
+    "Alpheratz":"September – December",
+    "Schedar":"September – December",
+    "Achernar":"October – January",
+
+    "Polaris":"All year",
+    "Kochab":"All year"
+
+  };
+
+  return months[star] || "Best during local evening twilight season";
 }
 function drawConstellation(constellationName,selectedStar){
 
