@@ -1912,6 +1912,9 @@ html+="<b>Best Stars:</b><br><br>";
 stars.slice(0,10).forEach(s=>{
 html+=
 "⭐ "+s.name+
+(STAR_GUIDE[s.name]
+ ? " <button class='smallTheoryBtn' onclick=\"openStarTheory('"+s.name+"')\">📘</button>"
+ : "")+
 " — Hc "+s.hc.toFixed(0)+"°"+
 " / Zn "+s.zn.toFixed(0)+"°"+
 " / Mag "+s.mag+
