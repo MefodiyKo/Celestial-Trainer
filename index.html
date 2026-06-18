@@ -374,7 +374,7 @@ No planets calculated.
   <h3 style="margin:0;">Celestial Almanac</h3>
 
   <button
-    onclick="openTheoryTopic('almanac')"
+    onclick="openObjectTheory()"
     style="
       padding:4px 10px;
       border:0;
@@ -4908,6 +4908,46 @@ function drawConstellation(constellationName,selectedStar){
   ctx.fillStyle="#9ee7ff";
   ctx.font="18px Arial";
   ctx.fillText(constellationName,30,35);
+}
+function openObjectTheory(){
+
+  let obj=celestialObject.value;
+
+  if(STAR_GUIDE[obj]){
+    openTheoryTopic("stars");
+
+    setTimeout(function(){
+      let s=document.getElementById("theoryStarSelect");
+      if(s){
+        s.value=obj;
+        showTheoryStar();
+      }
+    },200);
+
+    return;
+  }
+
+  if(obj==="Sun"){
+    openTheoryTopic("almanac");
+    return;
+  }
+
+  if(obj==="Moon"){
+    openTheoryTopic("sight");
+    return;
+  }
+
+  if(
+    obj==="Venus" ||
+    obj==="Mars" ||
+    obj==="Jupiter" ||
+    obj==="Saturn"
+  ){
+    openTheoryTopic("sky");
+    return;
+  }
+
+  openTheoryTopic("almanac");
 }
 function openTheoryTopic(topic){
 
