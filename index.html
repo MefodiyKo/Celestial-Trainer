@@ -4757,11 +4757,53 @@ function showTheoryStar(){
   info.howto.map((x,i)=>(i+1)+". "+x).join("<br>")+
   "<br><br><b>Navigation notes:</b><br>"+
   info.notes.map(x=>"• "+x).join("<br>")+
+"<br><br><b>Star Hopping:</b><br>"+
+(getStarHopping(starName))
   "</div>";
 
   drawConstellation(info.constellation,starName);
 }
+function getStarHopping(star){
 
+const hops={
+
+"Sirius":
+"Orion Belt → Sirius",
+
+"Procyon":
+"Sirius + Betelgeuse → Winter Triangle",
+
+"Betelgeuse":
+"Orion Belt → Betelgeuse",
+
+"Aldebaran":
+"Orion Belt upward → Aldebaran",
+
+"Capella":
+"Aldebaran → Capella",
+
+"Polaris":
+"Pointer Stars → Polaris",
+
+"Arcturus":
+"Arc to Arcturus",
+
+"Spica":
+"Arc to Arcturus → Speed to Spica",
+
+"Vega":
+"Summer Triangle",
+
+"Deneb":
+"Summer Triangle",
+
+"Altair":
+"Summer Triangle"
+
+};
+
+return hops[star] || "See constellation diagram.";
+}
 function drawConstellation(constellationName,selectedStar){
 
   let canvas=document.getElementById("constellationCanvas");
