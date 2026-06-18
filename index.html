@@ -4752,7 +4752,8 @@ function showTheoryStar(){
   "<b>"+starName.toUpperCase()+"</b><br><br>"+
   "Constellation: "+info.constellation+"<br>"+
   "Magnitude: "+info.magnitude+"<br>"+
-  "Season: "+info.season+"<br><br>"+
+  "Season: "+info.season+"<br>"+
+"Best Observation: "+bestObservation(starName)+"<br><br>"+
   "<b>How to find:</b><br>"+
   info.howto.map((x,i)=>(i+1)+". "+x).join("<br>")+
   "<br><br><b>Navigation notes:</b><br>"+
@@ -4803,6 +4804,27 @@ const hops={
 };
 
 return hops[star] || "See constellation diagram.";
+}
+function bestObservation(star){
+
+const list={
+
+"Sirius":"Evening twilight",
+"Canopus":"Evening twilight",
+"Capella":"Morning and evening twilight",
+"Polaris":"Any time when visible",
+"Arcturus":"Evening twilight",
+"Spica":"Evening twilight",
+"Vega":"Summer twilight",
+"Deneb":"Summer twilight",
+"Altair":"Summer twilight",
+"Rigel":"Evening twilight",
+"Betelgeuse":"Evening twilight",
+"Aldebaran":"Evening twilight"
+
+};
+
+return list[star] || "Twilight";
 }
 function drawConstellation(constellationName,selectedStar){
 
