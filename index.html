@@ -4868,12 +4868,17 @@ function drawConstellation(constellationName,selectedStar){
     ctx.fill();
 
     if(isSelected){
-      ctx.strokeStyle="#ffcc00";
-      ctx.lineWidth=2;
-      ctx.beginPath();
-      ctx.arc(star.x,star.y,15,0,Math.PI*2);
-      ctx.stroke();
-    }
+  ctx.shadowBlur=20;
+  ctx.shadowColor="#ffcc00";
+
+  ctx.strokeStyle="#ffcc00";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.arc(star.x,star.y,20,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.shadowBlur=0;
+}
 
     ctx.fillStyle=isSelected ? "#ffd966" : "#cfe9ff";
     ctx.font=isSelected ? "16px Arial" : "13px Arial";
