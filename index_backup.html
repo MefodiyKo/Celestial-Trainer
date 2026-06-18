@@ -306,6 +306,18 @@ canvas{touch-action:manipulation}
   button{
     display:none !important;
   }
+  .smallTheoryBtn{
+  background:#1f8de0;
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.smallTheoryBtn:hover{
+  opacity:0.9;
 }
 </style>
 </head>
@@ -361,7 +373,7 @@ No planets calculated.
   <h3 style="margin:0;">Celestial Almanac</h3>
 
   <button
-    onclick="openTheoryTopic('almanac')"
+    onclick="openObjectTheory()"
     style="
       padding:4px 10px;
       border:0;
@@ -1300,9 +1312,19 @@ let LHA=norm360(alm.GHA+data.lon);
 let r=calculateHcZn(data.lat,alm.Dec,LHA);
 
 updateLastData(obj,data.date,data.time,data.lat,data.lon,alm.GHA,alm.Dec,LHA,r.Hc,r.Zn);
+let theoryBtn="";
+
+if(STAR_GUIDE[obj]){
+  theoryBtn=
+  "<button class='smallTheoryBtn' onclick=\"openStarTheory('"+obj+"')\">📘 Theory</button>";
+}
+
 
 sunResult.innerHTML=
-"<b>"+obj.toUpperCase()+"</b><br><br>"+
+"<div style='display:flex;justify-content:space-between;align-items:center;'>"+
+"<b>"+obj.toUpperCase()+"</b>"+
+theoryBtn+
+"</div><br>"+
 "GHA: "+formatDM(alm.GHA)+"<br>"+
 "Dec: "+formatDec(alm.Dec)+"<br>"+
 "LHA: "+formatDM(LHA)+"<br>"+
@@ -1890,6 +1912,9 @@ html+="<b>Best Stars:</b><br><br>";
 stars.slice(0,10).forEach(s=>{
 html+=
 "⭐ "+s.name+
+(STAR_GUIDE[s.name]
+ ? " <button class='smallTheoryBtn' onclick=\"openStarTheory('"+s.name+"')\">📘</button>"
+ : "")+
 " — Hc "+s.hc.toFixed(0)+"°"+
 " / Zn "+s.zn.toFixed(0)+"°"+
 " / Mag "+s.mag+
@@ -4253,6 +4278,16 @@ Ho less than Hc = Away
 document.getElementById("theoryContent").innerHTML=html;
 drawTheoryCanvas(t);
 
+let oldCanvas=document.getElementById("theoryCanvas");
+
+if(oldCanvas){
+  oldCanvas.style.display = (t==="stars") ? "none" : "block";
+}
+
+if(t!=="stars"){
+  drawTheoryCanvas(t);
+}
+
 if(t==="stars"){
   setTimeout(function(){
     populateTheoryStars();
@@ -4262,20 +4297,156 @@ if(t==="stars"){
 
 }
 const STAR_GUIDE = {
+
   "Sirius":{
     constellation:"Canis Major",
     magnitude:"-1.46",
-    season:"Winter / Tropical evenings",
+    season:"Winter / tropical evenings",
     howto:[
       "Find Orion first.",
-      "Locate the three stars of Orion's Belt.",
-      "Extend the Belt line downward toward the south-east.",
-      "The very bright white star reached is Sirius."
+      "Locate Orion's Belt.",
+      "Extend the Belt downward toward the south-east.",
+      "The brilliant white star reached is Sirius."
     ],
     notes:[
       "Brightest star in the night sky.",
-      "Very useful for twilight observations.",
-      "Easy to identify because of its brilliance."
+      "Excellent star for twilight sights.",
+      "Very easy to identify by brightness."
+    ]
+  },
+
+  "Adhara":{
+    constellation:"Canis Major",
+    magnitude:"+1.50",
+    season:"Winter",
+    howto:[
+      "Find Sirius first.",
+      "Look below and to the east of Sirius.",
+      "Adhara is one of the bright stars forming the lower body of Canis Major."
+    ],
+    notes:[
+      "Useful when Sirius is already identified.",
+      "Good supporting star in the Canis Major group."
+    ]
+  },
+
+  "Rigel":{
+    constellation:"Orion",
+    magnitude:"+0.13",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Look below the Belt.",
+      "Rigel is the bright blue-white star at Orion's lower foot."
+    ],
+    notes:[
+      "Very useful navigation star.",
+      "Easy to identify from Orion."
+    ]
+  },
+
+  "Betelgeuse":{
+    constellation:"Orion",
+    magnitude:"+0.50",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Look above the Belt.",
+      "Betelgeuse is the reddish star at Orion's shoulder."
+    ],
+    notes:[
+      "Red colour helps identification.",
+      "Good star for evening observations."
+    ]
+  },
+
+  "Bellatrix":{
+    constellation:"Orion",
+    magnitude:"+1.64",
+    season:"Winter",
+    howto:[
+      "Find Orion.",
+      "Locate Betelgeuse.",
+      "Bellatrix is the opposite shoulder of Orion."
+    ],
+    notes:[
+      "Less bright than Rigel and Betelgeuse.",
+      "Useful when Orion is fully visible."
+    ]
+  },
+
+  "Aldebaran":{
+    constellation:"Taurus",
+    magnitude:"+0.85",
+    season:"Winter",
+    howto:[
+      "Find Orion's Belt.",
+      "Extend the Belt upward toward the north-west.",
+      "The orange star reached is Aldebaran."
+    ],
+    notes:[
+      "Orange colour is a useful identifier.",
+      "Marks the eye of Taurus."
+    ]
+  },
+
+  "Capella":{
+    constellation:"Auriga",
+    magnitude:"+0.08",
+    season:"Winter",
+    howto:[
+      "Find Orion and Taurus.",
+      "Look north of Aldebaran.",
+      "Capella is the bright yellow star high in Auriga."
+    ],
+    notes:[
+      "Very bright and useful in northern skies.",
+      "Good star for high-altitude sights."
+    ]
+  },
+
+  "Procyon":{
+    constellation:"Canis Minor",
+    magnitude:"+0.38",
+    season:"Winter / spring",
+    howto:[
+      "Find Sirius.",
+      "Find Betelgeuse in Orion.",
+      "Procyon forms a large triangle with Sirius and Betelgeuse."
+    ],
+    notes:[
+      "Part of the Winter Triangle.",
+      "Useful after Sirius is identified."
+    ]
+  },
+
+  "Pollux":{
+    constellation:"Gemini",
+    magnitude:"+1.14",
+    season:"Winter / spring",
+    howto:[
+      "Find Orion first.",
+      "Look north-east of Orion.",
+      "Pollux is the brighter of the two main Gemini stars."
+    ],
+    notes:[
+      "Usually seen together with Castor.",
+      "Good identification pair in Gemini."
+    ]
+  },
+
+  "Canopus":{
+    constellation:"Carina",
+    magnitude:"-0.74",
+    season:"Southern winter / tropical skies",
+    howto:[
+      "Find Sirius.",
+      "Look well below Sirius toward the southern sky.",
+      "Canopus is the next very bright star below Sirius."
+    ],
+    notes:[
+      "Second brightest star in the night sky.",
+      "Excellent navigation star in southern and tropical latitudes."
     ]
   },
 
@@ -4284,15 +4455,14 @@ const STAR_GUIDE = {
     magnitude:"+1.98",
     season:"All year in Northern Hemisphere",
     howto:[
-      "Find Ursa Major / Big Dipper.",
-      "Use the two pointer stars at the outer side of the bowl.",
-      "Extend their line about five times the distance between them.",
+      "Find the Big Dipper.",
+      "Use the two pointer stars.",
+      "Extend their line about five times.",
       "The star reached is Polaris."
     ],
     notes:[
-      "Used for Latitude by Polaris.",
-      "Close to the North Celestial Pole.",
-      "Not normally used as an azimuth star."
+      "Used for latitude by Polaris.",
+      "Close to the North Celestial Pole."
     ]
   },
 
@@ -4302,15 +4472,193 @@ const STAR_GUIDE = {
     season:"Spring / early summer",
     howto:[
       "Find the handle of the Big Dipper.",
-      "Follow the curve of the handle outward.",
-      "Arc to Arcturus.",
-      "Arcturus is a bright orange star."
+      "Follow the curve of the handle.",
+      "Arc to Arcturus."
     ],
     notes:[
-      "Useful bright star for evening sights.",
-      "Easy to identify by colour and brightness."
+      "Bright orange star.",
+      "Very useful evening navigation star."
     ]
-  }
+  },
+  "Spica":{
+  constellation:"Virgo",
+  magnitude:"+0.98",
+  season:"Spring",
+  howto:[
+    "Arc to Arcturus.",
+    "Continue the same curve.",
+    "Speed to Spica."
+  ],
+  notes:[
+    "Main star of Virgo.",
+    "Part of the famous navigator's guide: Arc to Arcturus, Speed to Spica."
+  ]
+},
+
+"Regulus":{
+  constellation:"Leo",
+  magnitude:"+1.35",
+  season:"Spring",
+  howto:[
+    "Find the Sickle of Leo.",
+    "Regulus is the bright star at its base."
+  ],
+  notes:[
+    "Heart of the Lion.",
+    "Excellent spring navigation star."
+  ]
+},
+
+"Denebola":{
+  constellation:"Leo",
+  magnitude:"+2.14",
+  season:"Spring",
+  howto:[
+    "Find Regulus.",
+    "Follow the body of Leo eastward.",
+    "Denebola marks the tail."
+  ],
+  notes:[
+    "Tail of Leo.",
+    "Useful with Regulus for constellation recognition."
+  ]
+},
+"Vega":{
+  constellation:"Lyra",
+  magnitude:"+0.03",
+  season:"Summer",
+  howto:[
+    "Look high in the summer sky.",
+    "Vega is the brightest star of Lyra.",
+    "Part of the Summer Triangle."
+  ],
+  notes:[
+    "One of the brightest stars in the sky.",
+    "Forms the Summer Triangle with Deneb and Altair."
+  ]
+},
+
+"Deneb":{
+  constellation:"Cygnus",
+  magnitude:"+1.25",
+  season:"Summer",
+  howto:[
+    "Find Vega first.",
+    "Look northeast for another bright star.",
+    "Deneb forms one corner of the Summer Triangle."
+  ],
+  notes:[
+    "Tail of the Swan.",
+    "Useful navigation star during northern summers."
+  ]
+},
+
+"Altair":{
+  constellation:"Aquila",
+  magnitude:"+0.77",
+  season:"Summer",
+  howto:[
+    "Find Vega and Deneb.",
+    "Altair completes the Summer Triangle."
+  ],
+  notes:[
+    "Bright star of Aquila.",
+    "Easy to identify between two smaller companion stars."
+  ]
+},
+"Alpheratz":{constellation:"Andromeda",magnitude:"+2.06",season:"Autumn",howto:["Find the Great Square of Pegasus.","Alpheratz is the north-eastern corner of the Square."],notes:["Useful autumn star.","Shared historically with Pegasus."]},
+
+"Ankaa":{constellation:"Phoenix",magnitude:"+2.40",season:"Autumn",howto:["Look in the southern sky below Fomalhaut.","Ankaa is the brightest star of Phoenix."],notes:["Southern navigation star.","Best from low and middle latitudes."]},
+
+"Schedar":{constellation:"Cassiopeia",magnitude:"+2.24",season:"Autumn / winter",howto:["Find the W shape of Cassiopeia.","Schedar is one of the bright stars in the W."],notes:["Good northern reference star.","Easy constellation shape."]},
+
+"Diphda":{constellation:"Cetus",magnitude:"+2.04",season:"Autumn",howto:["Find Fomalhaut or Aries region.","Diphda lies in Cetus, south of the main autumn sky figures."],notes:["Also known as Deneb Kaitos.","Useful in sparse autumn sky."]},
+
+"Achernar":{constellation:"Eridanus",magnitude:"+0.46",season:"Southern spring / summer",howto:["Follow Eridanus far south from Orion.","Achernar is the bright star at the end of the river."],notes:["Very bright southern star.","Excellent for southern observations."]},
+
+"Hamal":{constellation:"Aries",magnitude:"+2.00",season:"Autumn",howto:["Find the small group of Aries east of Pisces.","Hamal is the brightest star in Aries."],notes:["Useful autumn star.","Not very bright but identifiable."]},
+
+"Acamar":{constellation:"Eridanus",magnitude:"+3.20",season:"Winter",howto:["Follow the line of Eridanus south-west of Orion.","Acamar lies along the river before Achernar."],notes:["Moderate brightness.","Useful when Eridanus is known."]},
+
+"Menkar":{constellation:"Cetus",magnitude:"+2.54",season:"Autumn",howto:["Find Cetus below Aries and Pisces.","Menkar is one of the main stars in the head of Cetus."],notes:["Good autumn reference.","Useful with Diphda."]},
+
+"Mirfak":{constellation:"Perseus",magnitude:"+1.79",season:"Winter",howto:["Find Cassiopeia.","Move down toward Perseus.","Mirfak is the brightest star in Perseus."],notes:["Bright northern winter star.","Good for high northern skies."]},
+
+"Elnath":{constellation:"Taurus",magnitude:"+1.65",season:"Winter",howto:["Find Taurus and Auriga.","Elnath is shared visually between Taurus horn and Auriga area."],notes:["Useful near Capella and Aldebaran.","Good winter identification star."]},
+
+"Alnilam":{constellation:"Orion",magnitude:"+1.69",season:"Winter",howto:["Find Orion's Belt.","Alnilam is the middle star of the Belt."],notes:["Excellent identification reference.","Used to find Sirius and Aldebaran."]},
+
+"Avior":{constellation:"Carina",magnitude:"+1.86",season:"Southern skies",howto:["Find Canopus and Carina.","Avior lies east of Canopus in Carina."],notes:["Southern navigation star.","Useful with Canopus and Miaplacidus."]},
+
+"Suhail":{constellation:"Vela",magnitude:"+2.21",season:"Southern skies",howto:["Look south of Canis Major and Vela region.","Suhail is a bright star in Vela."],notes:["Southern star.","Useful in tropical and southern latitudes."]},
+
+"Miaplacidus":{constellation:"Carina",magnitude:"+1.67",season:"Southern skies",howto:["Find Canopus.","Look toward Carina and the False Cross region."],notes:["Bright southern navigation star.","Useful with Avior and Canopus."]},
+
+"Alphard":{constellation:"Hydra",magnitude:"+1.98",season:"Spring",howto:["Look south of Leo.","Alphard is the isolated bright star in Hydra."],notes:["Known as the solitary one.","Easy because few bright stars nearby."]},
+
+"Gienah":{constellation:"Corvus",magnitude:"+2.58",season:"Spring",howto:["Find Spica.","Look south-west of Spica for Corvus.","Gienah is one of the main stars of Corvus."],notes:["Useful with Spica.","Part of a compact constellation."]},
+
+"Acrux":{constellation:"Crux",magnitude:"+0.76",season:"Southern skies",howto:["Find the Southern Cross.","Acrux is the bright star at the foot of the Cross."],notes:["Excellent southern navigation star.","Useful for finding south celestial pole."]},
+
+"Gacrux":{constellation:"Crux",magnitude:"+1.63",season:"Southern skies",howto:["Find the Southern Cross.","Gacrux is the red star at the top of the Cross."],notes:["Top of Crux.","Useful with Acrux."]},
+
+"Alioth":{constellation:"Ursa Major",magnitude:"+1.76",season:"Northern spring",howto:["Find the Big Dipper.","Alioth is in the handle of the Dipper."],notes:["Bright Ursa Major star.","Good for northern recognition."]},
+
+"Alkaid":{constellation:"Ursa Major",magnitude:"+1.85",season:"Northern spring",howto:["Find the Big Dipper.","Alkaid is the end star of the handle."],notes:["End of Dipper handle.","Part of Arc to Arcturus."]},
+
+"Hadar":{constellation:"Centaurus",magnitude:"+0.61",season:"Southern skies",howto:["Find Crux.","Hadar is one of the bright pointers near the Southern Cross."],notes:["Very bright southern star.","Useful with Rigil Kentaurus."]},
+
+"Menkent":{constellation:"Centaurus",magnitude:"+2.06",season:"Southern spring",howto:["Look in Centaurus north of Crux.","Menkent is a bright star in northern Centaurus."],notes:["Southern navigation star.","Useful in low latitudes."]},
+
+"Rigil Kentaurus":{constellation:"Centaurus",magnitude:"-0.27",season:"Southern skies",howto:["Find the Southern Cross.","Use the two bright pointers; the brighter one is Rigil Kentaurus."],notes:["Very bright star.","Excellent southern navigation star."]},
+
+"Zubenelgenubi":{constellation:"Libra",magnitude:"+2.75",season:"Spring / summer",howto:["Find Spica and Antares.","Libra lies between Virgo and Scorpius."],notes:["Moderate brightness.","Useful when Libra is identified."]},
+
+"Kochab":{constellation:"Ursa Minor",magnitude:"+2.08",season:"All year northern skies",howto:["Find Polaris.","Kochab is one of the bright stars in the bowl of Ursa Minor."],notes:["Useful near Polaris.","Circumpolar in northern latitudes."]},
+
+"Alphecca":{constellation:"Corona Borealis",magnitude:"+2.23",season:"Spring / summer",howto:["Find Arcturus.","Look east for the small semicircle of Corona Borealis.","Alphecca is the bright star in the crown."],notes:["Easy crown shape.","Good identification star."]},
+
+"Antares":{constellation:"Scorpius",magnitude:"+1.06",season:"Summer",howto:["Find the curved body of Scorpius.","Antares is the red heart of the Scorpion."],notes:["Red colour helps identification.","Excellent summer star."]},
+
+"Atria":{constellation:"Triangulum Australe",magnitude:"+1.91",season:"Southern skies",howto:["Find Centaurus and Crux area.","Atria lies in the small southern triangle."],notes:["Southern navigation star.","Useful with southern constellations."]},
+
+"Sabik":{constellation:"Ophiuchus",magnitude:"+2.43",season:"Summer",howto:["Look north of Scorpius.","Sabik is in Ophiuchus above Antares region."],notes:["Moderate brightness.","Useful in summer sky."]},
+
+"Shaula":{constellation:"Scorpius",magnitude:"+1.62",season:"Summer",howto:["Find Antares.","Follow Scorpius down to the tail.","Shaula is at the sting of the Scorpion."],notes:["Bright star in Scorpius tail.","Good southern summer star."]},
+
+"Rasalhague":{constellation:"Ophiuchus",magnitude:"+2.08",season:"Summer",howto:["Find Vega and Altair area.","Look south-west toward Ophiuchus.","Rasalhague is the head of Ophiuchus."],notes:["Useful summer navigation star.","Above Scorpius."]},
+
+"Eltanin":{constellation:"Draco",magnitude:"+2.24",season:"Northern summer",howto:["Find Vega.","Look north-west of Vega into Draco.","Eltanin is a bright star in the Dragon's head."],notes:["Northern star.","Useful near Vega."]},
+
+"Kaus Australis":{constellation:"Sagittarius",magnitude:"+1.79",season:"Summer",howto:["Find the Teapot of Sagittarius.","Kaus Australis is a bright star in the bow/teapot figure."],notes:["Good southern summer star.","Near Milky Way centre."]},
+
+"Nunki":{constellation:"Sagittarius",magnitude:"+2.05",season:"Summer",howto:["Find Sagittarius Teapot.","Nunki is a bright star in the handle area."],notes:["Useful summer star.","Good with Kaus Australis."]},
+
+"Peacock":{constellation:"Pavo",magnitude:"+1.91",season:"Southern skies",howto:["Look far south below Sagittarius and Indus.","Peacock is the bright star of Pavo."],notes:["Southern navigation star.","Useful in high southern latitudes."]},
+
+"Enif":{constellation:"Pegasus",magnitude:"+2.40",season:"Autumn",howto:["Find the Great Square of Pegasus.","Enif lies west of the Square in Pegasus."],notes:["Autumn navigation star.","Useful near Markab and Alpheratz."]},
+
+"Alnair":{constellation:"Grus",magnitude:"+1.74",season:"Southern autumn",howto:["Look south of Fomalhaut.","Alnair is the bright star in Grus."],notes:["Southern autumn star.","Good with Fomalhaut."]},
+
+"Fomalhaut":{constellation:"Piscis Austrinus",magnitude:"+1.16",season:"Autumn",howto:["Look low in the southern autumn sky.","Fomalhaut is a solitary bright star."],notes:["Very isolated and easy to identify.","Excellent autumn navigation star."]},
+
+"Markab":{constellation:"Pegasus",magnitude:"+2.49",season:"Autumn",howto:["Find the Great Square of Pegasus.","Markab is the south-west corner of the Square."],notes:["Useful Pegasus reference.","Good autumn star."]},
+
+"Dubhe":{
+  constellation:"Ursa Major",
+  magnitude:"+1.79",
+  season:"Northern spring / all year in northern latitudes",
+  howto:[
+    "Find the Big Dipper.",
+    "Dubhe is the upper outer star of the bowl.",
+    "Together with Merak, it points toward Polaris."
+  ],
+  notes:[
+    "One of the two Pointer Stars.",
+    "Very useful for finding Polaris.",
+    "Good northern reference star."
+  ]
+}
 };
 
 const CONSTELLATIONS = {
@@ -4350,7 +4698,504 @@ const CONSTELLATIONS = {
       {name:"Delta Boo",x:560,y:240}
     ],
     lines:[[0,3],[3,1],[3,2],[3,5],[0,4],[4,5]]
-  }
+  },
+  "Orion":{
+  stars:[
+    {name:"Betelgeuse",x:220,y:120},
+    {name:"Bellatrix",x:420,y:140},
+    {name:"Alnitak",x:260,y:260},
+    {name:"Alnilam",x:340,y:250},
+    {name:"Mintaka",x:420,y:240},
+    {name:"Saiph",x:250,y:430},
+    {name:"Rigel",x:450,y:450}
+  ],
+  lines:[
+    [0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[5,6]
+  ]
+},
+
+"Taurus":{
+  stars:[
+    {name:"Aldebaran",x:280,y:260},
+    {name:"Elnath",x:520,y:120},
+    {name:"Hyadum I",x:180,y:180},
+    {name:"Hyadum II",x:180,y:340},
+    {name:"Ain",x:420,y:360}
+  ],
+  lines:[
+    [1,0],[0,2],[0,3],[0,4]
+  ]
+},
+
+"Auriga":{
+  stars:[
+    {name:"Capella",x:340,y:100},
+    {name:"Menkalinan",x:480,y:220},
+    {name:"Mahasim",x:420,y:400},
+    {name:"Hassaleh",x:220,y:400},
+    {name:"Almaaz",x:180,y:220}
+  ],
+  lines:[
+    [0,1],[1,2],[2,3],[3,4],[4,0]
+  ]
+},
+
+"Canis Minor":{
+  stars:[
+    {name:"Procyon",x:260,y:220},
+    {name:"Gomeisa",x:480,y:320}
+  ],
+  lines:[
+    [0,1]
+  ]
+},
+
+"Gemini":{
+  stars:[
+    {name:"Castor",x:250,y:120},
+    {name:"Pollux",x:420,y:140},
+    {name:"Alhena",x:360,y:420},
+    {name:"Wasat",x:320,y:280},
+    {name:"Mebsuta",x:220,y:260}
+  ],
+  lines:[
+    [0,3],[1,3],[3,2],[3,4]
+  ]
+},
+
+"Carina":{
+  stars:[
+    {name:"Canopus",x:350,y:180},
+    {name:"Miaplacidus",x:220,y:320},
+    {name:"Avior",x:520,y:340},
+    {name:"Aspidiske",x:360,y:440}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,3]
+  ]
+},
+
+"Virgo":{
+  stars:[
+    {name:"Spica",x:420,y:320},
+    {name:"Zavijava",x:250,y:180},
+    {name:"Porrima",x:320,y:250},
+    {name:"Vindemiatrix",x:220,y:100},
+    {name:"Auva",x:520,y:220}
+  ],
+  lines:[
+    [0,2],[2,1],[1,3],[2,4]
+  ]
+},
+
+"Leo":{
+  stars:[
+    {name:"Regulus",x:220,y:260},
+    {name:"Algieba",x:280,y:180},
+    {name:"Zosma",x:420,y:200},
+    {name:"Denebola",x:560,y:140},
+    {name:"Chertan",x:450,y:320}
+  ],
+  lines:[
+    [0,1],[1,2],[2,3],[2,4],[4,0]
+  ]
+},
+
+"Lyra":{
+  stars:[
+    {name:"Vega",x:350,y:180},
+    {name:"Sheliak",x:260,y:320},
+    {name:"Sulafat",x:450,y:320},
+    {name:"Delta Lyr",x:350,y:380}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,3]
+  ]
+},
+
+"Cygnus":{
+  stars:[
+    {name:"Deneb",x:350,y:80},
+    {name:"Sadr",x:350,y:240},
+    {name:"Albireo",x:350,y:460},
+    {name:"Gienah",x:200,y:240},
+    {name:"Delta Cyg",x:500,y:240}
+  ],
+  lines:[
+    [0,1],[1,2],[1,3],[1,4]
+  ]
+},
+
+"Aquila":{
+  stars:[
+    {name:"Altair",x:350,y:260},
+    {name:"Tarazed",x:260,y:220},
+    {name:"Alshain",x:450,y:300},
+    {name:"Eta Aql",x:200,y:380},
+    {name:"Delta Aql",x:520,y:160}
+  ],
+  lines:[
+    [0,1],[0,2],[1,3],[2,4]
+  ]
+},
+"Andromeda":{
+  stars:[
+    {name:"Alpheratz",x:180,y:220},
+    {name:"Mirach",x:340,y:260},
+    {name:"Almach",x:520,y:340},
+    {name:"Delta And",x:420,y:180}
+  ],
+  lines:[
+    [0,1],[1,2],[1,3]
+  ]
+},
+
+"Cassiopeia":{
+  stars:[
+    {name:"Schedar",x:180,y:260},
+    {name:"Caph",x:280,y:180},
+    {name:"Gamma Cas",x:380,y:280},
+    {name:"Ruchbah",x:500,y:180},
+    {name:"Segin",x:620,y:260}
+  ],
+  lines:[
+    [0,1],[1,2],[2,3],[3,4]
+  ]
+},
+
+"Perseus":{
+  stars:[
+    {name:"Mirfak",x:340,y:240},
+    {name:"Algol",x:520,y:320},
+    {name:"Delta Per",x:250,y:180},
+    {name:"Epsilon Per",x:180,y:300}
+  ],
+  lines:[
+    [0,1],[0,2],[0,3]
+  ]
+},
+
+"Pegasus":{
+  stars:[
+    {name:"Markab",x:220,y:360},
+    {name:"Scheat",x:220,y:160},
+    {name:"Algenib",x:520,y:360},
+    {name:"Alpheratz",x:520,y:160},
+    {name:"Enif",x:120,y:260}
+  ],
+  lines:[
+    [0,1],[1,3],[3,2],[2,0],[0,4]
+  ]
+},
+
+"Aries":{
+  stars:[
+    {name:"Hamal",x:320,y:240},
+    {name:"Sheratan",x:460,y:220},
+    {name:"Mesarthim",x:580,y:260}
+  ],
+  lines:[
+    [0,1],[1,2]
+  ]
+},
+
+"Cetus":{
+  stars:[
+    {name:"Menkar",x:260,y:220},
+    {name:"Diphda",x:520,y:420},
+    {name:"Gamma Cet",x:420,y:240},
+    {name:"Delta Cet",x:560,y:280}
+  ],
+  lines:[
+    [0,2],[2,3],[3,1]
+  ]
+},
+
+"Piscis Austrinus":{
+  stars:[
+    {name:"Fomalhaut",x:360,y:280},
+    {name:"Beta PsA",x:260,y:200},
+    {name:"Gamma PsA",x:500,y:220},
+    {name:"Delta PsA",x:430,y:380}
+  ],
+  lines:[
+    [1,0],[0,2],[0,3]
+  ]
+},
+"Scorpius":{
+  stars:[
+    {name:"Antares",x:340,y:220},
+    {name:"Dschubba",x:250,y:150},
+    {name:"Sargas",x:500,y:360},
+    {name:"Shaula",x:620,y:430},
+    {name:"Lesath",x:570,y:470}
+  ],
+  lines:[[0,1],[0,2],[2,3],[3,4]]
+},
+
+"Ophiuchus":{
+  stars:[
+    {name:"Rasalhague",x:360,y:100},
+    {name:"Sabik",x:260,y:420},
+    {name:"Cebalrai",x:470,y:180},
+    {name:"Yed Prior",x:220,y:260}
+  ],
+  lines:[[0,2],[2,1],[1,3],[3,0]]
+},
+
+"Sagittarius":{
+  stars:[
+    {name:"Kaus Australis",x:340,y:360},
+    {name:"Nunki",x:500,y:220},
+    {name:"Kaus Media",x:300,y:260},
+    {name:"Kaus Borealis",x:260,y:160},
+    {name:"Ascella",x:460,y:400}
+  ],
+  lines:[[3,2],[2,0],[0,4],[4,1],[1,3]]
+},
+
+"Libra":{
+  stars:[
+    {name:"Zubenelgenubi",x:300,y:320},
+    {name:"Zubeneschamali",x:480,y:180},
+    {name:"Brachium",x:520,y:400}
+  ],
+  lines:[[0,1],[1,2],[2,0]]
+},
+
+"Draco":{
+  stars:[
+    {name:"Eltanin",x:420,y:220},
+    {name:"Rastaban",x:320,y:180},
+    {name:"Grumium",x:260,y:280},
+    {name:"Altais",x:520,y:360}
+  ],
+  lines:[[1,0],[0,2],[2,3]]
+},
+
+"Crux":{
+  stars:[
+    {name:"Acrux",x:360,y:440},
+    {name:"Gacrux",x:360,y:120},
+    {name:"Mimosa",x:250,y:260},
+    {name:"Imai",x:480,y:280}
+  ],
+  lines:[[0,1],[2,3]]
+},
+
+"Centaurus":{
+  stars:[
+    {name:"Rigil Kentaurus",x:260,y:420},
+    {name:"Hadar",x:360,y:340},
+    {name:"Menkent",x:500,y:180},
+    {name:"Theta Cen",x:420,y:280}
+  ],
+  lines:[[0,1],[1,3],[3,2]]
+},
+"Eridanus":{
+  stars:[
+    {name:"Achernar",x:420,y:480},
+    {name:"Acamar",x:300,y:300},
+    {name:"Cursa",x:180,y:120},
+    {name:"Zaurak",x:260,y:220},
+    {name:"Rana",x:360,y:380}
+  ],
+  lines:[[2,3],[3,1],[1,4],[4,0]]
+},
+
+"Phoenix":{
+  stars:[
+    {name:"Ankaa",x:320,y:240},
+    {name:"Beta Phe",x:480,y:180},
+    {name:"Gamma Phe",x:520,y:360},
+    {name:"Delta Phe",x:220,y:360}
+  ],
+  lines:[[0,1],[1,2],[2,3],[3,0]]
+},
+
+"Grus":{
+  stars:[
+    {name:"Alnair",x:360,y:160},
+    {name:"Beta Gru",x:520,y:300},
+    {name:"Gamma Gru",x:300,y:420},
+    {name:"Delta Gru",x:180,y:280}
+  ],
+  lines:[[0,1],[1,2],[2,3],[3,0]]
+},
+
+"Pavo":{
+  stars:[
+    {name:"Peacock",x:360,y:220},
+    {name:"Beta Pav",x:520,y:300},
+    {name:"Delta Pav",x:300,y:420},
+    {name:"Eta Pav",x:200,y:300}
+  ],
+  lines:[[0,1],[1,2],[2,3],[3,0]]
+},
+
+"Triangulum Australe":{
+  stars:[
+    {name:"Atria",x:360,y:120},
+    {name:"Beta TrA",x:220,y:420},
+    {name:"Gamma TrA",x:520,y:420}
+  ],
+  lines:[[0,1],[1,2],[2,0]]
+},
+
+"Vela":{
+  stars:[
+    {name:"Suhail",x:360,y:220},
+    {name:"Regor",x:500,y:340},
+    {name:"Delta Vel",x:240,y:360},
+    {name:"Markeb",x:180,y:180}
+  ],
+  lines:[[0,1],[1,2],[2,3],[3,0]]
+},
+
+"Hydra":{
+  stars:[
+    {name:"Alphard",x:300,y:240},
+    {name:"Zeta Hya",x:180,y:180},
+    {name:"Nu Hya",x:460,y:300},
+    {name:"Pi Hya",x:580,y:360},
+    {name:"Gamma Hya",x:420,y:180}
+  ],
+  lines:[[1,0],[0,4],[4,2],[2,3]]
+},
+
+"Corvus":{
+  stars:[
+    {name:"Gienah",x:260,y:180},
+    {name:"Kraz",x:460,y:160},
+    {name:"Algorab",x:500,y:360},
+    {name:"Minkar",x:220,y:380}
+  ],
+  lines:[[0,1],[1,2],[2,3],[3,0]]
+},
+
+"Corona Borealis":{
+  stars:[
+    {name:"Alphecca",x:360,y:160},
+    {name:"Nusakan",x:260,y:220},
+    {name:"Theta CrB",x:220,y:320},
+    {name:"Delta CrB",x:320,y:400},
+    {name:"Gamma CrB",x:460,y:330}
+  ],
+  lines:[[1,0],[0,4],[4,3],[3,2]]
+},
+"Ursa Major":{
+  stars:[
+    {name:"Dubhe",x:180,y:120},
+    {name:"Merak",x:180,y:260},
+    {name:"Phecda",x:320,y:300},
+    {name:"Megrez",x:320,y:160},
+    {name:"Alioth",x:450,y:180},
+    {name:"Mizar",x:560,y:220},
+    {name:"Alkaid",x:680,y:320}
+  ],
+  lines:[
+    [0,1],
+    [1,2],
+    [2,3],
+    [3,0],
+    [3,4],
+    [4,5],
+    [5,6]
+  ]
+},
+"Scorpius":{
+  stars:[
+    {name:"Antares",x:320,y:180},
+    {name:"Acrab",x:240,y:120},
+    {name:"Dschubba",x:290,y:130},
+    {name:"Sargas",x:430,y:340},
+    {name:"Shaula",x:560,y:430},
+    {name:"Lesath",x:520,y:400}
+  ],
+  lines:[
+    [1,2],
+    [2,0],
+    [0,3],
+    [3,5],
+    [5,4]
+  ]
+},
+
+"Sagittarius":{
+  stars:[
+    {name:"Kaus Australis",x:520,y:340},
+    {name:"Nunki",x:420,y:120},
+    {name:"Ascella",x:420,y:320},
+    {name:"Kaus Media",x:340,y:260},
+    {name:"Kaus Borealis",x:300,y:180},
+    {name:"Alnasl",x:220,y:340}
+  ],
+  lines:[
+    [4,3],
+    [3,2],
+    [2,0],
+    [3,1],
+    [3,5]
+  ]
+},
+
+"Grus":{
+  stars:[
+    {name:"Alnair",x:360,y:180},
+    {name:"Beta Gru",x:240,y:300},
+    {name:"Gamma Gru",x:500,y:320},
+    {name:"Delta Gru",x:380,y:420}
+  ],
+  lines:[
+    [0,1],
+    [0,2],
+    [1,3],
+    [2,3]
+  ]
+},
+
+"Phoenix":{
+  stars:[
+    {name:"Ankaa",x:350,y:220},
+    {name:"Beta Phe",x:220,y:320},
+    {name:"Gamma Phe",x:520,y:280},
+    {name:"Delta Phe",x:400,y:420}
+  ],
+  lines:[
+    [0,1],
+    [0,2],
+    [1,3],
+    [2,3]
+  ]
+},
+
+"Hydra":{
+  stars:[
+    {name:"Alphard",x:360,y:260},
+    {name:"Gamma Hya",x:220,y:180},
+    {name:"Nu Hya",x:520,y:220},
+    {name:"Xi Hya",x:620,y:320}
+  ],
+  lines:[
+    [1,0],
+    [0,2],
+    [2,3]
+  ]
+},
+
+"Piscis Austrinus":{
+  stars:[
+    {name:"Fomalhaut",x:360,y:260},
+    {name:"Beta PsA",x:220,y:200},
+    {name:"Gamma PsA",x:520,y:220},
+    {name:"Delta PsA",x:420,y:400}
+  ],
+  lines:[
+    [1,0],
+    [0,2],
+    [0,3]
+  ]
+}
 };
 function populateTheoryStars(){
 
@@ -4380,18 +5225,162 @@ function showTheoryStar(){
   document.getElementById("theoryStarContent").innerHTML=
   "<div class='resultBox'>"+
   "<b>"+starName.toUpperCase()+"</b><br><br>"+
-  "Constellation: "+info.constellation+"<br>"+
-  "Magnitude: "+info.magnitude+"<br>"+
-  "Season: "+info.season+"<br><br>"+
+"Constellation: "+info.constellation+"<br>"+
+"Magnitude: "+info.magnitude+"<br>"+
+"SHA: "+getStarSHA(starName)+"<br>"+
+"Declination: "+getStarDec(starName)+"<br>"+
+"Season: "+info.season+"<br>"+
+"Visibility: "+getStarVisibility(starName)+"<br>"+
+"Best Months: "+getBestMonths(starName)+"<br>"+
+"Best Observation: "+bestObservation(starName)+"<br><br>"+
   "<b>How to find:</b><br>"+
   info.howto.map((x,i)=>(i+1)+". "+x).join("<br>")+
   "<br><br><b>Navigation notes:</b><br>"+
   info.notes.map(x=>"• "+x).join("<br>")+
+"<br><br><b>Star Hopping:</b><br>"+
+(getStarHopping(starName))
   "</div>";
 
   drawConstellation(info.constellation,starName);
 }
+function getStarHopping(star){
 
+const hops={
+
+"Sirius":
+"Orion Belt → Sirius",
+
+"Procyon":
+"Sirius + Betelgeuse → Winter Triangle",
+
+"Betelgeuse":
+"Orion Belt → Betelgeuse",
+
+"Aldebaran":
+"Orion Belt upward → Aldebaran",
+
+"Capella":
+"Aldebaran → Capella",
+
+"Polaris":
+"Pointer Stars → Polaris",
+
+"Arcturus":
+"Arc to Arcturus",
+
+"Spica":
+"Arc to Arcturus → Speed to Spica",
+
+"Vega":
+"Summer Triangle",
+
+"Deneb":
+"Summer Triangle",
+
+"Altair":
+"Summer Triangle"
+
+};
+
+return hops[star] || "See constellation diagram.";
+}
+function bestObservation(star){
+
+const list={
+
+"Sirius":"Evening twilight",
+"Canopus":"Evening twilight",
+"Capella":"Morning and evening twilight",
+"Polaris":"Any time when visible",
+"Arcturus":"Evening twilight",
+"Spica":"Evening twilight",
+"Vega":"Summer twilight",
+"Deneb":"Summer twilight",
+"Altair":"Summer twilight",
+"Rigel":"Evening twilight",
+"Betelgeuse":"Evening twilight",
+"Aldebaran":"Evening twilight"
+
+};
+
+return list[star] || "Twilight";
+}
+function getStarSHA(star){
+
+  if(!STAR_CATALOG[star]) return "—";
+
+  return STAR_CATALOG[star].SHA.toFixed(1)+"°";
+}
+
+function getStarDec(star){
+
+  if(!STAR_CATALOG[star]) return "—";
+
+  let dec=STAR_CATALOG[star].Dec;
+  let hemi=dec>=0 ? "N" : "S";
+
+  return Math.abs(dec).toFixed(1)+"° "+hemi;
+}
+
+function getStarVisibility(star){
+
+  const southern=[
+    "Canopus","Achernar","Acrux","Gacrux","Hadar",
+    "Rigil Kentaurus","Atria","Peacock","Alnair",
+    "Suhail","Miaplacidus","Avior","Ankaa"
+  ];
+
+  const northern=[
+    "Polaris","Kochab","Dubhe","Alioth","Alkaid",
+    "Capella","Schedar","Mirfak","Eltanin"
+  ];
+
+  if(southern.includes(star)) return "Best in Southern / Tropical latitudes";
+  if(northern.includes(star)) return "Best in Northern latitudes";
+
+  return "Visible from many latitudes depending on season";
+}
+
+function getBestMonths(star){
+
+  const months={
+
+    "Sirius":"December – March",
+    "Canopus":"December – March",
+    "Rigel":"December – March",
+    "Betelgeuse":"December – March",
+    "Aldebaran":"November – February",
+    "Capella":"October – March",
+    "Procyon":"January – April",
+    "Pollux":"January – April",
+
+    "Regulus":"February – May",
+    "Denebola":"March – June",
+    "Spica":"April – July",
+    "Arcturus":"April – July",
+    "Alphard":"February – May",
+
+    "Vega":"June – September",
+    "Deneb":"July – October",
+    "Altair":"July – October",
+    "Antares":"June – August",
+    "Shaula":"June – August",
+    "Nunki":"July – September",
+    "Kaus Australis":"July – September",
+
+    "Fomalhaut":"September – November",
+    "Markab":"September – December",
+    "Alpheratz":"September – December",
+    "Schedar":"September – December",
+    "Achernar":"October – January",
+
+    "Polaris":"All year",
+    "Kochab":"All year"
+
+  };
+
+  return months[star] || "Best during local evening twilight season";
+}
 function drawConstellation(constellationName,selectedStar){
 
   let canvas=document.getElementById("constellationCanvas");
@@ -4434,12 +5423,17 @@ function drawConstellation(constellationName,selectedStar){
     ctx.fill();
 
     if(isSelected){
-      ctx.strokeStyle="#ffcc00";
-      ctx.lineWidth=2;
-      ctx.beginPath();
-      ctx.arc(star.x,star.y,15,0,Math.PI*2);
-      ctx.stroke();
-    }
+  ctx.shadowBlur=20;
+  ctx.shadowColor="#ffcc00";
+
+  ctx.strokeStyle="#ffcc00";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.arc(star.x,star.y,20,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.shadowBlur=0;
+}
 
     ctx.fillStyle=isSelected ? "#ffd966" : "#cfe9ff";
     ctx.font=isSelected ? "16px Arial" : "13px Arial";
@@ -4449,6 +5443,46 @@ function drawConstellation(constellationName,selectedStar){
   ctx.fillStyle="#9ee7ff";
   ctx.font="18px Arial";
   ctx.fillText(constellationName,30,35);
+}
+function openObjectTheory(){
+
+  let obj=celestialObject.value;
+
+  if(STAR_GUIDE[obj]){
+    openTheoryTopic("stars");
+
+    setTimeout(function(){
+      let s=document.getElementById("theoryStarSelect");
+      if(s){
+        s.value=obj;
+        showTheoryStar();
+      }
+    },200);
+
+    return;
+  }
+
+  if(obj==="Sun"){
+    openTheoryTopic("almanac");
+    return;
+  }
+
+  if(obj==="Moon"){
+    openTheoryTopic("sight");
+    return;
+  }
+
+  if(
+    obj==="Venus" ||
+    obj==="Mars" ||
+    obj==="Jupiter" ||
+    obj==="Saturn"
+  ){
+    openTheoryTopic("sky");
+    return;
+  }
+
+  openTheoryTopic("almanac");
 }
 function openTheoryTopic(topic){
 
@@ -4473,6 +5507,22 @@ window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+function openStarTheory(star){
+
+  openTheoryTopic("stars");
+
+  setTimeout(function(){
+
+    let s=document.getElementById("theoryStarSelect");
+
+    if(s){
+      s.value=star;
+      showTheoryStar();
+    }
+
+  },200);
 
 }
 function calculateTwilight(){
