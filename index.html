@@ -306,6 +306,19 @@ canvas{touch-action:manipulation}
   button{
     display:none !important;
   }
+  .smallTheoryBtn{
+  background:#1f8de0;
+  color:white;
+  border:none;
+  border-radius:6px;
+  padding:4px 10px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.smallTheoryBtn:hover{
+  opacity:0.9;
+}
 }
 </style>
 </head>
@@ -1300,6 +1313,13 @@ let LHA=norm360(alm.GHA+data.lon);
 let r=calculateHcZn(data.lat,alm.Dec,LHA);
 
 updateLastData(obj,data.date,data.time,data.lat,data.lon,alm.GHA,alm.Dec,LHA,r.Hc,r.Zn);
+let theoryBtn="";
+
+if(STAR_GUIDE[obj]){
+  theoryBtn=
+  "<button class='smallTheoryBtn' onclick=\"openStarTheory('"+obj+"')\">📘 Theory</button>";
+}
+
 
 sunResult.innerHTML=
 "<b>"+obj.toUpperCase()+"</b><br><br>"+
@@ -4912,6 +4932,22 @@ window.scrollTo({
 top:0,
 behavior:"smooth"
 });
+
+}
+function openStarTheory(star){
+
+  openTheoryTopic("stars");
+
+  setTimeout(function(){
+
+    let s=document.getElementById("theoryStarSelect");
+
+    if(s){
+      s.value=star;
+      showTheoryStar();
+    }
+
+  },200);
 
 }
 function calculateTwilight(){
