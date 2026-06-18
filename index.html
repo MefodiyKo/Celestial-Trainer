@@ -341,7 +341,7 @@ Selected: —
 
 <p class="small">Shows calculated Sun/Moon/stars according to UTC, position and course.</p>
 </div>
-<div class="card hiddenBlock">
+<div class="card">
 <h3>Star Planner</h3>
 <button class="main" onclick="showStarPlanner()">Show Best Stars</button>
 <div class="result" id="starPlannerResult">No plan calculated.
@@ -1849,114 +1849,114 @@ function showStarPlanner(){
 let data=getInputData();
 
 if(data.error){
-starPlannerResult.innerHTML=data.error;
-return;
+  starPlannerResult.innerHTML=data.error;
+  return;
 }
 
 let sun=sunAlmanac(data.date,data.time);
+
 let sunR=calculateHcZn(
-data.lat,
-sun.Dec,
-norm360(sun.GHA+data.lon)
+  data.lat,
+  sun.Dec,
+  norm360(sun.GHA+data.lon)
 );
 
 let stars=[];
 
 Object.keys(STAR_CATALOG).forEach(name=>{
 
-let star=STAR_CATALOG[name];
-let GHA=norm360(sun.GHAAries+star.SHA);
+  let star=STAR_CATALOG[name];
 
-let r=calculateHcZn(
-data.lat,
-star.Dec,
-norm360(GHA+data.lon)
-);
+  let GHA=norm360(
+    sun.GHAAries+
+    star.SHA
+  );
 
-if(r.Hc>=15 && r.Hc<=70){
+  let r=calculateHcZn(
+    data.lat,
+    star.Dec,
+    norm360(GHA+data.lon)
+  );
 
-stars.push({
-name:name,
-hc:r.Hc,
-zn:r.Zn,
-mag:star.Mag
-});
+  if(r.Hc>=10 && r.Hc<=75){
 
-}
+    let altitudeScore=
+      100-Math.abs(r.Hc-45);
 
+    let brightnessScore=
+      30-(star.Mag*5);
+
+    let totalScore=
+      altitudeScore+
+      brightnessScore;
+
+    stars.push({
+      name:name,
+      hc:r.Hc,
+      zn:r.Zn,
+      mag:star.Mag,
+      score:totalScore
+    });
+  }
 });
 
 stars.sort((a,b)=>{
-return a.mag-b.mag;
+  return b.score-a.score;
 });
 
-let title="STAR PLANNER";
+let title="RECOMMENDED STARS NOW";
 
-if(sunR.Hc>-6){
-title="DAYLIGHT — stars not recommended";
+if(sunR.Hc>-3){
+  title="DAYLIGHT — STARS NOT RECOMMENDED";
+}else if(sunR.Hc<=-3 && sunR.Hc>-6){
+  title="CIVIL TWILIGHT — ONLY BRIGHT STARS";
 }else if(sunR.Hc<=-6 && sunR.Hc>-12){
-title="CIVIL / NAUTICAL TWILIGHT — good for star sights";
-}else if(sunR.Hc<=-12){
-title="NIGHT — stars visible";
+  title="NAUTICAL TWILIGHT — BEST TIME FOR STAR SIGHTS";
+}else if(sunR.Hc<=-12 && sunR.Hc>-18){
+  title="ASTRONOMICAL TWILIGHT — STARS VISIBLE";
+}else{
+  title="NIGHT — MANY STARS VISIBLE";
 }
 
 let html=
 "<b>"+title+"</b><br><br>"+
-"Sun Hc: "+sunR.Hc.toFixed(1)+"°<br><br>";
+"Sun Hc: "+sunR.Hc.toFixed(1)+"°<br>"+
+"Recommended altitude: 15°–70°<br>"+
+"Best altitude zone: around 30°–60°<br><br>";
 
 if(stars.length===0){
-html+="No suitable stars found.";
-}else{
-html+="<b>Best Stars:</b><br><br>";
 
-stars.slice(0,10).forEach(s=>{
-html+=
-"⭐ "+s.name+
-(STAR_GUIDE[s.name]
- ? " <button class='smallTheoryBtn' onclick=\"openStarTheory('"+s.name+"')\">📘</button>"
- : "")+
-" — Hc "+s.hc.toFixed(0)+"°"+
-" / Zn "+s.zn.toFixed(0)+"°"+
-" / Mag "+s.mag+
-"<br>";
-});
+  html+="No suitable stars found.";
+
+}else{
+
+  html+="<b>Best Stars for Sight:</b><br><br>";
+
+  stars.slice(0,12).forEach((s,i)=>{
+
+    let quality="Good";
+
+    if(s.hc<15) quality="Low altitude";
+    if(s.hc>70) quality="High altitude";
+    if(s.hc>=25 && s.hc<=60) quality="Excellent";
+
+    html+=
+    (i+1)+". ⭐ "+s.name+
+    (STAR_GUIDE[s.name]
+      ? " <button class='smallTheoryBtn' onclick=\"openStarTheory('"+s.name+"')\">📘</button>"
+      : "")+
+    "<br>"+
+    "Hc: "+s.hc.toFixed(1)+"°"+
+    " | Zn: "+s.zn.toFixed(1)+"°"+
+    " | Mag: "+s.mag+
+    " | "+quality+
+    "<br><br>";
+  });
 }
 
 starPlannerResult.innerHTML=html;
 
 }
-[
-"dateUTC",
-"utcHour",
-"utcMin",
-"utcSec",
-"latDeg",
-"latMin",
-"latDir",
-"lonDeg",
-"lonMin",
-"lonDir",
-"skyCourse",
-"skyMode"
-].forEach(id=>{
-
-let el=document.getElementById(id);
-
-el.addEventListener("change",function(){
-populateObjectList();
-autoUpdateSky();
-showStarPlanner();
-showPlanetFinder();
-});
-
-el.addEventListener("input",function(){
-populateObjectList();
-autoUpdateSky();
-showStarPlanner();
-showPlanetFinder();
-});
-
-});
 function showPlanetFinder(){
 
 let data=getInputData();
