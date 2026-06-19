@@ -5799,7 +5799,33 @@ let sextantPixelScale=6;
 async function startSextant(){
 
   sextantActive=true;
+if(
+  typeof DeviceOrientationEvent!=="undefined" &&
+  typeof DeviceOrientationEvent.requestPermission==="function"
+){
+  try{
 
+    let permission=
+      await DeviceOrientationEvent.requestPermission();
+
+    if(permission==="granted"){
+      window.addEventListener(
+        "deviceorientation",
+        handleSextantOrientation
+      );
+    }else{
+      alert("Sensor permission denied.");
+    }
+
+  }catch(err){
+    alert("Sensor error: "+err);
+  }
+}else{
+  window.addEventListener(
+    "deviceorientation",
+    handleSextantOrientation
+  );
+}
   try{
     sextantStream=await navigator.mediaDevices.getUserMedia({
       video:{facingMode:"environment"},
@@ -5810,25 +5836,6 @@ async function startSextant(){
 
   }catch(e){
     alert("Camera error: "+e.message);
-  }
-
-  if(
-    typeof DeviceOrientationEvent !== "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ){
-    DeviceOrientationEvent.requestPermission()
-    .then(function(permission){
-      if(permission==="granted"){
-        window.addEventListener("deviceorientation",handleSextantOrientation);
-      }else{
-        alert("Sensor permission denied.");
-      }
-    })
-    .catch(function(err){
-      alert("Sensor error: "+err);
-    });
-  }else{
-    window.addEventListener("deviceorientation",handleSextantOrientation);
   }
 
   let canvas=document.getElementById("sextantCanvas");
