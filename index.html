@@ -1161,23 +1161,42 @@ return {JD,GHA,Dec,GHAAries:GMST};
 }
 
 function moonAlmanac(date,time){
+
 let JD=julianDate(date,time);
 let D=JD-2451545.0;
 
-let L=norm360(218.316+13.176396*D);
-let M=norm360(134.963+13.064993*D);
-let F=norm360(93.272+13.229350*D);
+/* Mean orbital elements */
+let L=norm360(218.3164477+13.17639648*D);
+let M=norm360(134.9633964+13.06499295*D);
+let Ms=norm360(357.5291092+0.98560028*D);
+let Dm=norm360(297.8501921+12.19074912*D);
+let F=norm360(93.2720950+13.22935024*D);
 
-let lon=L+6.289*Math.sin(degToRad(M));
-let lat=5.128*Math.sin(degToRad(F));
+/* Improved ecliptic longitude */
+let lon=L
++6.289*Math.sin(degToRad(M))
++1.274*Math.sin(degToRad(2*Dm-M))
++0.658*Math.sin(degToRad(2*Dm))
++0.214*Math.sin(degToRad(2*M))
+-0.186*Math.sin(degToRad(Ms))
+-0.114*Math.sin(degToRad(2*F));
 
-let eps=23.439-0.0000004*D;
+/* Improved ecliptic latitude */
+let lat=
+5.128*Math.sin(degToRad(F))
++0.280*Math.sin(degToRad(M+F))
++0.277*Math.sin(degToRad(M-F))
++0.173*Math.sin(degToRad(2*Dm-F));
 
+let eps=23.439291-0.00000036*D;
+
+/* RA / Dec */
 let RA=radToDeg(Math.atan2(
 Math.sin(degToRad(lon))*Math.cos(degToRad(eps))-
 Math.tan(degToRad(lat))*Math.sin(degToRad(eps)),
 Math.cos(degToRad(lon))
 ));
+
 RA=norm360(RA);
 
 let Dec=radToDeg(Math.asin(
@@ -1188,16 +1207,39 @@ Math.cos(degToRad(lat))*Math.sin(degToRad(eps))*Math.sin(degToRad(lon))
 let GMST=gmstFromJD(JD);
 let GHA=norm360(GMST-RA);
 
-/* approximate Moon distance km */
-let distance=385001-20905*Math.cos(degToRad(M));
+/* Distance km, improved approximate */
+let distance=
+385000.56
+-20905.0*Math.cos(degToRad(M))
+-3699.0*Math.cos(degToRad(2*Dm-M))
+-2956.0*Math.cos(degToRad(2*Dm))
+-570.0*Math.cos(degToRad(2*M));
 
 /* Horizontal Parallax in minutes */
 let HP=radToDeg(Math.asin(6378.14/distance))*60;
 
-/* Semi-diameter in minutes */
+/* Moon semi-diameter in minutes */
 let SD=0.2725*HP;
 
-return {JD,GHA,Dec,HP,SD};
+/* Age / phase */
+let sun=sunAlmanac(date,time);
+let phaseAngle=norm360(lon - norm360(sun.GHAAries - sun.GHA));
+let age=phaseAngle/360*29.530588;
+
+let illum=(1-Math.cos(degToRad(phaseAngle)))/2*100;
+
+return {
+JD:JD,
+GHA:GHA,
+Dec:Dec,
+HP:HP,
+SD:SD,
+Distance:distance,
+PhaseAngle:phaseAngle,
+Age:age,
+Illumination:illum
+};
+
 }
 
 function calculateHcZn(lat,dec,LHA){
