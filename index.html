@@ -616,12 +616,7 @@ Stop
 
 </div>
 
-<div class="grid2">
-  <button class="main" onclick="moveSextantBody(-1)">▲ Body Up</button>
-  <button class="main" onclick="moveSextantBody(1)">▼ Body Down</button>
-</div>
-
-<button class="main" onclick="resetSextantBody()">Reset Body</button>
+<button class="main" onclick="resetSextantBody()">Reset Body / New Sight</button>
 
 </div>
 
@@ -5905,21 +5900,9 @@ function getTrainingHs(){
     return 0;
   }
 
-  let pitchDelta=
-    sextantCurrentPitch-sextantStartPitch;
-
-  sextantDisplayBodyY=
-    sextantBodyY+
-    pitchDelta*sextantPixelScale;
-
-  let pixelDifference=
-    sextantHorizonY-sextantDisplayBodyY;
-
-  if(pixelDifference<0){
-    pixelDifference=0;
-  }
-
-  return pixelDifference/sextantPixelScale;
+  return Math.abs(
+    sextantCurrentPitch - sextantStartPitch
+  );
 }
 function freezeSextant(){
 
@@ -5951,41 +5934,28 @@ function drawSextant(){
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  let horizonY=canvas.height/2;
-  let bodyY=horizonY-sextantBodyOffset;
-  let cx=canvas.width/2;
+  sextantHorizonY=canvas.height/2;
+
+  let hs=getTrainingHs();
+
+  let angleBox=document.getElementById("sextantAngle");
+  if(angleBox){
+    angleBox.innerText=hs.toFixed(1)+"°";
+  }
 
   ctx.strokeStyle="#9ee7ff";
   ctx.lineWidth=3;
   ctx.beginPath();
-  ctx.moveTo(0,horizonY);
-  ctx.lineTo(canvas.width,horizonY);
+  ctx.moveTo(0,sextantHorizonY);
+  ctx.lineTo(canvas.width,sextantHorizonY);
   ctx.stroke();
-
-  ctx.fillStyle="#9ee7ff";
-  ctx.font="15px Arial";
-  ctx.fillText("HORIZON",20,horizonY-10);
 
   ctx.strokeStyle="#ffd966";
   ctx.lineWidth=2;
   ctx.beginPath();
-  ctx.moveTo(cx,bodyY);
-  ctx.lineTo(cx,horizonY);
+  ctx.moveTo(canvas.width/2,sextantHorizonY-25);
+  ctx.lineTo(canvas.width/2,sextantHorizonY+25);
   ctx.stroke();
-
-  ctx.fillStyle="#ffd966";
-  ctx.beginPath();
-  ctx.arc(cx,bodyY,10,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle="#ffd966";
-  ctx.font="15px Arial";
-  ctx.fillText("BODY",cx+15,bodyY+5);
-
-  let hs=getTrainingHs();
-
-  document.getElementById("sextantAngle").innerText=
-    hs.toFixed(1)+"°";
 
   ctx.fillStyle="white";
   ctx.font="18px Arial";
@@ -5993,8 +5963,47 @@ function drawSextant(){
 
   ctx.fillStyle="#ffffff";
   ctx.font="16px Arial";
-  ctx.fillText("Move BODY down to the horizon",20,65);
-  ctx.fillText("Training Hs: "+hs.toFixed(1)+"°",20,95);
+
+  if(!sextantBodyLocked){
+    ctx.fillText("1. Aim camera at body",20,65);
+    ctx.fillText("2. Tap the body",20,95);
+  }else{
+    ctx.fillText("3. Lower body to horizon",20,65);
+    ctx.fillText("4. Freeze when body touches horizon",20,95);
+  }
+
+  ctx.fillText("Hs: "+hs.toFixed(1)+"°",20,125);
+
+  if(sextantBodyLocked){
+
+    let pitchDelta=
+      sextantCurrentPitch-sextantStartPitch;
+
+    sextantDisplayBodyY=
+      sextantBodyY+
+      pitchDelta*sextantPixelScale;
+
+    ctx.strokeStyle="#ffd966";
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.moveTo(sextantBodyX,sextantDisplayBodyY);
+    ctx.lineTo(sextantBodyX,sextantHorizonY);
+    ctx.stroke();
+
+    ctx.fillStyle="#ffd966";
+    ctx.beginPath();
+    ctx.arc(sextantBodyX,sextantDisplayBodyY,10,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#ffd966";
+    ctx.font="15px Arial";
+    ctx.fillText("BODY",sextantBodyX+15,sextantDisplayBodyY+5);
+  }
+
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="14px Arial";
+  ctx.fillText("HORIZON",20,sextantHorizonY-10);
 
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
