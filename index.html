@@ -997,6 +997,7 @@ Date / UTC:<br>
 <option value="polaris">Polaris</option>
 <option value="forms">Forms / Worksheet</option>
 <option value="stars">Stars & Constellations</option>
+<option value="catalogue">57 Navigation Stars Catalogue</option>
 </select>
 
 <div id="theoryContent" class="resultBox" style="margin-top:15px">
@@ -4346,6 +4347,23 @@ style="width:100%;background:#06152a;border:1px solid #31506a;border-radius:8px;
 </canvas>
 `;
 }
+if(t==="catalogue"){
+
+html=`
+<b>57 NAVIGATION STARS CATALOGUE</b><br><br>
+
+<input
+id="starSearch"
+class="full"
+placeholder="Search star..."
+oninput="filterStarCatalogue()">
+
+<div id="starCatalogueBox"
+style="margin-top:15px;max-height:600px;overflow:auto;">
+</div>
+`;
+
+}
 if(t==="forms"){
 html=`
 <b>FORMS / WORKSHEET</b><br><br>
@@ -4377,7 +4395,9 @@ if(t==="stars"){
     showTheoryStar();
   },100);
 }
-
+if(t==="catalogue"){
+  loadStarCatalogue();
+}
 }
 const STAR_GUIDE = {
 
@@ -5593,6 +5613,79 @@ function calculateTwilight(){
 
   "Astronomical Twilight AM: "+astro.rise+"<br>"+
   "Astronomical Twilight PM: "+astro.set;
+
+}
+function loadStarCatalogue(){
+
+let html=
+"<table style='width:100%;font-size:12px'>"+
+"<tr>"+
+"<th>Star</th>"+
+"<th>Mag</th>"+
+"<th>Constellation</th>"+
+"</tr>";
+
+Object.keys(STAR_GUIDE)
+.sort()
+.forEach(name=>{
+
+let s=STAR_GUIDE[name];
+
+html+=
+"<tr>"+
+"<td>"+name+"</td>"+
+"<td>"+s.magnitude+"</td>"+
+"<td>"+s.constellation+"</td>"+
+"</tr>";
+
+});
+
+html+="</table>";
+
+let box=document.getElementById("starCatalogueBox");
+if(box) box.innerHTML=html;
+
+}
+function filterStarCatalogue(){
+
+let txt=
+document.getElementById("starSearch")
+.value
+.toLowerCase();
+
+let html=
+"<table style='width:100%;font-size:12px'>"+
+"<tr>"+
+"<th>Star</th>"+
+"<th>Mag</th>"+
+"<th>Constellation</th>"+
+"</tr>";
+
+Object.keys(STAR_GUIDE)
+.sort()
+.forEach(name=>{
+
+let s=STAR_GUIDE[name];
+
+if(
+name.toLowerCase().includes(txt) ||
+s.constellation.toLowerCase().includes(txt)
+){
+
+html+=
+"<tr>"+
+"<td>"+name+"</td>"+
+"<td>"+s.magnitude+"</td>"+
+"<td>"+s.constellation+"</td>"+
+"</tr>";
+
+}
+
+});
+
+html+="</table>";
+
+document.getElementById("starCatalogueBox").innerHTML=html;
 
 }
 setNowUTC();
