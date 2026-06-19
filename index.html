@@ -597,12 +597,31 @@ Stop
 
 </div>
 
-<canvas
-id="sextantCanvas"
-width="500"
-height="300"
-style="width:100%;background:#06152a;border-radius:8px;margin-top:15px;">
-</canvas>
+<div style="position:relative;width:100%;height:360px;margin-top:15px;background:#06152a;border-radius:8px;overflow:hidden;">
+
+  <video
+    id="sextantVideo"
+    autoplay
+    playsinline
+    muted
+    style="position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;">
+  </video>
+
+  <canvas
+    id="sextantCanvas"
+    width="500"
+    height="360"
+    style="position:absolute;left:0;top:0;width:100%;height:100%;">
+  </canvas>
+
+</div>
+
+<div class="grid2">
+  <button class="main" onclick="moveSextantBody(-1)">▲ Body Up</button>
+  <button class="main" onclick="moveSextantBody(1)">▼ Body Down</button>
+</div>
+
+<button class="main" onclick="resetSextantBody()">Reset Body</button>
 
 </div>
 
@@ -5904,6 +5923,130 @@ function useCapturedHsForSight(){
   );
 
   alert("Captured Hs inserted into Sight Reduction.");
+}
+let sextantStream=null;
+let sextantBodyOffset=80; // pixels above horizon
+let sextantScale=6; // pixels per degree, training scale
+
+async function startSextant(){
+
+  sextantActive=true;
+
+  try{
+    sextantStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"environment"},
+      audio:false
+    });
+
+    document.getElementById("sextantVideo").srcObject=sextantStream;
+
+  }catch(e){
+    alert("Camera error: "+e.message);
+  }
+
+  drawSextant();
+}
+
+function stopSextant(){
+
+  sextantActive=false;
+
+  if(sextantStream){
+    sextantStream.getTracks().forEach(t=>t.stop());
+    sextantStream=null;
+  }
+
+}
+
+function moveSextantBody(direction){
+
+  sextantBodyOffset += direction*5;
+
+  if(sextantBodyOffset<0) sextantBodyOffset=0;
+  if(sextantBodyOffset>250) sextantBodyOffset=250;
+
+  drawSextant();
+}
+
+function resetSextantBody(){
+
+  sextantBodyOffset=80;
+  drawSextant();
+
+}
+
+function getTrainingHs(){
+
+  return sextantBodyOffset/sextantScale;
+
+}
+
+function freezeSextant(){
+
+  sextantFrozenAngle=getTrainingHs();
+
+  document.getElementById("sextantCaptured").innerText=
+    sextantFrozenAngle.toFixed(1)+"°";
+
+}
+
+function drawSextant(){
+
+  let canvas=document.getElementById("sextantCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  let horizonY=canvas.height/2;
+  let bodyY=horizonY-sextantBodyOffset;
+  let cx=canvas.width/2;
+
+  ctx.strokeStyle="#9ee7ff";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(0,horizonY);
+  ctx.lineTo(canvas.width,horizonY);
+  ctx.stroke();
+
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="15px Arial";
+  ctx.fillText("HORIZON",20,horizonY-10);
+
+  ctx.strokeStyle="#ffd966";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(cx,bodyY);
+  ctx.lineTo(cx,horizonY);
+  ctx.stroke();
+
+  ctx.fillStyle="#ffd966";
+  ctx.beginPath();
+  ctx.arc(cx,bodyY,10,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#ffd966";
+  ctx.font="15px Arial";
+  ctx.fillText("BODY",cx+15,bodyY+5);
+
+  let hs=getTrainingHs();
+
+  document.getElementById("sextantAngle").innerText=
+    hs.toFixed(1)+"°";
+
+  ctx.fillStyle="white";
+  ctx.font="18px Arial";
+  ctx.fillText("Camera Sextant Training Mode",20,35);
+
+  ctx.fillStyle="#ffffff";
+  ctx.font="16px Arial";
+  ctx.fillText("Move BODY down to the horizon",20,65);
+  ctx.fillText("Training Hs: "+hs.toFixed(1)+"°",20,95);
+
+  ctx.fillStyle="#cccccc";
+  ctx.font="12px Arial";
+  ctx.fillText("For training only — not for official navigation",20,340);
 }
 setNowUTC();
 populateObjectList();
