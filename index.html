@@ -1362,6 +1362,17 @@ if(STAR_GUIDE[obj]){
 }
 
 
+let extraInfo="";
+
+if(obj==="Moon"){
+  extraInfo=
+  "HP: "+alm.HP.toFixed(1)+"'<br>"+
+  "SD: "+alm.SD.toFixed(1)+"'<br>"+
+  "Distance: "+Math.round(alm.Distance).toLocaleString()+" km<br>"+
+  "Moon Age: "+alm.Age.toFixed(1)+" days<br>"+
+  "Illumination: "+alm.Illumination.toFixed(0)+"%<br>";
+}
+
 sunResult.innerHTML=
 "<div style='display:flex;justify-content:space-between;align-items:center;'>"+
 "<b>"+obj.toUpperCase()+"</b>"+
@@ -1371,7 +1382,8 @@ theoryBtn+
 "Dec: "+formatDec(alm.Dec)+"<br>"+
 "LHA: "+formatDM(LHA)+"<br>"+
 "Hc: "+formatAlt(r.Hc)+"<br>"+
-"Zn: "+formatBearing(r.Zn);
+"Zn: "+formatBearing(r.Zn)+"<br>"+
+extraInfo;
 
 updateSightCorrections();
 autoUpdateSky();
