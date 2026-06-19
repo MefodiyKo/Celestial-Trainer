@@ -5780,13 +5780,37 @@ document.getElementById("starCatalogueBox").innerHTML=html;
 
 }
 let sextantActive=false;
-let sextantPitchValue=0;
-let sextantRollValue=0;
 let sextantFrozenAngle=0;
 
-function startSextant(){
+let sextantStream=null;
+
+let sextantBodyLocked=false;
+let sextantBodyX=250;
+let sextantBodyY=120;
+let sextantDisplayBodyY=120;
+let sextantHorizonY=180;
+
+let sextantStartPitch=0;
+let sextantCurrentPitch=0;
+let sextantCurrentRoll=0;
+
+let sextantPixelScale=6;
+
+async function startSextant(){
 
   sextantActive=true;
+
+  try{
+    sextantStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"environment"},
+      audio:false
+    });
+
+    document.getElementById("sextantVideo").srcObject=sextantStream;
+
+  }catch(e){
+    alert("Camera error: "+e.message);
+  }
 
   if(
     typeof DeviceOrientationEvent !== "undefined" &&
@@ -5807,141 +5831,12 @@ function startSextant(){
     window.addEventListener("deviceorientation",handleSextantOrientation);
   }
 
-  drawSextant();
-}
-
-function stopSextant(){
-  sextantActive=false;
-  window.removeEventListener("deviceorientation",handleSextantOrientation);
-}
-function freezeSextant(){
-
-  sextantFrozenAngle=
-    Math.abs(90-Math.abs(sextantPitchValue));
-
-  document.getElementById(
-    "sextantCaptured"
-  ).innerText=
-    sextantFrozenAngle.toFixed(1)+"°";
-
-}
-function handleSextantOrientation(event){
-
-  sextantPitchValue = event.beta || 0;
-  sextantRollValue = event.gamma || 0;
-
-  let angle =
-    Math.abs(90 - Math.abs(sextantPitchValue));
-
-  document.getElementById("sextantPitch").innerText =
-    sextantPitchValue.toFixed(1) + "°";
-
-  document.getElementById("sextantRoll").innerText =
-    sextantRollValue.toFixed(1) + "°";
-
-  document.getElementById("sextantAngle").innerText =
-    angle.toFixed(1) + "°";
-
-  drawSextant();
-
-}
-
-function drawSextant(){
-
   let canvas=document.getElementById("sextantCanvas");
-  if(!canvas)return;
 
-  let ctx=canvas.getContext("2d");
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle="#06152a";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  let cx=canvas.width/2;
-  let cy=canvas.height/2;
-
-  let rollRad=degToRad(sextantRoll);
-
-  ctx.save();
-  ctx.translate(cx,cy);
-  ctx.rotate(rollRad);
-
-  ctx.strokeStyle="#9ee7ff";
-  ctx.lineWidth=3;
-
-  ctx.beginPath();
-  ctx.moveTo(-250,0);
-  ctx.lineTo(250,0);
-  ctx.stroke();
-
-  ctx.restore();
-
-  ctx.fillStyle="white";
-  ctx.font="18px Arial";
-  ctx.fillText("Artificial Horizon",20,35);
-
-  ctx.fillStyle="#9ee7ff";
-  ctx.font="16px Arial";
-  ctx.fillText("Pitch: "+sextantPitch.toFixed(1)+"°",20,70);
-  ctx.fillText("Roll: "+sextantRoll.toFixed(1)+"°",20,95);
-  ctx.fillText("Training angle: "+Math.abs(sextantPitch).toFixed(1)+"°",20,120);
-
-  ctx.strokeStyle="#ffd966";
-  ctx.lineWidth=2;
-
-  ctx.beginPath();
-  ctx.moveTo(cx,20);
-  ctx.lineTo(cx,canvas.height-20);
-  ctx.stroke();
-
-  ctx.fillStyle="#ffd966";
-  ctx.beginPath();
-  ctx.arc(cx,cy,6,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle="#cccccc";
-  ctx.font="12px Arial";
-  ctx.fillText("For training only — not for navigation",20,280);
-}
-function useCapturedHsForSight(){
-
-  if(!sextantFrozenAngle || sextantFrozenAngle<=0){
-    alert("Freeze angle first.");
-    return;
-  }
-
-  let d=Math.floor(sextantFrozenAngle);
-  let m=(sextantFrozenAngle-d)*60;
-
-  document.getElementById("hsDeg").value=d;
-  document.getElementById("hsMin").value=m.toFixed(1);
-
-  openTab(
-    "sight",
-    document.querySelector("button[onclick*=\"openTab('sight'\"]")
-  );
-
-  alert("Captured Hs inserted into Sight Reduction.");
-}
-let sextantStream=null;
-let sextantBodyOffset=80; // pixels above horizon
-let sextantScale=6; // pixels per degree, training scale
-
-async function startSextant(){
-
-  sextantActive=true;
-
-  try{
-    sextantStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:"environment"},
-      audio:false
-    });
-
-    document.getElementById("sextantVideo").srcObject=sextantStream;
-
-  }catch(e){
-    alert("Camera error: "+e.message);
+  if(canvas){
+    canvas.onclick=function(event){
+      selectSextantBody(event);
+    };
   }
 
   drawSextant();
@@ -5950,44 +5845,94 @@ async function startSextant(){
 function stopSextant(){
 
   sextantActive=false;
+
+  window.removeEventListener("deviceorientation",handleSextantOrientation);
 
   if(sextantStream){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
-
 }
 
-function moveSextantBody(direction){
+function handleSextantOrientation(event){
 
-  sextantBodyOffset += direction*5;
+  sextantCurrentPitch=event.beta || 0;
+  sextantCurrentRoll=event.gamma || 0;
 
-  if(sextantBodyOffset<0) sextantBodyOffset=0;
-  if(sextantBodyOffset>250) sextantBodyOffset=250;
+  let pitchBox=document.getElementById("sextantPitch");
+  let rollBox=document.getElementById("sextantRoll");
+
+  if(pitchBox){
+    pitchBox.innerText=sextantCurrentPitch.toFixed(1)+"°";
+  }
+
+  if(rollBox){
+    rollBox.innerText=sextantCurrentRoll.toFixed(1)+"°";
+  }
 
   drawSextant();
 }
 
-function resetSextantBody(){
+function selectSextantBody(event){
 
-  sextantBodyOffset=80;
+  let canvas=document.getElementById("sextantCanvas");
+  let rect=canvas.getBoundingClientRect();
+
+  sextantBodyX=
+    (event.clientX-rect.left)*
+    (canvas.width/rect.width);
+
+  sextantBodyY=
+    (event.clientY-rect.top)*
+    (canvas.height/rect.height);
+
+  sextantStartPitch=sextantCurrentPitch;
+  sextantBodyLocked=true;
+
   drawSextant();
-
 }
 
 function getTrainingHs(){
 
-  return sextantBodyOffset/sextantScale;
+  if(!sextantBodyLocked){
+    return 0;
+  }
 
+  let pitchDelta=
+    sextantCurrentPitch-sextantStartPitch;
+
+  sextantDisplayBodyY=
+    sextantBodyY+
+    pitchDelta*sextantPixelScale;
+
+  let pixelDifference=
+    sextantHorizonY-sextantDisplayBodyY;
+
+  if(pixelDifference<0){
+    pixelDifference=0;
+  }
+
+  return pixelDifference/sextantPixelScale;
 }
-
 function freezeSextant(){
 
   sextantFrozenAngle=getTrainingHs();
 
-  document.getElementById("sextantCaptured").innerText=
-    sextantFrozenAngle.toFixed(1)+"°";
+  let captured=document.getElementById("sextantCaptured");
 
+  if(captured){
+    captured.innerText=
+      sextantFrozenAngle.toFixed(1)+"°";
+  }
+
+  if(sextantFrozenAngle<=0.2){
+    alert("Body is on horizon. Hs captured.");
+  }else{
+    alert(
+      "Body is not on horizon yet. Current remaining angle: "+
+      sextantFrozenAngle.toFixed(1)+"°"
+    );
+  }
 }
 
 function drawSextant(){
