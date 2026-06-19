@@ -357,6 +357,7 @@ No planets calculated.
 <button class="tab active" onclick="openTab('almanac',this)">Almanac</button>
 <button class="tab" onclick="openTab('observation',this)">Compass Obs</button>
 <button class="tab" onclick="openTab('sight',this)">Sight Reduction</button>
+<button class="tab" onclick="openTab('sextant',this)">Sextant</button>
 <button class="tab" onclick="openTab('meridian',this)">Meridian</button>
 <button class="tab" onclick="openTab('polaris',this)">Polaris</button>
 <button class="tab" onclick="openTab('twilight',this)">Twilight</button>
@@ -489,74 +490,7 @@ True Bearing / Zn: <span id="obsZn">--</span>
 </div>
 </div>
 
-<div id="sight" class="section">
-<div class="card">
-<div style="display:flex;justify-content:space-between;align-items:center;">
-  <h3 style="margin:0;">Sight Reduction</h3>
-  <button onclick="openTheoryTopic('sight')" style="padding:4px 10px;border:0;border-radius:6px;background:#1f8ac0;color:white;font-size:13px;">📘 Theory</button>
-</div>
-
-<div class="resultBox">
-Object: <span id="sightObject">--</span><br>
-Hc: <span id="sightHc">--</span><br>
-Zn: <span id="sightZn">--</span>
-</div>
-
-<label>Hs</label>
-<div class="grid3">
-<input id="hsDeg" type="number" placeholder="71">
-<span>°</span>
-<input id="hsMin" type="number" step="0.1" placeholder="23.4">
-<span>'</span>
-<select disabled><option></option></select>
-</div>
-
-<div class="grid2">
-<div>
-<label>Index Error (')</label>
-<input id="indexError" class="full" type="number" step="0.1" value="0">
-</div>
-<div>
-<label>Height of Eye (m)</label>
-<input id="heightOfEye" class="full" type="number" step="0.1" value="15">
-</div>
-</div>
-
-<div class="grid2">
-<div>
-<label>Pressure hPa</label>
-<input id="pressure" class="full" type="number" value="1010">
-</div>
-<div>
-<label>Temperature °C</label>
-<input id="temperature" class="full" type="number" value="10">
-</div>
-</div>
-
-<label>Body</label>
-<select id="sightBody" class="full">
-<option value="star">Star / Planet</option>
-<option value="sunLL">Sun Lower Limb</option>
-<option value="sunUL">Sun Upper Limb</option>
-<option value="moonLL">Moon Lower Limb</option>
-<option value="moonUL">Moon Upper Limb</option>
-</select>
-
-<div class="grid2">
-<div>
-<label>SD '</label>
-<input id="sdValue" class="full" type="number" step="0.1" value="0">
-</div>
-<div>
-<label>Parallax '</label>
-<input id="parallaxValue" class="full" type="number" step="0.1" value="0">
-</div>
-</div>
-
-<button class="main" onclick="calculateSightReduction()">Calculate Sight</button>
-
-<div class="grid2">
-<button class="main" onclick="savePositionFixLOP(0)">Save LOP 1</button>
+<div id="sight" class="section">lick="savePositionFixLOP(0)">Save LOP 1</button>
 <button class="main" onclick="savePositionFixLOP(1)">Save LOP 2</button>
 </div>
 <button class="main" onclick="savePositionFixLOP(2)">Save LOP 3</button>
@@ -564,7 +498,45 @@ Zn: <span id="sightZn">--</span>
 <div class="result" id="sightResult">Calculate object first.</div>
 </div>
 </div>
+<div id="sextant" class="section">
 
+<div class="card">
+
+<h3>📐 Digital Sextant (Training)</h3>
+
+<div class="resultBox">
+
+<b>Status:</b> Training Mode<br><br>
+
+Device Pitch:
+<span id="sextantPitch">0.0°</span><br>
+
+Device Roll:
+<span id="sextantRoll">0.0°</span><br>
+
+Calculated Angle:
+<span id="sextantAngle">0.0°</span><br><br>
+
+<button class="main" onclick="startSextant()">
+Start Sensors
+</button>
+
+<button class="main" onclick="stopSextant()">
+Stop
+</button>
+
+</div>
+
+<canvas
+id="sextantCanvas"
+width="500"
+height="300"
+style="width:100%;background:#06152a;border-radius:8px;margin-top:15px;">
+</canvas>
+
+</div>
+
+</div>
 <div id="meridian" class="section">
 <div class="card">
 <div style="display:flex;justify-content:space-between;align-items:center;">
