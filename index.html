@@ -3054,30 +3054,60 @@ function calculatePolaris(){
   let sun=sunAlmanac(data.date,data.time);
   let polaris=STAR_CATALOG["Polaris"];
 
-  let GHA=norm360(sun.GHAAries+polaris.SHA);
-  let LHA=norm360(GHA+data.lon);
-  let LHAAries=norm360(sun.GHAAries+data.lon);
+  let GHAAries=sun.GHAAries;
+  let SHA=polaris.SHA;
+  let Dec=polaris.Dec;
 
-  let polarDistance=90-polaris.Dec;
+  let GHAPolaris=norm360(GHAAries+SHA);
+  let LHAPolaris=norm360(GHAPolaris+data.lon);
+  let LHAAries=norm360(GHAAries+data.lon);
 
-  let correction=
+  let polarDistance=90-Dec;
+
+  let a0=
     polarDistance*
     Math.cos(degToRad(LHAAries));
 
-  let lat=Ho+correction;
+  let a1=
+    0.008*
+    Math.sin(degToRad(2*LHAAries));
+
+  let a2=
+    0.001*
+    Math.sin(degToRad(data.lat));
+
+  let totalCorrection=a0+a1+a2;
+
+  let lat=Ho+totalCorrection;
 
   polarisResult.innerHTML=
-  "<b>LATITUDE BY POLARIS</b><br><br>"+
+  "<b>LATITUDE BY POLARIS — NP314 STYLE</b><br><br>"+
+
+  "<b>Observed Altitude</b><br>"+
   "Hs: "+formatAlt(Hs)+"<br>"+
+  "Index Error: "+ie.toFixed(1)+"'<br>"+
   "Dip: "+dip.toFixed(1)+"'<br>"+
   "Refraction: "+ref.toFixed(1)+"'<br>"+
   "Ho: "+formatAlt(Ho)+"<br><br>"+
-  "GHA Polaris: "+formatDM(GHA)+"<br>"+
-  "LHA Polaris: "+formatDM(LHA)+"<br>"+
+
+  "<b>Polaris Data</b><br>"+
+  "GHA Aries: "+formatDM(GHAAries)+"<br>"+
+  "SHA Polaris: "+formatDM(SHA)+"<br>"+
+  "GHA Polaris: "+formatDM(GHAPolaris)+"<br>"+
   "LHA Aries: "+formatDM(LHAAries)+"<br>"+
-  "Polaris Correction: "+(correction*60).toFixed(1)+"'<br><br>"+
+  "LHA Polaris: "+formatDM(LHAPolaris)+"<br>"+
+  "Dec Polaris: "+formatDec(Dec)+"<br><br>"+
+
+  "<b>Corrections</b><br>"+
+  "a0: "+(a0*60).toFixed(1)+"'<br>"+
+  "a1: "+(a1*60).toFixed(1)+"'<br>"+
+  "a2: "+(a2*60).toFixed(1)+"'<br>"+
+  "Total Polaris Correction: "+(totalCorrection*60).toFixed(1)+"'<br><br>"+
+
   "<b>Latitude:</b><br>"+
-  formatLatLon(lat,true);
+  formatLatLon(lat,true)+"<br><br>"+
+
+  "<span class='small'>
 
 }
 
