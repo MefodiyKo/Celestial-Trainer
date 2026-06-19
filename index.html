@@ -5660,6 +5660,113 @@ html+="</table>";
 document.getElementById("starCatalogueBox").innerHTML=html;
 
 }
+let sextantActive=false;
+let sextantPitch=0;
+let sextantRoll=0;
+
+function startSextant(){
+
+  sextantActive=true;
+
+  if(
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ){
+    DeviceOrientationEvent.requestPermission()
+    .then(function(permission){
+      if(permission==="granted"){
+        window.addEventListener("deviceorientation",handleSextantOrientation);
+      }else{
+        alert("Sensor permission denied.");
+      }
+    })
+    .catch(function(err){
+      alert("Sensor error: "+err);
+    });
+  }else{
+    window.addEventListener("deviceorientation",handleSextantOrientation);
+  }
+
+  drawSextant();
+}
+
+function stopSextant(){
+  sextantActive=false;
+  window.removeEventListener("deviceorientation",handleSextantOrientation);
+}
+
+function handleSextantOrientation(event){
+
+  sextantPitch=event.beta || 0;
+  sextantRoll=event.gamma || 0;
+
+  let angle=Math.abs(sextantPitch);
+
+  sextantPitch.innerText=sextantPitch.toFixed(1)+"°";
+  sextantRoll.innerText=sextantRoll.toFixed(1)+"°";
+  sextantAngle.innerText=angle.toFixed(1)+"°";
+
+  drawSextant();
+}
+
+function drawSextant(){
+
+  let canvas=document.getElementById("sextantCanvas");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#06152a";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  let cx=canvas.width/2;
+  let cy=canvas.height/2;
+
+  let rollRad=degToRad(sextantRoll);
+
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(rollRad);
+
+  ctx.strokeStyle="#9ee7ff";
+  ctx.lineWidth=3;
+
+  ctx.beginPath();
+  ctx.moveTo(-250,0);
+  ctx.lineTo(250,0);
+  ctx.stroke();
+
+  ctx.restore();
+
+  ctx.fillStyle="white";
+  ctx.font="18px Arial";
+  ctx.fillText("Artificial Horizon",20,35);
+
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="16px Arial";
+  ctx.fillText("Pitch: "+sextantPitch.toFixed(1)+"°",20,70);
+  ctx.fillText("Roll: "+sextantRoll.toFixed(1)+"°",20,95);
+  ctx.fillText("Training angle: "+Math.abs(sextantPitch).toFixed(1)+"°",20,120);
+
+  ctx.strokeStyle="#ffd966";
+  ctx.lineWidth=2;
+
+  ctx.beginPath();
+  ctx.moveTo(cx,20);
+  ctx.lineTo(cx,canvas.height-20);
+  ctx.stroke();
+
+  ctx.fillStyle="#ffd966";
+  ctx.beginPath();
+  ctx.arc(cx,cy,6,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#cccccc";
+  ctx.font="12px Arial";
+  ctx.fillText("For training only — not for navigation",20,280);
+}
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
