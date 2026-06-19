@@ -516,11 +516,13 @@ Device Roll:
 
 Calculated Angle:
 <span id="sextantAngle">0.0°</span><br><br>
-
+Captured Hs:
+<span id="sextantCaptured">--</span>
 <button class="main" onclick="startSextant()">
 Start Sensors
 </button>
-
+<button class="main" onclick="freezeSextant()">Freeze Angle</button>
+<button class="main" onclick="useCapturedHsForSight()">Use Captured Hs for Sight</button>
 <button class="main" onclick="stopSextant()">
 Stop
 </button>
@@ -5661,8 +5663,9 @@ document.getElementById("starCatalogueBox").innerHTML=html;
 
 }
 let sextantActive=false;
-let sextantPitch=0;
-let sextantRoll=0;
+let sextantPitchValue=0;
+let sextantRollValue=0;
+let sextantFrozenAngle=0;
 
 function startSextant(){
 
@@ -5694,19 +5697,36 @@ function stopSextant(){
   sextantActive=false;
   window.removeEventListener("deviceorientation",handleSextantOrientation);
 }
+function freezeSextant(){
 
+  sextantFrozenAngle=
+    Math.abs(90-Math.abs(sextantPitchValue));
+
+  document.getElementById(
+    "sextantCaptured"
+  ).innerText=
+    sextantFrozenAngle.toFixed(1)+"°";
+
+}
 function handleSextantOrientation(event){
 
-  sextantPitch=event.beta || 0;
-  sextantRoll=event.gamma || 0;
+  sextantPitchValue = event.beta || 0;
+  sextantRollValue = event.gamma || 0;
 
-  let angle=Math.abs(sextantPitch);
+  let angle =
+    Math.abs(90 - Math.abs(sextantPitchValue));
 
-  sextantPitch.innerText=sextantPitch.toFixed(1)+"°";
-  sextantRoll.innerText=sextantRoll.toFixed(1)+"°";
-  sextantAngle.innerText=angle.toFixed(1)+"°";
+  document.getElementById("sextantPitch").innerText =
+    sextantPitchValue.toFixed(1) + "°";
+
+  document.getElementById("sextantRoll").innerText =
+    sextantRollValue.toFixed(1) + "°";
+
+  document.getElementById("sextantAngle").innerText =
+    angle.toFixed(1) + "°";
 
   drawSextant();
+
 }
 
 function drawSextant(){
@@ -5766,6 +5786,26 @@ function drawSextant(){
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
   ctx.fillText("For training only — not for navigation",20,280);
+}
+function useCapturedHsForSight(){
+
+  if(!sextantFrozenAngle || sextantFrozenAngle<=0){
+    alert("Freeze angle first.");
+    return;
+  }
+
+  let d=Math.floor(sextantFrozenAngle);
+  let m=(sextantFrozenAngle-d)*60;
+
+  document.getElementById("hsDeg").value=d;
+  document.getElementById("hsMin").value=m.toFixed(1);
+
+  openTab(
+    "sight",
+    document.querySelector("button[onclick*=\"openTab('sight'\"]")
+  );
+
+  alert("Captured Hs inserted into Sight Reduction.");
 }
 setNowUTC();
 populateObjectList();
