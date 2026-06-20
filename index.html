@@ -5953,7 +5953,7 @@ function useCapturedHsForSight(){
   window.lastObservation.dateUTC = document.getElementById("dateUTC")?.value || "";
   window.lastObservation.object = document.getElementById("bodySelect")?.value || "Sun";
 
-let hsDegInput = document.getElementById("hsDeg");
+  let hsDegInput = document.getElementById("hsDeg");
 let hsMinInput = document.getElementById("hsMin");
 
 if(hsDegInput && hsMinInput){
@@ -5976,7 +5976,7 @@ if(hsDegInput && hsMinInput){
 }else{
 
   alert("Hs saved, but Sight Reduction Hs fields not found.");
-
+}
 }
 function resetSextantBody(){
 
