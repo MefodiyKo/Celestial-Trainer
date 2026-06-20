@@ -364,26 +364,6 @@ body.sextant-fullscreen .sextant-float-freeze{
   color:#061824;
   font-weight:800;
 }
-body.sextant-fullscreen #sextantControls{
-  position:fixed !important;
-  left:10px !important;
-  right:10px !important;
-  bottom:10px !important;
-  z-index:10001 !important;
-  display:grid !important;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-}
-
-body.sextant-fullscreen #sextantControls button{
-  min-height:48px;
-  font-size:14px;
-  padding:8px;
-}
-
-body.sextant-fullscreen .sextant-float-freeze{
-  z-index:10002 !important;
-}
 </style>
 </head>
 
@@ -651,6 +631,7 @@ Calculated Angle:
 <span id="sextantAngle">0.0°</span><br><br>
 Captured Hs:
 <span id="sextantCaptured">--</span>
+<div id="sextantControls">
 <button class="main" onclick="startSextant()">
 Start Sensors
 </button>
