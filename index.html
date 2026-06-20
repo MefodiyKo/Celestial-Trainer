@@ -319,6 +319,81 @@ canvas{touch-action:manipulation}
 .smallTheoryBtn:hover{
   opacity:0.9;
 }
+/* ===== Sextant Fullscreen Mode ===== */
+
+body.sextant-fullscreen{
+  overflow:hidden;
+}
+
+body.sextant-fullscreen #sextantCard{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  width:100vw;
+  height:100vh;
+  margin:0;
+  padding:10px;
+  border-radius:0;
+  background:#061824;
+  overflow:hidden;
+}
+
+body.sextant-fullscreen #sextantCanvas{
+  width:100%;
+  height:72vh;
+  display:block;
+  border-radius:14px;
+  background:#000;
+}
+
+.sextant-float-freeze{
+  display:none;
+}
+
+body.sextant-fullscreen .sextant-float-freeze{
+  display:block;
+  position:fixed;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:10001;
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  border:2px solid #ffd966;
+  background:rgba(255,217,102,0.92);
+  color:#061824;
+  font-weight:800;
+  font-size:14px;
+  box-shadow:0 0 20px rgba(255,217,102,0.6);
+}
+
+body.sextant-fullscreen .top-tabs,
+body.sextant-fullscreen header,
+body.sextant-fullscreen .nav-tabs{
+  display:none;
+}
+
+body.sextant-fullscreen #sextantControls{
+  position:fixed;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  z-index:10000;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+
+body.sextant-fullscreen #sextantControls button{
+  min-height:48px;
+  font-size:14px;
+  padding:8px;
+}
+
+body.sextant-fullscreen #sextantInfo{
+  font-size:15px;
+}
 </style>
 </head>
 
@@ -568,7 +643,7 @@ Zn: <span id="sightZn">--</span>
 </div>
 <div id="sextant" class="section">
 
-<div class="card">
+<div class="card" id="sextantCard">
 
 <h3>📐 Digital Sextant (Training)</h3>
 
@@ -586,13 +661,25 @@ Calculated Angle:
 <span id="sextantAngle">0.0°</span><br><br>
 Captured Hs:
 <span id="sextantCaptured">--</span>
-<button class="main" onclick="startSextant()">
-Start Sensors
-</button>
-<button class="main" onclick="freezeSextant()">Freeze Angle</button>
-<button class="main" onclick="useCapturedHsForSight()">Use Captured Hs for Sight</button>
-<button class="main" onclick="stopSextant()">
-Stop
+<div id="sextantControls">
+
+  <button class="main" onclick="startSextant()">
+    Start Sensors
+  </button>
+
+  <button class="main" onclick="useCapturedHsForSight()">
+    Use Captured Hs
+  </button>
+
+  <button class="main" onclick="stopSextant()">
+    Stop
+  </button>
+
+</div>
+
+<button class="sextant-float-freeze"
+        onclick="freezeSextant()">
+  FREEZE
 </button>
 
 </div>
@@ -5842,6 +5929,7 @@ if(
   }
 
   drawSextant();
+  document.body.classList.add("sextant-fullscreen");
 }
 
 function stopSextant(){
@@ -5854,6 +5942,7 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
+document.body.classList.remove("sextant-fullscreen");
 }
 
 function handleSextantOrientation(event){
@@ -5953,7 +6042,7 @@ function useCapturedHsForSight(){
   window.lastObservation.dateUTC = document.getElementById("dateUTC")?.value || "";
   window.lastObservation.object = document.getElementById("bodySelect")?.value || "Sun";
 
-  let hsDegInput = document.getElementById("hsDeg");
+let hsDegInput = document.getElementById("hsDeg");
 let hsMinInput = document.getElementById("hsMin");
 
 if(hsDegInput && hsMinInput){
@@ -5976,7 +6065,7 @@ if(hsDegInput && hsMinInput){
 }else{
 
   alert("Hs saved, but Sight Reduction Hs fields not found.");
-}
+
 }
 function resetSextantBody(){
 
