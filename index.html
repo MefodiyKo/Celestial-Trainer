@@ -5894,10 +5894,18 @@ if(
   }
 
   drawSextant();
-let sextantEl = document.getElementById("sextantCard");
+  let view=document.getElementById("sextantView");
 
-if(sextantEl && sextantEl.requestFullscreen){
-  sextantEl.requestFullscreen();
+if(view){
+  view.style.display="block";
+  view.style.position="fixed";
+  view.style.left="0";
+  view.style.top="0";
+  view.style.width="100vw";
+  view.style.height="100vh";
+  view.style.margin="0";
+  view.style.borderRadius="0";
+  view.style.zIndex="9999";
 }
 
 document.body.classList.add("sextant-fullscreen");
@@ -5914,11 +5922,19 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
-if(document.fullscreenElement){
-  document.exitFullscreen();
-}
 
 document.body.classList.remove("sextant-fullscreen");
+let view=document.getElementById("sextantView");
+
+if(view){
+  view.style.display="";
+  view.style.position="relative";
+  view.style.width="100%";
+  view.style.height="360px";
+  view.style.marginTop="15px";
+  view.style.borderRadius="8px";
+  view.style.zIndex="";
+}
 }
 
 function handleSextantOrientation(event){
