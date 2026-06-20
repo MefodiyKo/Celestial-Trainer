@@ -5929,6 +5929,46 @@ function freezeSextant(){
     );
   }
 }
+function useCapturedHsForSight(){
+
+  let capturedText = document.getElementById("sextantCaptured")?.innerText || "--";
+
+  if(capturedText === "--"){
+    alert("No captured Hs available. Freeze angle first.");
+    return;
+  }
+
+  let hsValue = parseFloat(capturedText);
+
+  if(isNaN(hsValue)){
+    alert("Captured Hs is not valid.");
+    return;
+  }
+
+  window.lastObservation = window.lastObservation || {};
+
+  window.lastObservation.hs = hsValue;
+  window.lastObservation.source = "Digital Sextant";
+  window.lastObservation.timeUTC = document.getElementById("timeUTC")?.value || "";
+  window.lastObservation.dateUTC = document.getElementById("dateUTC")?.value || "";
+  window.lastObservation.object = document.getElementById("bodySelect")?.value || "Sun";
+
+  let hsInput =
+    document.getElementById("srHs") ||
+    document.getElementById("sightHs") ||
+    document.getElementById("hsInput") ||
+    document.getElementById("sextantHs");
+
+  if(hsInput){
+    hsInput.value = hsValue.toFixed(1);
+    hsInput.dispatchEvent(new Event("input"));
+    hsInput.dispatchEvent(new Event("change"));
+
+    alert("Hs sent to Sight Reduction: " + hsValue.toFixed(1) + "°");
+  }else{
+    alert("Hs saved, but Sight Reduction Hs field not found.");
+  }
+}
 function resetSextantBody(){
 
   sextantBodyLocked=false;
@@ -5937,9 +5977,6 @@ function resetSextantBody(){
   sextantBodyY=120;
   sextantDisplayBodyY=120;
   sextantStartPitch=sextantCurrentPitch;
-
-  trainingHs=0;
-  sextantCapturedHs=null;
 
   let captured=document.getElementById("sextantCaptured");
   if(captured){
