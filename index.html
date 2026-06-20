@@ -5936,7 +5936,13 @@ if(
   }
 
   drawSextant();
-  document.body.classList.add("sextant-fullscreen");
+let sextantEl = document.getElementById("sextantCard");
+
+if(sextantEl && sextantEl.requestFullscreen){
+  sextantEl.requestFullscreen();
+}
+
+document.body.classList.add("sextant-fullscreen");
 
 }
 
@@ -5950,6 +5956,10 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
+if(document.fullscreenElement){
+  document.exitFullscreen();
+}
+
 document.body.classList.remove("sextant-fullscreen");
 }
 
