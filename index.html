@@ -5890,7 +5890,12 @@ function selectSextantBody(event){
 
   sextantStartPitch=sextantCurrentPitch;
   sextantBodyLocked=true;
+sextantFrozenAngle=0;
 
+let captured=document.getElementById("sextantCaptured");
+if(captured){
+  captured.innerText="--";
+}
   drawSextant();
 }
 
