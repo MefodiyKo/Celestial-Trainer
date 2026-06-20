@@ -325,17 +325,21 @@ body.sextant-fullscreen{
   overflow:hidden;
 }
 
+body.sextant-fullscreen #sextant{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:9999 !important;
+  width:100vw !important;
+  height:100vh !important;
+  display:block !important;
+  background:#061824 !important;
+}
+
 body.sextant-fullscreen #sextantCard{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  width:100vw;
-  height:100vh;
-  margin:0;
-  padding:10px;
-  border-radius:0;
-  background:#061824;
-  overflow:hidden;
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  border-radius:0 !important;
 }
 body.sextant-fullscreen #sextantView{
   position:relative;
@@ -5933,7 +5937,7 @@ if(
 
   drawSextant();
   document.body.classList.add("sextant-fullscreen");
-  alert(document.body.className);
+
 }
 
 function stopSextant(){
