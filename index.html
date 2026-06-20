@@ -5924,7 +5924,7 @@ if(
   }
 
   drawSextant();
-  
+  document.body.classList.add("sextant-fullscreen");
 }
 
 function stopSextant(){
@@ -5937,7 +5937,7 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
-
+document.body.classList.remove("sextant-fullscreen");
 }
 
 function handleSextantOrientation(event){
