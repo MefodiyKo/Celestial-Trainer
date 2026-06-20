@@ -337,13 +337,21 @@ body.sextant-fullscreen #sextantCard{
   background:#061824;
   overflow:hidden;
 }
-
-body.sextant-fullscreen #sextantCanvas{
+body.sextant-fullscreen #sextantView{
+  position:relative;
   width:100%;
-  height:72vh;
-  display:block;
+  height:72vh !important;
+  margin-top:8px !important;
   border-radius:14px;
-  background:#000;
+  overflow:hidden;
+}
+body.sextant-fullscreen #sextantCanvas,
+body.sextant-fullscreen #sextantVideo{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100% !important;
+  height:100% !important;
 }
 
 .sextant-float-freeze{
