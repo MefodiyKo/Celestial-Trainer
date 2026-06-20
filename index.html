@@ -5929,7 +5929,27 @@ function freezeSextant(){
     );
   }
 }
+function resetSextantBody(){
 
+  sextantBodyLocked=false;
+  sextantFrozenAngle=0;
+  sextantBodyX=250;
+  sextantBodyY=120;
+  sextantDisplayBodyY=120;
+  sextantStartPitch=sextantCurrentPitch;
+
+  let captured=document.getElementById("sextantCaptured");
+  if(captured){
+    captured.innerText="--";
+  }
+
+  let angle=document.getElementById("sextantAngle");
+  if(angle){
+    angle.innerText="0.0°";
+  }
+
+  drawSextant();
+}
 function drawSextant(){
 
   let canvas=document.getElementById("sextantCanvas");
