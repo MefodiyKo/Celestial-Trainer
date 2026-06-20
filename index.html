@@ -5938,6 +5938,9 @@ function resetSextantBody(){
   sextantDisplayBodyY=120;
   sextantStartPitch=sextantCurrentPitch;
 
+  trainingHs=0;
+  sextantCapturedHs=null;
+
   let captured=document.getElementById("sextantCaptured");
   if(captured){
     captured.innerText="--";
