@@ -661,25 +661,20 @@ Calculated Angle:
 <span id="sextantAngle">0.0°</span><br><br>
 Captured Hs:
 <span id="sextantCaptured">--</span>
-<div id="sextantControls">
+<button class="main" onclick="startSextant()">
+Start Sensors
+</button>
 
-  <button class="main" onclick="startSextant()">
-    Start Sensors
-  </button>
+<button class="main" onclick="freezeSextant()">
+Freeze Angle
+</button>
 
-  <button class="main" onclick="useCapturedHsForSight()">
-    Use Captured Hs
-  </button>
+<button class="main" onclick="useCapturedHsForSight()">
+Use Captured Hs for Sight
+</button>
 
-  <button class="main" onclick="stopSextant()">
-    Stop
-  </button>
-
-</div>
-
-<button class="sextant-float-freeze"
-        onclick="freezeSextant()">
-  FREEZE
+<button class="main" onclick="stopSextant()">
+Stop
 </button>
 
 </div>
@@ -5929,7 +5924,7 @@ if(
   }
 
   drawSextant();
-  document.body.classList.add("sextant-fullscreen");
+  
 }
 
 function stopSextant(){
@@ -5942,7 +5937,7 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
-document.body.classList.remove("sextant-fullscreen");
+
 }
 
 function handleSextantOrientation(event){
