@@ -365,6 +365,22 @@ body.sextant-fullscreen .sextant-float-freeze{
   color:#061824;
   font-weight:800;
 }
+body.sextant-fullscreen #sextantControls{
+  position:fixed !important;
+  left:10px !important;
+  right:10px !important;
+  bottom:10px !important;
+  z-index:10001 !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:6px;
+}
+
+body.sextant-fullscreen #sextantControls button{
+  min-height:44px;
+  font-size:12px;
+  padding:6px;
+}
 </style>
 </head>
 
@@ -669,7 +685,9 @@ Stop
   </canvas>
 
 </div>
-
+<button class="sextant-float-freeze" onclick="freezeSextant()">
+FREEZE
+</button>
 <button class="main" onclick="resetSextantBody()">Reset Body / New Sight</button>
 
 </div>
