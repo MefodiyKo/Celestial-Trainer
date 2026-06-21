@@ -6229,66 +6229,6 @@ function drawSextant(){
   ctx.fillText("For training only — not for official navigation",20,340);
   
 }
-function drawSkyLabels(){
-
-  let overlay =
-    document.getElementById("skyOverlayCanvas");
-
-  if(!overlay)return;
-
-  let ctx = overlay.getContext("2d");
-
-  ctx.clearRect(
-    0,
-    0,
-    overlay.width,
-    overlay.height
-  );
-
-  if(
-    !document.getElementById("showSkyLabels")?.checked
-  ){
-    return;
-  }
-
-  ctx.fillStyle="#9ee7ff";
-  ctx.font="16px Arial";
-
-  let labels=[];
-
-  labels.push({
-    name:"Sun",
-    x:overlay.width*0.65,
-    y:overlay.height*0.55
-  });
-
-  labels.push({
-    name:"Moon",
-    x:overlay.width*0.55,
-    y:overlay.height*0.35
-  });
-
-  labels.push({
-    name:"Venus",
-    x:overlay.width*0.70,
-    y:overlay.height*0.25
-  });
-
-  labels.forEach(obj=>{
-
-    ctx.beginPath();
-    ctx.arc(obj.x,obj.y,6,0,Math.PI*2);
-    ctx.fill();
-
-    ctx.fillText(
-      obj.name,
-      obj.x+10,
-      obj.y+5
-    );
-
-  });
-
-}
 setNowUTC();
 populateObjectList();
 updateSightCorrections();
