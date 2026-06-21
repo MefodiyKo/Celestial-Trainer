@@ -1696,7 +1696,25 @@ ctx.lineWidth=1;
 
 ctx.fillStyle="#ffffff";
 ctx.font="10px Arial";
-ctx.fillText(o.name,x+7,y+4);
+
+let labelX = x + 7;
+let labelY = y + 4;
+
+let textWidth = ctx.measureText(o.name).width;
+
+if(labelX + textWidth > right - 5){
+  labelX = x - textWidth - 7;
+}
+
+if(labelY < topY + 10){
+  labelY = topY + 10;
+}
+
+if(labelY > horizonY - 5){
+  labelY = horizonY - 5;
+}
+
+ctx.fillText(o.name,labelX,labelY);
 
 skyObjects.push({
 name:o.name,
@@ -6209,7 +6227,7 @@ function drawSextant(){
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
   ctx.fillText("For training only — not for official navigation",20,340);
-  drawSkyLabels();
+  
 }
 function drawSkyLabels(){
 
