@@ -396,7 +396,18 @@ body.sextant-fullscreen #sextantControls button{
 <div class="card">
 <h3>Sky View</h3>
 <canvas id="skyCanvas" width="360" height="220"></canvas>
-
+<canvas
+  id="skyOverlayCanvas"
+  width="500"
+  height="360"
+  style="
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;">
+</canvas>
 <div id="selectedObjectInfo" class="result">
 Selected: —
 </div>
@@ -666,7 +677,10 @@ Stop
 </button>
 
 </div>
-
+<label style="margin-top:10px;display:block;">
+<input type="checkbox" id="showSkyLabels" checked>
+ Sky Labels
+</label>
 <div id="sextantView" style="position:relative;width:100%;height:360px;margin-top:15px;background:#06152a;border-radius:8px;overflow:hidden;">
 
   <video
@@ -6195,6 +6209,67 @@ function drawSextant(){
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
   ctx.fillText("For training only — not for official navigation",20,340);
+  drawSkyLabels();
+}
+function drawSkyLabels(){
+
+  let overlay =
+    document.getElementById("skyOverlayCanvas");
+
+  if(!overlay)return;
+
+  let ctx = overlay.getContext("2d");
+
+  ctx.clearRect(
+    0,
+    0,
+    overlay.width,
+    overlay.height
+  );
+
+  if(
+    !document.getElementById("showSkyLabels")?.checked
+  ){
+    return;
+  }
+
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="16px Arial";
+
+  let labels=[];
+
+  labels.push({
+    name:"Sun",
+    x:overlay.width*0.65,
+    y:overlay.height*0.55
+  });
+
+  labels.push({
+    name:"Moon",
+    x:overlay.width*0.55,
+    y:overlay.height*0.35
+  });
+
+  labels.push({
+    name:"Venus",
+    x:overlay.width*0.70,
+    y:overlay.height*0.25
+  });
+
+  labels.forEach(obj=>{
+
+    ctx.beginPath();
+    ctx.arc(obj.x,obj.y,6,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillText(
+      obj.name,
+      obj.x+10,
+      obj.y+5
+    );
+
+  });
+
 }
 setNowUTC();
 populateObjectList();
