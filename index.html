@@ -1553,46 +1553,29 @@ if(STAR_GUIDE[obj]){
   theoryBtn=
   "<button class='smallTheoryBtn' onclick=\"openStarTheory('"+obj+"')\">📘 Theory</button>";
 }
-let moonPhase="";
 
 let extraInfo="";
 
 if(obj==="Moon"){
 
-  let phase=alm.Age;
+  let phaseIcon = "🌙";
 
-  if(phase<1.5 || phase>28){
-    moonPhase="🌑 New Moon";
-  }
-  else if(phase<7.4){
-    moonPhase="🌒 Waxing Crescent";
-  }
-  else if(phase<8.9){
-    moonPhase="🌓 First Quarter";
-  }
-  else if(phase<14.2){
-    moonPhase="🌔 Waxing Gibbous";
-  }
-  else if(phase<15.8){
-    moonPhase="🌕 Full Moon";
-  }
-  else if(phase<22.1){
-    moonPhase="🌖 Waning Gibbous";
-  }
-  else if(phase<23.6){
-    moonPhase="🌗 Last Quarter";
-  }
-  else{
-    moonPhase="🌘 Waning Crescent";
-  }
+  if(alm.Age < 1.5 || alm.Age > 28) phaseIcon = "🌑";
+  else if(alm.Age < 7.4) phaseIcon = "🌒";
+  else if(alm.Age < 8.9) phaseIcon = "🌓";
+  else if(alm.Age < 14.2) phaseIcon = "🌔";
+  else if(alm.Age < 15.8) phaseIcon = "🌕";
+  else if(alm.Age < 22.1) phaseIcon = "🌖";
+  else if(alm.Age < 23.6) phaseIcon = "🌗";
+  else phaseIcon = "🌘";
 
-  extraInfo=
-  "Phase: "+moonPhase+"<br>"+
-  "HP: "+alm.HP.toFixed(1)+"'<br>"+
-  "SD: "+alm.SD.toFixed(1)+"'<br>"+
-  "Distance: "+Math.round(alm.Distance).toLocaleString()+" km<br>"+
-  "Moon Age: "+alm.Age.toFixed(1)+" days<br>"+
-  "Illumination: "+alm.Illumination.toFixed(0)+"%<br>";
+  extraInfo =
+  "Phase: " + phaseIcon + " " + alm.PhaseName + "<br>" +
+  "HP: " + alm.HP.toFixed(1) + "'<br>" +
+  "SD: " + alm.SD.toFixed(1) + "'<br>" +
+  "Distance: " + Math.round(alm.Distance).toLocaleString() + " km<br>" +
+  "Moon Age: " + alm.Age.toFixed(1) + " days<br>" +
+  "Illumination: " + alm.Illumination.toFixed(0) + "%<br>";
 }
 
 sunResult.innerHTML=
