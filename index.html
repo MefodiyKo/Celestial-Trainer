@@ -1773,13 +1773,15 @@ if(o.type==="star"){
 });
 if(sunR.Hc<-6){
 
-  ctx.strokeStyle="rgba(158,231,255,0.45)";
-  ctx.lineWidth=1;
+  ctx.save();
+  ctx.globalAlpha = 0.45;
+  ctx.strokeStyle = "#9ee7ff";
+  ctx.lineWidth = 1;
 
   CONSTELLATION_LINES.forEach(line=>{
 
-    let a=plottedStars[line[0]];
-    let b=plottedStars[line[1]];
+    let a = plottedStars[line[0]];
+    let b = plottedStars[line[1]];
 
     if(a && b){
 
@@ -1791,6 +1793,8 @@ if(sunR.Hc<-6){
     }
 
   });
+
+  ctx.restore();
 
 }
 if(selectedInfo){
