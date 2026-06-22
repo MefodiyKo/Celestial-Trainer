@@ -1391,12 +1391,34 @@ let HP=radToDeg(Math.asin(6378.14/distance))*60;
 /* Moon semi-diameter in minutes */
 let SD=0.2725*HP;
 
-/* Age / phase */
-let sun=sunAlmanac(date,time);
-let phaseAngle=norm360(lon - norm360(sun.GHAAries - sun.GHA));
-let age=phaseAngle/360*29.530588;
+/* Sun ecliptic longitude for Moon phase */
+let sunMeanLong = norm360(280.46646 + 0.98564736 * D);
+let sunMeanAnom = norm360(357.52911 + 0.98560028 * D);
 
-let illum=(1-Math.cos(degToRad(phaseAngle)))/2*100;
+let sunLon = sunMeanLong
++ 1.914602 * Math.sin(degToRad(sunMeanAnom))
++ 0.019993 * Math.sin(degToRad(2 * sunMeanAnom))
++ 0.000289 * Math.sin(degToRad(3 * sunMeanAnom));
+
+sunLon = norm360(sunLon);
+
+/* Age / phase */
+let phaseAngle = norm360(lon - sunLon);
+let age = phaseAngle / 360 * 29.530588;
+
+let illum = (1 - Math.cos(degToRad(phaseAngle))) / 2 * 100;
+
+let phaseName = "";
+
+if(age < 1.5) phaseName = "New Moon";
+else if(age < 6.5) phaseName = "Waxing Crescent";
+else if(age < 8.5) phaseName = "First Quarter";
+else if(age < 13.5) phaseName = "Waxing Gibbous";
+else if(age < 16.5) phaseName = "Full Moon";
+else if(age < 21.5) phaseName = "Waning Gibbous";
+else if(age < 23.5) phaseName = "Last Quarter";
+else if(age < 28.0) phaseName = "Waning Crescent";
+else phaseName = "New Moon";
 
 return {
 JD:JD,
@@ -1407,7 +1429,8 @@ SD:SD,
 Distance:distance,
 PhaseAngle:phaseAngle,
 Age:age,
-Illumination:illum
+Illumination:illum,
+PhaseName: phaseName
 };
 
 }
