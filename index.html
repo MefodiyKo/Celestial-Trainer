@@ -1349,14 +1349,24 @@ let lon=L
 +0.658*Math.sin(degToRad(2*Dm))
 +0.214*Math.sin(degToRad(2*M))
 -0.186*Math.sin(degToRad(Ms))
--0.114*Math.sin(degToRad(2*F));
+-0.114*Math.sin(degToRad(2*F))
++0.058*Math.sin(degToRad(2*Dm-2*M))
++0.057*Math.sin(degToRad(2*Dm-M-Ms))
++0.053*Math.sin(degToRad(2*Dm+M))
++0.046*Math.sin(degToRad(2*Dm-Ms));
+
+lon=norm360(lon);
 
 /* Improved ecliptic latitude */
 let lat=
 5.128*Math.sin(degToRad(F))
 +0.280*Math.sin(degToRad(M+F))
 +0.277*Math.sin(degToRad(M-F))
-+0.173*Math.sin(degToRad(2*Dm-F));
++0.173*Math.sin(degToRad(2*Dm-F))
++0.055*Math.sin(degToRad(2*Dm+F-M))
++0.046*Math.sin(degToRad(2*Dm-F-M))
++0.033*Math.sin(degToRad(2*Dm+F))
++0.017*Math.sin(degToRad(2*M+F));
 
 let eps=23.439291-0.00000036*D;
 
@@ -1377,48 +1387,56 @@ Math.cos(degToRad(lat))*Math.sin(degToRad(eps))*Math.sin(degToRad(lon))
 let GMST=gmstFromJD(JD);
 let GHA=norm360(GMST-RA);
 
-/* Distance km, improved approximate */
+/* Distance km */
 let distance=
 385000.56
 -20905.0*Math.cos(degToRad(M))
 -3699.0*Math.cos(degToRad(2*Dm-M))
 -2956.0*Math.cos(degToRad(2*Dm))
--570.0*Math.cos(degToRad(2*M));
+-570.0*Math.cos(degToRad(2*M))
++246.0*Math.cos(degToRad(2*M-2*Dm))
+-205.0*Math.cos(degToRad(Ms-2*Dm))
+-171.0*Math.cos(degToRad(M+2*Dm))
+-152.0*Math.cos(degToRad(M+Ms-2*Dm));
 
 /* Horizontal Parallax in minutes */
 let HP=radToDeg(Math.asin(6378.14/distance))*60;
 
-/* Moon semi-diameter in minutes */
+/* Moon Semi-Diameter in minutes */
 let SD=0.2725*HP;
 
-/* Sun ecliptic longitude for Moon phase */
-let sunMeanLong = norm360(280.46646 + 0.98564736 * D);
-let sunMeanAnom = norm360(357.52911 + 0.98560028 * D);
+/* Sun ecliptic longitude */
+let sunMeanLong=norm360(280.46646+0.98564736*D);
+let sunMeanAnom=norm360(357.52911+0.98560028*D);
 
-let sunLon = sunMeanLong
-+ 1.914602 * Math.sin(degToRad(sunMeanAnom))
-+ 0.019993 * Math.sin(degToRad(2 * sunMeanAnom))
-+ 0.000289 * Math.sin(degToRad(3 * sunMeanAnom));
+let sunLon=sunMeanLong
++1.914602*Math.sin(degToRad(sunMeanAnom))
++0.019993*Math.sin(degToRad(2*sunMeanAnom))
++0.000289*Math.sin(degToRad(3*sunMeanAnom));
 
-sunLon = norm360(sunLon);
+sunLon=norm360(sunLon);
 
-/* Age / phase */
-let phaseAngle = norm360(lon - sunLon);
-let age = phaseAngle / 360 * 29.530588;
+/* Moon phase */
+let phaseAngle=norm360(lon-sunLon);
+let age=phaseAngle/360*29.530588;
 
-let illum = (1 - Math.cos(degToRad(phaseAngle))) / 2 * 100;
+/* Illumination */
+let illum=(1-Math.cos(degToRad(phaseAngle)))/2*100;
 
-let phaseName = "";
+/* Waxing / Waning */
+let waxing = phaseAngle < 180;
 
-if(age < 1.5) phaseName = "New Moon";
-else if(age < 6.5) phaseName = "Waxing Crescent";
-else if(age < 8.5) phaseName = "First Quarter";
-else if(age < 13.5) phaseName = "Waxing Gibbous";
-else if(age < 16.5) phaseName = "Full Moon";
-else if(age < 21.5) phaseName = "Waning Gibbous";
-else if(age < 23.5) phaseName = "Last Quarter";
-else if(age < 28.0) phaseName = "Waning Crescent";
-else phaseName = "New Moon";
+/* Phase name */
+let phaseName="";
+
+if(age < 1.5 || age > 28.0) phaseName="New Moon";
+else if(age < 6.5) phaseName="Waxing Crescent";
+else if(age < 8.5) phaseName="First Quarter";
+else if(age < 13.5) phaseName="Waxing Gibbous";
+else if(age < 16.5) phaseName="Full Moon";
+else if(age < 21.5) phaseName="Waning Gibbous";
+else if(age < 23.5) phaseName="Last Quarter";
+else phaseName="Waning Crescent";
 
 return {
 JD:JD,
@@ -1430,7 +1448,10 @@ Distance:distance,
 PhaseAngle:phaseAngle,
 Age:age,
 Illumination:illum,
-PhaseName: phaseName
+Waxing:waxing,
+PhaseName:phaseName,
+Lon:lon,
+Lat:lat
 };
 
 }
