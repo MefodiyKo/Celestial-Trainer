@@ -1637,7 +1637,40 @@ showPlanetFinder();
 alert("GPS Error: "+err.message);
 },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
 }
+function drawMoonSymbol(ctx,x,y,size,illum,waxing){
 
+ctx.save();
+
+ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.fillStyle="#dddddd";
+ctx.fill();
+
+let shadow = 1 - illum / 100;
+let offset = size * shadow * 1.8;
+
+ctx.globalCompositeOperation="source-over";
+ctx.fillStyle="#06152a";
+
+ctx.beginPath();
+
+if(waxing){
+  ctx.ellipse(x - offset/2,y,size*0.85,size,0,0,Math.PI*2);
+}else{
+  ctx.ellipse(x + offset/2,y,size*0.85,size,0,0,Math.PI*2);
+}
+
+ctx.fill();
+
+ctx.strokeStyle="#ffffff";
+ctx.lineWidth=1;
+ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.stroke();
+
+ctx.restore();
+
+}
 function drawSkyView(){
 let canvas=document.getElementById("skyCanvas");
 let ctx=canvas.getContext("2d");
@@ -1682,7 +1715,19 @@ if(sunR.Hc>-5)objects.push({name:"Sun",type:"sun",hc:sunR.Hc,zn:sunR.Zn,mag:-26}
 
 let moon=moonAlmanac(data.date,data.time);
 let moonR=calculateHcZn(data.lat,moon.Dec,norm360(moon.GHA+data.lon));
-if(moonR.Hc>0)objects.push({name:"Moon",type:"moon",hc:moonR.Hc,zn:moonR.Zn,mag:-12});
+
+if(moonR.Hc>0){
+  objects.push({
+    name:"Moon",
+    type:"moon",
+    hc:moonR.Hc,
+    zn:moonR.Zn,
+    mag:-12,
+    illumination:moon.Illumination,
+    waxing:moon.Waxing,
+    phaseName:moon.PhaseName
+  });
+}
 ["Venus","Mars","Jupiter","Saturn"].forEach(name=>{
 
 let p=planetAlmanac(data.date,data.time,name);
@@ -1743,9 +1788,13 @@ o.type==="moon" ? "#dddddd" :
 o.type==="planet" ? "#88ff88" :
 "#ffffff";
 
-ctx.beginPath();
-ctx.arc(x,y,size,0,Math.PI*2);
-ctx.fill();
+if(o.type==="moon"){
+  drawMoonSymbol(ctx,x,y,size,o.illumination,o.waxing);
+}else{
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+}
 
 if(o.name===selectedObject){
   selectedInfo=o;
