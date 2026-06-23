@@ -1797,7 +1797,7 @@ o.type==="planet" ? "#88ff88" :
 "#ffffff";
 
 if(o.type==="moon"){
-  drawMoonSymbol(ctx,x,y,size,o.illumination,o.waxing);
+  drawMoonSymbol(ctx,x,y,size,o.illumination,!o.waxing);
 }else{
   ctx.beginPath();
   ctx.arc(x,y,size,0,Math.PI*2);
