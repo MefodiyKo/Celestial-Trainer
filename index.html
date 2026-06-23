@@ -1655,9 +1655,9 @@ ctx.fillStyle="#06152a";
 ctx.beginPath();
 
 if(waxing){
-  ctx.ellipse(x - offset/2,y,size*0.85,size,0,0,Math.PI*2);
-}else{
   ctx.ellipse(x + offset/2,y,size*0.85,size,0,0,Math.PI*2);
+}else{
+  ctx.ellipse(x - offset/2,y,size*0.85,size,0,0,Math.PI*2);
 }
 
 ctx.fill();
@@ -1762,7 +1762,14 @@ for(let name in STAR_CATALOG){
 let st=STAR_CATALOG[name];
 let GHA=norm360(sun.GHAAries+st.SHA);
 let rr=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
-if(rr.Hc>5)objects.push({name,type:"star",hc:rr.Hc,zn:rr.Zn,mag:st.Mag});
+if(rr.Hc>5){
+  objects.push({
+    name:name,
+    type:"star",
+    hc:rr.Hc,
+    zn:rr.Zn,
+    mag:st.Mag
+  });
 }
 }
 let plottedStars = {};
