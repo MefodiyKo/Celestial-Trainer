@@ -1429,14 +1429,29 @@ let waxing = phaseAngle < 180;
 /* Phase name */
 let phaseName="";
 
-if(age < 1.5 || age > 28.0) phaseName="New Moon";
-else if(age < 6.5) phaseName="Waxing Crescent";
-else if(age < 8.5) phaseName="First Quarter";
-else if(age < 13.5) phaseName="Waxing Gibbous";
-else if(age < 16.5) phaseName="Full Moon";
-else if(age < 21.5) phaseName="Waning Gibbous";
-else if(age < 23.5) phaseName="Last Quarter";
-else phaseName="Waning Crescent";
+if(age < 1.0 || age > 28.5)
+phaseName="New Moon";
+
+else if(age < 7.4)
+phaseName="Waxing Crescent";
+
+else if(age < 8.9)
+phaseName="First Quarter";
+
+else if(age < 14.2)
+phaseName="Waxing Gibbous";
+
+else if(age < 15.8)
+phaseName="Full Moon";
+
+else if(age < 22.1)
+phaseName="Waning Gibbous";
+
+else if(age < 23.6)
+phaseName="Last Quarter";
+
+else
+phaseName="Waning Crescent";
 
 return {
 JD:JD,
@@ -1641,33 +1656,100 @@ function drawMoonSymbol(ctx,x,y,size,illum,waxing){
 
 ctx.save();
 
+/* Moon dark base */
 ctx.beginPath();
 ctx.arc(x,y,size,0,Math.PI*2);
-ctx.fillStyle="#dddddd";
+ctx.fillStyle="#06152a";
 ctx.fill();
 
-let shadow = 1 - illum / 100;
-let offset = size * shadow * 1.8;
-
-ctx.globalCompositeOperation="source-over";
-ctx.fillStyle="#06152a";
-
+/* Clip to Moon circle */
 ctx.beginPath();
+ctx.arc(x,y,size,0,Math.PI*2);
+ctx.clip();
 
-if(waxing){
-  ctx.ellipse(x + offset/2,y,size*0.85,size,0,0,Math.PI*2);
-}else{
-  ctx.ellipse(x - offset/2,y,size*0.85,size,0,0,Math.PI*2);
+let k=illum/100;
+
+/* Full Moon */
+if(k>0.97){
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fillStyle="#dddddd";
+  ctx.fill();
 }
 
-ctx.fill();
+/* New Moon */
+else if(k<0.03){
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fillStyle="#152a3d";
+  ctx.fill();
+}
 
+/* Crescent */
+else if(k<0.5){
+
+  let crescentWidth=size*(0.25+k*1.5);
+
+  ctx.beginPath();
+
+  if(waxing){
+    ctx.ellipse(x+size*0.45,y,crescentWidth,size,0,-Math.PI/2,Math.PI/2);
+    ctx.lineTo(x+size*0.45,y-size);
+  }else{
+    ctx.ellipse(x-size*0.45,y,crescentWidth,size,0,Math.PI/2,Math.PI*1.5);
+    ctx.lineTo(x-size*0.45,y+size);
+  }
+
+  ctx.fillStyle="#dddddd";
+  ctx.fill();
+}
+
+/* Quarter */
+else if(k>=0.48 && k<=0.52){
+
+  ctx.beginPath();
+
+  if(waxing){
+    ctx.rect(x,y-size,size,size*2);
+  }else{
+    ctx.rect(x-size,y-size,size,size*2);
+  }
+
+  ctx.fillStyle="#dddddd";
+  ctx.fill();
+}
+
+/* Gibbous */
+else{
+
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fillStyle="#dddddd";
+  ctx.fill();
+
+  let shadowWidth=size*((1-k)*1.8);
+
+  ctx.beginPath();
+
+  if(waxing){
+    ctx.ellipse(x-size*0.65,y,shadowWidth,size,0,0,Math.PI*2);
+  }else{
+    ctx.ellipse(x+size*0.65,y,shadowWidth,size,0,0,Math.PI*2);
+  }
+
+  ctx.fillStyle="#06152a";
+  ctx.fill();
+}
+
+/* Border */
+ctx.restore();
+
+ctx.save();
 ctx.strokeStyle="#ffffff";
 ctx.lineWidth=1;
 ctx.beginPath();
 ctx.arc(x,y,size,0,Math.PI*2);
 ctx.stroke();
-
 ctx.restore();
 
 }
