@@ -1912,13 +1912,26 @@ if(o.type==="moon"){
 }
 
 if(o.name===selectedObject){
+
   selectedInfo=o;
-ctx.strokeStyle="#ffd966";
-ctx.lineWidth=2;
-ctx.beginPath();
-ctx.arc(x,y,size+7,0,Math.PI*2);
-ctx.stroke();
-ctx.lineWidth=1;
+
+  /* Bearing line */
+  ctx.strokeStyle="#ffd966";
+  ctx.lineWidth=1;
+
+  ctx.beginPath();
+  ctx.moveTo(x,horizonY);
+  ctx.lineTo(x,y);
+  ctx.stroke();
+
+  /* Selection ring */
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.arc(x,y,size+7,0,Math.PI*2);
+  ctx.stroke();
+
+  ctx.lineWidth=1;
+
 }
 
 ctx.fillStyle="#ffffff";
@@ -1988,7 +2001,7 @@ document.getElementById("selectedObjectInfo").innerHTML=
 "<b>Selected:</b> "+selectedInfo.name+
 " | Hc "+selectedInfo.hc.toFixed(1)+"°"+
 " | Zn "+selectedInfo.zn.toFixed(1)+"°";
-
+" | Bearing Line Active";
 }
 ctx.fillStyle="#9ee7ff";
 ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,210);
