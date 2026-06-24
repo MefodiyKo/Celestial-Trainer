@@ -1923,14 +1923,17 @@ let y=horizonY-(o.hc/90)*(horizonY-topY);
 if(y<topY)y=topY;
 if(y>horizonY)y=horizonY;
 
-let size=
-o.type==="sun" ? 8 :
-o.type==="moon" ? 7 :
-o.type==="planet" ? 5 :
-o.mag<0 ? 5 :
-o.mag<1 ? 4 :
-o.mag<2 ? 3 :
-2;
+let size;
+
+if(o.type==="sun") size=8;
+else if(o.type==="moon") size=7;
+else if(o.name==="Venus") size=6;
+else if(o.name==="Jupiter") size=5;
+else if(o.name==="Mars") size=4;
+else if(o.name==="Saturn") size=4;
+else{
+  size = Math.max(1.5, 5 - o.mag * 1.1);
+}
 
 ctx.fillStyle=
 o.type==="sun" ? "#ffd966" :
@@ -1939,11 +1942,28 @@ o.type==="planet" ? "#88ff88" :
 "#ffffff";
 
 if(o.type==="moon"){
+
   drawMoonSymbol(ctx,x,y,size,o.illumination,!o.waxing);
+
 }else{
+
+  if(o.type==="star" && o.mag<1.0){
+
+    ctx.save();
+    ctx.globalAlpha=0.25;
+
+    ctx.beginPath();
+    ctx.arc(x,y,size+3,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
+
+  }
+
   ctx.beginPath();
   ctx.arc(x,y,size,0,Math.PI*2);
   ctx.fill();
+
 }
 
 if(o.name===selectedObject){
