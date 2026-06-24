@@ -2035,21 +2035,34 @@ if(sunR.Hc<-6){
   ctx.strokeStyle = "#9ee7ff";
   ctx.lineWidth = 1;
 
-  CONSTELLATION_LINES.forEach(line=>{
+CONSTELLATION_LINES.forEach(line=>{
 
-    let a = plottedStars[line[0]];
-    let b = plottedStars[line[1]];
+  let a = plottedStars[line[0]];
+  let b = plottedStars[line[1]];
 
-    if(a && b){
+  if(a && b){
 
-      ctx.beginPath();
-      ctx.moveTo(a.x,a.y);
-      ctx.lineTo(b.x,b.y);
-      ctx.stroke();
+    let selectedStar = STAR_CATALOG[selectedObject];
+    let sameConstellation = false;
 
+    if(selectedStar && STAR_CATALOG[line[0]] && STAR_CATALOG[line[1]]){
+      sameConstellation =
+      STAR_CATALOG[line[0]].Con === selectedStar.Con &&
+      STAR_CATALOG[line[1]].Con === selectedStar.Con;
     }
 
-  });
+    ctx.strokeStyle = sameConstellation ? "#ffd966" : "#9ee7ff";
+    ctx.globalAlpha = sameConstellation ? 0.9 : 0.35;
+    ctx.lineWidth = sameConstellation ? 2 : 1;
+
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);
+    ctx.lineTo(b.x,b.y);
+    ctx.stroke();
+
+  }
+
+});
 
   ctx.restore();
 
