@@ -1790,7 +1790,42 @@ let rightDir=norm360(course+90);
 ctx.fillText(leftDir.toFixed(0)+"°",left,horizonY+16);
 ctx.fillText(centerDir.toFixed(0)+"°",left+width/2-12,horizonY+16);
 ctx.fillText(rightDir.toFixed(0)+"°",right-35,horizonY+16);
+/* Horizon ticks every 10° */
 
+ctx.strokeStyle="#5fb8d9";
+ctx.lineWidth=1;
+
+for(let deg=-90;deg<=90;deg+=10){
+
+  let x=left+((deg+90)/180)*width;
+
+  let tick=4;
+
+  if(deg%30===0)tick=8;
+
+  ctx.beginPath();
+  ctx.moveTo(x,horizonY);
+  ctx.lineTo(x,horizonY-tick);
+  ctx.stroke();
+
+}
+let heading=norm360(course);
+
+function cardinal(d){
+
+if(d>=315 || d<45)return "N";
+if(d>=45 && d<135)return "E";
+if(d>=135 && d<225)return "S";
+return "W";
+
+}
+
+ctx.fillStyle="#9ee7ff";
+ctx.font="12px Arial";
+
+ctx.fillText(cardinal(leftDir),left+18,horizonY-10);
+ctx.fillText(cardinal(centerDir),left+width/2-4,horizonY-10);
+ctx.fillText(cardinal(rightDir),right-18,horizonY-10);
 if(data.error){
 ctx.fillText("Enter UTC and position.",10,25);
 return;
