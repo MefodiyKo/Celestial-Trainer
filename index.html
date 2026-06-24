@@ -1932,7 +1932,8 @@ else if(o.name==="Jupiter") size=5;
 else if(o.name==="Mars") size=4;
 else if(o.name==="Saturn") size=4;
 else{
-  size = Math.max(1.5, 5 - o.mag * 1.1);
+  let twinkle = 0.4 * Math.sin(Date.now()/500 + o.name.length);
+  size = Math.max(1.5, 5 - o.mag * 1.1 + twinkle);
 }
 
 ctx.fillStyle=
@@ -2060,6 +2061,9 @@ document.getElementById("selectedObjectInfo").innerHTML=
 }
 ctx.fillStyle="#9ee7ff";
 ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,210);
+if(sunR.Hc<-6){
+  setTimeout(drawSkyView,700);
+}
 }
 let skyDragging=false;
 
