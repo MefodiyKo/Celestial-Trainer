@@ -1759,18 +1759,30 @@ let canvas=document.getElementById("skyCanvas");
 let ctx=canvas.getContext("2d");
 ctx.clearRect(0,0,canvas.width,canvas.height);
 skyObjects=[];
+
 let selectedObject=celestialObject.value;
 let selectedInfo=null;
 let data=getInputData();
+
 ctx.fillStyle="#06152a";
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 let horizonY=170,left=28,right=340,topY=24,width=right-left;
+
+let course=parseFloat(skyCourse.value);
+if(isNaN(course))course=0;
+
+let mode=skyMode.value;
+
 ctx.strokeStyle="#9ee7ff";
-ctx.beginPath();ctx.moveTo(left,horizonY);ctx.lineTo(right,horizonY);ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(left,horizonY);
+ctx.lineTo(right,horizonY);
+ctx.stroke();
 
 ctx.fillStyle="#9ee7ff";
 ctx.font="11px Arial";
+
 let leftDir=norm360(course-90);
 let centerDir=norm360(course);
 let rightDir=norm360(course+90);
@@ -1783,10 +1795,6 @@ if(data.error){
 ctx.fillText("Enter UTC and position.",10,25);
 return;
 }
-
-let course=parseFloat(skyCourse.value);
-if(isNaN(course))course=0;
-let mode=skyMode.value;
 
 function azToX(az){
 az=norm360(az);
