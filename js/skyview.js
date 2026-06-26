@@ -168,9 +168,18 @@ if(isNaN(course))course=0;
 let mode=skyMode.value;
 
 ctx.strokeStyle="#9ee7ff";
+ctx.lineWidth=2;
+
 ctx.beginPath();
-ctx.moveTo(left,horizonY);
-ctx.lineTo(right,horizonY);
+
+ctx.arc(
+(left+right)/2,
+horizonY+175,
+250,
+Math.PI*1.18,
+Math.PI*1.82
+);
+
 ctx.stroke();
 
 ctx.fillStyle="#9ee7ff";
