@@ -1,3 +1,42 @@
+function drawRealSkyBackground(ctx,canvas,sunHc){
+
+let g=ctx.createLinearGradient(0,0,0,canvas.height);
+
+if(sunHc>5){
+  // Day
+  g.addColorStop(0,"#1b6fa8");
+  g.addColorStop(0.6,"#63b7e6");
+  g.addColorStop(1,"#d6f3ff");
+}
+else if(sunHc>-6){
+  // Civil twilight
+  g.addColorStop(0,"#102b4a");
+  g.addColorStop(0.65,"#234f78");
+  g.addColorStop(1,"#d98b4a");
+}
+else if(sunHc>-12){
+  // Nautical twilight
+  g.addColorStop(0,"#06152a");
+  g.addColorStop(0.7,"#0b2b4c");
+  g.addColorStop(1,"#17476d");
+}
+else if(sunHc>-18){
+  // Astronomical twilight
+  g.addColorStop(0,"#020812");
+  g.addColorStop(0.7,"#06152a");
+  g.addColorStop(1,"#0b2238");
+}
+else{
+  // Night
+  g.addColorStop(0,"#00040a");
+  g.addColorStop(0.65,"#020812");
+  g.addColorStop(1,"#06152a");
+}
+
+ctx.fillStyle=g;
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+}
 function drawMoonSymbol(ctx,x,y,size,illum,waxing){
 
 ctx.save();
@@ -108,9 +147,18 @@ skyObjects=[];
 let selectedObject=celestialObject.value;
 let selectedInfo=null;
 let data=getInputData();
+if(data.error){
+  ctx.fillStyle="#06152a";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#9ee7ff";
+  ctx.fillText("Enter UTC and position.",10,25);
+  return;
+}
+let objects=[];
+let sun=sunAlmanac(data.date,data.time);
+let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 
-ctx.fillStyle="#06152a";
-ctx.fillRect(0,0,canvas.width,canvas.height);
+drawRealSkyBackground(ctx,canvas,sunR.Hc);
 
 let horizonY=170,left=28,right=340,topY=24,width=right-left;
 
@@ -171,10 +219,7 @@ ctx.font="12px Arial";
 ctx.fillText(cardinal(leftDir),left+18,horizonY-10);
 ctx.fillText(cardinal(centerDir),left+width/2-4,horizonY-10);
 ctx.fillText(cardinal(rightDir),right-18,horizonY-10);
-if(data.error){
-ctx.fillText("Enter UTC and position.",10,25);
-return;
-}
+
 
 function azToX(az){
 az=norm360(az);
