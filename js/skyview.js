@@ -230,21 +230,39 @@ ctx.fillText(cardinal(centerDir),left+width/2-4,horizonY-10);
 ctx.fillText(cardinal(rightDir),right-18,horizonY-10);
 
 
-function azToX(az){
+function projectSky(az,hc){
+
 az=norm360(az);
 
-if(mode==="north"){
-  return left+(az/360)*width;
-}
+let center = mode==="north" ? 0 : course;
+let rel=normalizeError(az-center);
 
-/* Course centered: show only 180° sector */
-let rel=normalizeError(az-course);
+/* show only 180° forward sector */
+if(rel<-90 || rel>90)return null;
 
-if(rel<-90 || rel>90){
-  return null;
-}
+/* normalized horizontal position */
+let t=(rel+90)/180;
 
-return left+((rel+90)/180)*width;
+/* wide view */
+let x=left+t*width;
+
+/* altitude curve: low objects stay near horizon, high objects move upward faster */
+let h=Math.max(0,Math.min(90,hc));
+let altitudeFactor=Math.sin(degToRad(h));
+
+/* dome effect: centre of sky is higher than edges */
+let sideCurve=Math.sin(t*Math.PI);
+let domeLift=18*sideCurve;
+
+/* final y */
+let y=horizonY - altitudeFactor*(horizonY-topY) - domeLift;
+
+/* keep inside canvas */
+if(y<topY)y=topY;
+if(y>horizonY)y=horizonY;
+
+return {x:x,y:y};
+
 }
 
 if(sunR.Hc>-5)objects.push({name:"Sun",type:"sun",hc:sunR.Hc,zn:sunR.Zn,mag:-26});
@@ -311,13 +329,12 @@ if(rr.Hc>5){
 }
 let plottedStars = {};
 objects.forEach(o=>{
-let x=azToX(o.zn);
+let pos=projectSky(o.zn,o.hc);
 
-if(x===null)return;
+if(!pos)return;
 
-let y=horizonY-(o.hc/90)*(horizonY-topY);
-if(y<topY)y=topY;
-if(y>horizonY)y=horizonY;
+let x=pos.x;
+let y=pos.y;
 
 let size;
 
