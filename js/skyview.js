@@ -230,15 +230,13 @@ for(let deg=-90;deg<=90;deg+=10){
   ctx.stroke();
 
 }
-let heading=norm360(course);
 
 ctx.fillStyle="#9ee7ff";
 ctx.font="12px Arial";
 
-ctx.fillText(cardinal(leftDir),left+18,horizonY-10);
-ctx.fillText(cardinal(centerDir),left+width/2-4,horizonY-10);
-ctx.fillText(cardinal(rightDir),right-18,horizonY-10);
-
+ctx.fillText(skyCardinal(leftDir),left+18,horizonY-10);
+ctx.fillText(skyCardinal(centerDir),left+width/2-4,horizonY-10);
+ctx.fillText(skyCardinal(rightDir),right-18,horizonY-10);
 
 function projectSky(az,hc){
 
