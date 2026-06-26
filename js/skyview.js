@@ -160,7 +160,11 @@ let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 
 drawRealSkyBackground(ctx,canvas,sunR.Hc);
 
-let horizonY=170,left=28,right=340,topY=24,width=right-left;
+let horizonY=230,
+    left=22,
+    right=338,
+    topY=18,
+    width=right-left;
 
 let course=parseFloat(skyCourse.value);
 if(isNaN(course))course=0;
@@ -172,13 +176,17 @@ ctx.lineWidth=2;
 
 ctx.beginPath();
 
-ctx.arc(
-(left+right)/2,
-horizonY+175,
-250,
-Math.PI*1.18,
-Math.PI*1.82
-);
+ctx.beginPath();
+
+for(let x=left;x<=right;x++){
+
+  let t=(x-left)/width;
+  let y=horizonY-18*Math.sin(Math.PI*t);
+
+  if(x===left)ctx.moveTo(x,y);
+  else ctx.lineTo(x,y);
+
+}
 
 ctx.stroke();
 
