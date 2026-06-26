@@ -238,9 +238,6 @@ if(rel<-90 || rel>90){
 return left+((rel+90)/180)*width;
 }
 
-let objects=[];
-let sun=sunAlmanac(data.date,data.time);
-let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 if(sunR.Hc>-5)objects.push({name:"Sun",type:"sun",hc:sunR.Hc,zn:sunR.Zn,mag:-26});
 
 let moon=moonAlmanac(data.date,data.time);
