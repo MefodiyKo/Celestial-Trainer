@@ -512,3 +512,4 @@ canvas.addEventListener("mouseleave",function(){
 });
 
 }
+function autoUpdateSky(){drawSkyView();}
