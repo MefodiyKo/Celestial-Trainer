@@ -138,6 +138,17 @@ ctx.stroke();
 ctx.restore();
 
 }
+function skyHorizonY(x,left,width,horizonY){
+  let t=(x-left)/width;
+  return horizonY-18*Math.sin(Math.PI*t);
+}
+
+function skyCardinal(d){
+  if(d>=315 || d<45)return "N";
+  if(d>=45 && d<135)return "E";
+  if(d>=135 && d<225)return "S";
+  return "W";
+}
 function drawSkyView(){
 let canvas=document.getElementById("skyCanvas");
 let ctx=canvas.getContext("2d");
@@ -220,15 +231,6 @@ for(let deg=-90;deg<=90;deg+=10){
 
 }
 let heading=norm360(course);
-
-function cardinal(d){
-
-if(d>=315 || d<45)return "N";
-if(d>=45 && d<135)return "E";
-if(d>=135 && d<225)return "S";
-return "W";
-
-}
 
 ctx.fillStyle="#9ee7ff";
 ctx.font="12px Arial";
