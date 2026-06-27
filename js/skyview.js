@@ -201,7 +201,7 @@ let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 
 drawRealSkyBackground(ctx,canvas,sunR.Hc);
 
-let horizonY=360,
+let horizonY=520,
     left=18,
     right=342,
     topY=18,
@@ -567,7 +567,7 @@ if(STAR_CATALOG[selectedInfo.name]){
 document.getElementById("selectedObjectInfo").innerHTML=infoHTML;
 }
 ctx.fillStyle="#9ee7ff";
-ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,210);
+ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,horizonY+55);
 if(sunR.Hc<-6){
   setTimeout(drawSkyView,700);
 }
