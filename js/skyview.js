@@ -185,7 +185,6 @@ let mode=skyMode.value;
 ctx.strokeStyle="#9ee7ff";
 ctx.lineWidth=2;
 
-ctx.beginPath();
 
 ctx.beginPath();
 
@@ -265,7 +264,7 @@ let altitudeFactor=Math.pow(Math.sin(degToRad(h)),0.72);
 
 /* dome effect: centre of sky is higher than edges */
 let sideCurve=Math.sin(t*Math.PI);
-let domeLift=32*sideCurve;
+let domeLift=42*sideCurve;
 
 /* final y */
 let y=horizonY - altitudeFactor*(horizonY-topY) - domeLift;
