@@ -47,7 +47,17 @@ haze.addColorStop(1,"rgba(120,180,210,0.28)");
 
 ctx.fillStyle=haze;
 ctx.fillRect(0,horizonY-45,canvas.width,70);
+ctx.save();
+ctx.globalAlpha=0.35;
+ctx.strokeStyle="rgba(180,235,255,0.8)";
+ctx.lineWidth=1;
 
+ctx.beginPath();
+ctx.moveTo(0,horizonY);
+ctx.lineTo(canvas.width,horizonY);
+ctx.stroke();
+
+ctx.restore();
 /* Sea below horizon */
 let sea=ctx.createLinearGradient(0,horizonY,0,canvas.height);
 sea.addColorStop(0,"rgba(20,70,95,0.75)");
