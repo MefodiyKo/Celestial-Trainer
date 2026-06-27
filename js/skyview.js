@@ -37,6 +37,26 @@ ctx.fillStyle=g;
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
 }
+function drawMarineHaze(ctx,canvas,horizonY){
+
+let haze=ctx.createLinearGradient(0,horizonY-45,0,horizonY+25);
+
+haze.addColorStop(0,"rgba(255,255,255,0)");
+haze.addColorStop(0.45,"rgba(180,230,255,0.18)");
+haze.addColorStop(1,"rgba(120,180,210,0.28)");
+
+ctx.fillStyle=haze;
+ctx.fillRect(0,horizonY-45,canvas.width,70);
+
+/* Sea below horizon */
+let sea=ctx.createLinearGradient(0,horizonY,0,canvas.height);
+sea.addColorStop(0,"rgba(20,70,95,0.75)");
+sea.addColorStop(1,"rgba(5,25,40,0.95)");
+
+ctx.fillStyle=sea;
+ctx.fillRect(0,horizonY,canvas.width,canvas.height-horizonY);
+
+}
 function drawMoonSymbol(ctx,x,y,size,illum,waxing){
 
 ctx.save();
@@ -176,7 +196,7 @@ let horizonY=360,
     right=342,
     topY=18,
     width=right-left;
-
+drawMarineHaze(ctx,canvas,horizonY);
 let course=parseFloat(skyCourse.value);
 if(isNaN(course))course=0;
 
@@ -347,7 +367,7 @@ if(!pos)return;
 
 let x=pos.x;
 let y=pos.y;
-
+let altitudeFade=Math.min(1,Math.max(0.35,o.hc/25));
 let size;
 
 if(o.type==="sun") size=8;
@@ -360,7 +380,7 @@ else{
   let twinkle = 0.4 * Math.sin(Date.now()/500 + o.name.length);
   size = Math.max(1.5, 5 - o.mag * 1.1 + twinkle);
 }
-
+ctx.globalAlpha=altitudeFade;
 ctx.fillStyle=
 o.type==="sun" ? "#ffd966" :
 o.type==="moon" ? "#dddddd" :
@@ -370,7 +390,30 @@ o.name==="Jupiter" ? "#f5deb3" :
 o.name==="Saturn" ? "#ffe08a" :
 "#ffffff";
 
-if(o.type==="moon"){
+if(o.type==="sun"){
+
+  ctx.save();
+  ctx.globalAlpha=0.35;
+  ctx.beginPath();
+  ctx.arc(x,y,size+18,0,Math.PI*2);
+  ctx.fillStyle="#ffd966";
+  ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+
+}
+else if(o.type==="moon"){
+
+  ctx.save();
+  ctx.globalAlpha=0.22;
+  ctx.beginPath();
+  ctx.arc(x,y,size+14,0,Math.PI*2);
+  ctx.fillStyle="#ddddff";
+  ctx.fill();
+  ctx.restore();
 
   drawMoonSymbol(ctx,x,y,size,o.illumination,!o.waxing);
 
@@ -394,7 +437,7 @@ if(o.type==="moon"){
   ctx.fill();
 
 }
-
+ctx.globalAlpha=1;
 if(o.name===selectedObject){
 
   selectedInfo=o;
