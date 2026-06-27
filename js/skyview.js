@@ -224,20 +224,25 @@ for(let deg=-90;deg<=90;deg+=10){
 
   if(deg%30===0)tick=8;
 
-  ctx.beginPath();
-  ctx.moveTo(x,horizonY);
-  ctx.lineTo(x,horizonY-tick);
-  ctx.stroke();
+let hy=skyHorizonY(x,left,width,horizonY);
+
+ctx.beginPath();
+ctx.moveTo(x,hy);
+ctx.lineTo(x,hy-tick);
+ctx.stroke();
 
 }
 
 ctx.fillStyle="#9ee7ff";
 ctx.font="12px Arial";
 
-ctx.fillText(skyCardinal(leftDir),left+18,horizonY-10);
-ctx.fillText(skyCardinal(centerDir),left+width/2-4,horizonY-10);
-ctx.fillText(skyCardinal(rightDir),right-18,horizonY-10);
+let leftHY   = skyHorizonY(left,left,width,horizonY);
+let centerHY = skyHorizonY(left+width/2,left,width,horizonY);
+let rightHY  = skyHorizonY(right,left,width,horizonY);
 
+ctx.fillText(skyCardinal(leftDir),left+18,leftHY-10);
+ctx.fillText(skyCardinal(centerDir),left+width/2-4,centerHY-10);
+ctx.fillText(skyCardinal(rightDir),right-18,rightHY-10);
 function projectSky(az,hc){
 
 az=norm360(az);
