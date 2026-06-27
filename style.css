@@ -32,8 +32,17 @@ letter-spacing:.3px;
 .tabs button.active{background:#1f6fa8}
 .section{display:none;padding:15px}
 .section.active{display:block}
-.card{background:#132f46;padding:15px;border-radius:10px}
+.card{
+background:#132f46;
+padding:10px;
+border-radius:12px;
+margin-bottom:10px;
+}
 label{display:block;margin-top:12px}
+.card h2{
+margin:2px 0 8px;
+font-size:18px;
+}
 input,select{width:100%;padding:10px;font-size:16px;box-sizing:border-box;border-radius:6px;border:none;margin-top:5px}
 button.main{width:100%;padding:14px;font-size:16px;background:#1f8ac0;color:white;border:none;border-radius:8px;margin-top:15px}
 .result{font-size:18px;margin-top:15px;color:#9ee7ff;line-height:1.5}
