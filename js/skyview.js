@@ -171,7 +171,7 @@ let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 
 drawRealSkyBackground(ctx,canvas,sunR.Hc);
 
-let horizonY=310,
+let horizonY=360,
     left=18,
     right=342,
     topY=18,
