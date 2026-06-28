@@ -195,12 +195,44 @@ if(o.type==="star"){
     ctx.globalAlpha=fade;
 
     if(o.type==="sun"){
-      drawSkyV3Glow(ctx,x,y,size+22,"rgba(255,217,102,0.35)");
-      ctx.fillStyle="#ffd966";
-      ctx.beginPath();
-      ctx.arc(x,y,size,0,Math.PI*2);
-      ctx.fill();
-    }
+
+  /* Outer corona */
+  let corona=ctx.createRadialGradient(
+      x,y,size*0.5,
+      x,y,size*5
+  );
+
+  corona.addColorStop(0,"rgba(255,245,180,0.70)");
+  corona.addColorStop(0.35,"rgba(255,220,120,0.30)");
+  corona.addColorStop(1,"rgba(255,200,80,0)");
+
+  ctx.fillStyle=corona;
+  ctx.beginPath();
+  ctx.arc(x,y,size*5,0,Math.PI*2);
+  ctx.fill();
+
+  /* Inner glow */
+  let glow=ctx.createRadialGradient(
+      x,y,1,
+      x,y,size*1.4
+  );
+
+  glow.addColorStop(0,"#fffef8");
+  glow.addColorStop(0.55,"#ffe58a");
+  glow.addColorStop(1,"#ffb63a");
+
+  ctx.fillStyle=glow;
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+
+  /* Bright core */
+  ctx.fillStyle="#fffdf2";
+  ctx.beginPath();
+  ctx.arc(x,y,size*0.45,0,Math.PI*2);
+  ctx.fill();
+
+}
     else if(o.type==="moon"){
       drawSkyV3Glow(ctx,x,y,size+16,"rgba(220,220,255,0.25)");
       drawSkyV3Moon(ctx,x,y,size,o.illumination,!o.waxing);
