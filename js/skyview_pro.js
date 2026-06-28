@@ -17,14 +17,25 @@ function drawSkyViewPro(){
   ctx.setTransform(1,0,0,1,0,0);
   ctx.globalAlpha=0.18;
 
-  /* subtle PRO vignette */
-  let v=ctx.createRadialGradient(W/2,H*0.35,W*0.15,W/2,H*0.35,W*0.85);
-  v.addColorStop(0,"rgba(255,255,255,0.04)");
-  v.addColorStop(0.65,"rgba(0,0,0,0)");
-  v.addColorStop(1,"rgba(0,0,0,0.45)");
+  /* PRO atmosphere */
+let horizonGlow=ctx.createLinearGradient(0,H*0.35,0,H);
 
-  ctx.fillStyle=v;
-  ctx.fillRect(0,0,W,H);
+horizonGlow.addColorStop(0,"rgba(255,255,255,0)");
+horizonGlow.addColorStop(0.55,"rgba(160,220,255,0.08)");
+horizonGlow.addColorStop(0.78,"rgba(210,240,255,0.18)");
+horizonGlow.addColorStop(1,"rgba(20,40,60,0.25)");
+
+ctx.fillStyle=horizonGlow;
+ctx.fillRect(0,0,W,H);
+
+/* subtle lens vignette */
+let v=ctx.createRadialGradient(W/2,H*0.35,W*0.10,W/2,H*0.35,W*0.95);
+v.addColorStop(0,"rgba(255,255,255,0.03)");
+v.addColorStop(0.68,"rgba(0,0,0,0)");
+v.addColorStop(1,"rgba(0,0,0,0.42)");
+
+ctx.fillStyle=v;
+ctx.fillRect(0,0,W,H);
 
   ctx.restore();
 }
