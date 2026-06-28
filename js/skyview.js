@@ -209,7 +209,7 @@ let topY = 30;
 let width = right - left;
 
 /* Горизонт занимает ~80% высоты окна */
-let horizonY = canvas.height - 55;
+let horizonY = canvas.height * 0.76;
 drawMarineHaze(ctx,canvas,horizonY);
 let course=parseFloat(skyCourse.value);
 if(isNaN(course))course=0;
