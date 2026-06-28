@@ -1553,14 +1553,7 @@ updateSightCorrections();
 autoUpdateSky();
 return true;
 }
-function setUTCFromTimestamp(timestamp){
-  let d=new Date(timestamp);
 
-  dateUTC.value=d.toISOString().slice(0,10);
-  utcHour.value=String(d.getUTCHours()).padStart(2,"0");
-  utcMin.value=String(d.getUTCMinutes()).padStart(2,"0");
-  utcSec.value=String(d.getUTCSeconds()).padStart(2,"0");
-}
 function getGPSPosition(){
 if(!navigator.geolocation){alert("GPS not supported.");return;}
 navigator.geolocation.getCurrentPosition(pos=>{
