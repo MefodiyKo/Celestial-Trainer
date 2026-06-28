@@ -205,11 +205,11 @@ const margin = 18;
 
 let left = margin;
 let right = canvas.width - margin;
-let topY = 18;
+let topY = 30;
 let width = right - left;
 
 /* Горизонт занимает ~80% высоты окна */
-let horizonY = Math.round(canvas.height * 0.80);
+let horizonY = canvas.height - 55;
 drawMarineHaze(ctx,canvas,horizonY);
 let course=parseFloat(skyCourse.value);
 if(isNaN(course))course=0;
@@ -298,7 +298,7 @@ let altitudeFactor=Math.pow(Math.sin(degToRad(h)),0.72);
 
 /* dome effect: centre of sky is higher than edges */
 let sideCurve=Math.sin(t*Math.PI);
-let domeLift=42*sideCurve;
+let domeLift = (canvas.height * 0.10) * sideCurve;
 
 /* final y */
 let y=horizonY - altitudeFactor*(horizonY-topY) - domeLift;
