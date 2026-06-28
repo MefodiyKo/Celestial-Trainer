@@ -470,89 +470,94 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
   ctx.restore();
 }
 
-/* Override old Sky View */
-window.drawSkyView=drawSkyViewV3;
-window.autoUpdateSky=function(){drawSkyViewV3();};
-let skyDragging=false;
-let lastSkyX=null;
+/* Override old Sky View completely */
 
-function setupSkyViewControls(){
+window.drawSkyView = drawSkyViewV3;
 
-let canvas=document.getElementById("skyCanvas");
-if(!canvas)return;
+window.autoUpdateSky = function(){
+  drawSkyViewV3();
+};
 
-function getPoint(e){
-  let rect=canvas.getBoundingClientRect();
-  let p=e.touches ? e.touches[0] : e;
-  return {
-    x:p.clientX-rect.left,
-    y:p.clientY-rect.top,
-    rect:rect
-  };
-}
+window.setupSkyViewControls = function(){
 
-function trySelectObject(x,y){
-  for(let i=skyObjects.length-1;i>=0;i--){
-    let o=skyObjects[i];
-    let dx=x-o.x;
-    let dy=y-o.y;
+  let canvas=document.getElementById("skyCanvas");
+  if(!canvas)return;
 
-    if(Math.sqrt(dx*dx+dy*dy)<32){
-      celestialObject.value=o.name;
-      calculateObject();
-      autoUpdateSky();
-      return true;
+  let skyV3Dragging=false;
+  let skyV3LastX=null;
+
+  function getPoint(e){
+    let rect=canvas.getBoundingClientRect();
+    let p=e.touches ? e.touches[0] : e;
+
+    return {
+      x:p.clientX-rect.left,
+      y:p.clientY-rect.top,
+      rect:rect
+    };
+  }
+
+  function trySelectObject(x,y){
+    for(let i=skyObjects.length-1;i>=0;i--){
+      let o=skyObjects[i];
+      let dx=x-o.x;
+      let dy=y-o.y;
+
+      if(Math.sqrt(dx*dx+dy*dy)<34){
+        celestialObject.value=o.name;
+        calculateObject();
+        drawSkyViewV3();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function start(e){
+    let p=getPoint(e);
+
+    if(trySelectObject(p.x,p.y)){
+      e.preventDefault();
+      return;
+    }
+
+    let activeTop=p.rect.height*0.55;
+    let activeBottom=p.rect.height*0.95;
+
+    if(p.y>activeTop && p.y<activeBottom){
+      skyV3Dragging=true;
+      skyV3LastX=p.x;
+      e.preventDefault();
     }
   }
-  return false;
-}
 
-function start(e){
-  let p=getPoint(e);
+  function move(e){
+    if(!skyV3Dragging)return;
 
-  if(trySelectObject(p.x,p.y)){
-    e.preventDefault();
-    return;
-  }
+    let p=getPoint(e);
+    let dx=p.x-skyV3LastX;
+    skyV3LastX=p.x;
 
-  let activeTop=p.rect.height*0.58;
-  let activeBottom=p.rect.height*0.92;
+    let current=parseFloat(skyCourse.value);
+    if(isNaN(current))current=0;
 
-  if(p.y>activeTop && p.y<activeBottom){
-    skyDragging=true;
-    lastSkyX=p.x;
+    skyCourse.value=String(norm360(current+dx*0.35).toFixed(0)).padStart(3,"0");
+
+    drawSkyViewV3();
     e.preventDefault();
   }
-}
 
-function move(e){
-  if(!skyDragging)return;
+  function end(){
+    skyV3Dragging=false;
+    skyV3LastX=null;
+  }
 
-  let p=getPoint(e);
-  let dx=p.x-lastSkyX;
-  lastSkyX=p.x;
+  canvas.addEventListener("touchstart",start,{passive:false});
+  canvas.addEventListener("touchmove",move,{passive:false});
+  canvas.addEventListener("touchend",end);
 
-  let current=parseFloat(skyCourse.value);
-  if(isNaN(current))current=0;
-
-  skyCourse.value=String(norm360(current+dx*0.35).toFixed(0)).padStart(3,"0");
-
-  autoUpdateSky();
-  e.preventDefault();
-}
-
-function end(){
-  skyDragging=false;
-  lastSkyX=null;
-}
-
-canvas.addEventListener("touchstart",start,{passive:false});
-canvas.addEventListener("touchmove",move,{passive:false});
-canvas.addEventListener("touchend",end);
-
-canvas.addEventListener("mousedown",start);
-canvas.addEventListener("mousemove",move);
-canvas.addEventListener("mouseup",end);
-canvas.addEventListener("mouseleave",end);
-
-}
+  canvas.addEventListener("mousedown",start);
+  canvas.addEventListener("mousemove",move);
+  canvas.addEventListener("mouseup",end);
+  canvas.addEventListener("mouseleave",end);
+};
