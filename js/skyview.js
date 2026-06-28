@@ -201,11 +201,15 @@ let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
 
 drawRealSkyBackground(ctx,canvas,sunR.Hc);
 
-let horizonY=520,
-    left=18,
-    right=342,
-    topY=18,
-    width=right-left;
+const margin = 18;
+
+let left = margin;
+let right = canvas.width - margin;
+let topY = 18;
+let width = right - left;
+
+/* Горизонт занимает ~80% высоты окна */
+let horizonY = Math.round(canvas.height * 0.80);
 drawMarineHaze(ctx,canvas,horizonY);
 let course=parseFloat(skyCourse.value);
 if(isNaN(course))course=0;
