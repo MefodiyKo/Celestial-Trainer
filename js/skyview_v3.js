@@ -325,7 +325,7 @@ function drawSkyV3MilkyWay(ctx,W,H,horizonY){
 
   ctx.save();
 
-  ctx.globalAlpha=0.16;
+  ctx.globalAlpha=0.35;
 
   ctx.translate(W*0.60,H*0.35);
   ctx.rotate(-0.55);
