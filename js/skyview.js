@@ -582,9 +582,7 @@ document.getElementById("selectedObjectInfo").innerHTML=infoHTML;
 }
 ctx.fillStyle="#9ee7ff";
 ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,horizonY+55);
-if(sunR.Hc<-6){
-  setTimeout(drawSkyView,700);
-}
+
 }
 let skyDragging=false;
 
