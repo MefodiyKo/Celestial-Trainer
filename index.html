@@ -1573,7 +1573,7 @@ let ld=Math.floor(lat), lm=(lat-ld)*60;
 let od=Math.floor(lon), om=(lon-od)*60;
 latDeg.value=ld;latMin.value=lm.toFixed(1);
 lonDeg.value=od;lonMin.value=om.toFixed(1);
-setUTCFromTimestamp(pos.timestamp);
+setNowUTC();
 calculateObject();
 populateObjectList();
 showStarPlanner();
