@@ -586,75 +586,86 @@ ctx.fillText("Sky View OK | Course "+course.toFixed(0)+"°",10,horizonY+55);
 }
 let skyDragging=false;
 
+let skyDragging=false;
+let lastSkyX=null;
+
 function setupSkyViewControls(){
 
 let canvas=document.getElementById("skyCanvas");
 if(!canvas)return;
 
-canvas.addEventListener("touchstart",function(e){
+function getPoint(e){
   let rect=canvas.getBoundingClientRect();
-  let y=e.touches[0].clientY-rect.top;
+  let p=e.touches ? e.touches[0] : e;
+  return {
+    x:p.clientX-rect.left,
+    y:p.clientY-rect.top,
+    rect:rect
+  };
+}
 
-  if(y>150 && y<190){
+function trySelectObject(x,y){
+  for(let i=skyObjects.length-1;i>=0;i--){
+    let o=skyObjects[i];
+    let dx=x-o.x;
+    let dy=y-o.y;
+    if(Math.sqrt(dx*dx+dy*dy)<28){
+      celestialObject.value=o.name;
+      calculateObject();
+      autoUpdateSky();
+      return true;
+    }
+  }
+  return false;
+}
+
+function start(e){
+  let p=getPoint(e);
+
+  if(trySelectObject(p.x,p.y)){
+    e.preventDefault();
+    return;
+  }
+
+  let activeTop=p.rect.height*0.60;
+  let activeBottom=p.rect.height*0.90;
+
+  if(p.y>activeTop && p.y<activeBottom){
     skyDragging=true;
+    lastSkyX=p.x;
     e.preventDefault();
   }
-},{passive:false});
+}
 
-canvas.addEventListener("touchmove",function(e){
+function move(e){
   if(!skyDragging)return;
 
-  let rect=canvas.getBoundingClientRect();
-  let x=e.touches[0].clientX-rect.left;
-  let canvasWidth=rect.width;
+  let p=getPoint(e);
+  let dx=p.x-lastSkyX;
+  lastSkyX=p.x;
 
-  let rel=(x/canvasWidth-0.5)*180;
   let current=parseFloat(skyCourse.value);
   if(isNaN(current))current=0;
 
-  skyCourse.value=String(norm360(current+rel*0.03).toFixed(0)).padStart(3,"0");
+  skyCourse.value=String(norm360(current+dx*0.35).toFixed(0)).padStart(3,"0");
 
-  drawSkyView();
+  autoUpdateSky();
   e.preventDefault();
-},{passive:false});
+}
 
-canvas.addEventListener("touchend",function(){
+function end(){
   skyDragging=false;
-});
+  lastSkyX=null;
+}
 
-canvas.addEventListener("mousedown",function(e){
-  let rect=canvas.getBoundingClientRect();
-  let y=e.clientY-rect.top;
+canvas.addEventListener("touchstart",start,{passive:false});
+canvas.addEventListener("touchmove",move,{passive:false});
+canvas.addEventListener("touchend",end);
 
-  if(y>150 && y<190){
-    skyDragging=true;
-    e.preventDefault();
-  }
-});
-
-canvas.addEventListener("mousemove",function(e){
-  if(!skyDragging)return;
-
-  let rect=canvas.getBoundingClientRect();
-  let x=e.clientX-rect.left;
-  let canvasWidth=rect.width;
-
-  let rel=(x/canvasWidth-0.5)*180;
-  let current=parseFloat(skyCourse.value);
-  if(isNaN(current))current=0;
-
-  skyCourse.value=String(norm360(current+rel*0.03).toFixed(0)).padStart(3,"0");
-
-  drawSkyView();
-});
-
-canvas.addEventListener("mouseup",function(){
-  skyDragging=false;
-});
-
-canvas.addEventListener("mouseleave",function(){
-  skyDragging=false;
-});
+canvas.addEventListener("mousedown",start);
+canvas.addEventListener("mousemove",move);
+canvas.addEventListener("mouseup",end);
+canvas.addEventListener("mouseleave",end);
 
 }
 function autoUpdateSky(){drawSkyView();}
