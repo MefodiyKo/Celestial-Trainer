@@ -306,9 +306,9 @@ function projectSky(az,hc){
 
   /* dome lift strongest in the center */
   let sideCurve = Math.sin(t * Math.PI);
-  let domeLift = canvas.height * 0.08 * sideCurve;
+ let domeLift = canvas.height * 0.05 * sideCurve;
 
-  let usableHeight = skyBottom - skyTop - canvas.height * 0.08;
+let usableHeight = (skyBottom - skyTop) * 0.82;
 
   let y = skyBottom - altitudeFactor * usableHeight - domeLift;
 
