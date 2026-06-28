@@ -389,24 +389,53 @@ function drawSkyV3MilkyWay(ctx,W,H,horizonY){
 
   ctx.save();
 
-  ctx.globalAlpha=0.16;
-
-  ctx.translate(W*0.60,H*0.35);
+  ctx.translate(W*0.58,H*0.36);
   ctx.rotate(-0.55);
 
-  let g=ctx.createLinearGradient(0,-H*0.45,0,H*0.45);
+  /* Main soft cloud */
+  let g=ctx.createRadialGradient(
+    0,0,W*0.03,
+    0,0,W*0.22
+  );
 
-  g.addColorStop(0,"rgba(255,255,255,0)");
-  g.addColorStop(0.20,"rgba(210,220,255,0.04)");
-  g.addColorStop(0.50,"rgba(240,245,255,0.22)");
-  g.addColorStop(0.80,"rgba(210,220,255,0.04)");
+  g.addColorStop(0,"rgba(240,245,255,0.28)");
+  g.addColorStop(0.35,"rgba(210,220,255,0.14)");
+  g.addColorStop(0.70,"rgba(180,200,255,0.06)");
   g.addColorStop(1,"rgba(255,255,255,0)");
 
+  ctx.globalAlpha=0.55;
   ctx.fillStyle=g;
-  ctx.fillRect(-W*0.14,-H*0.60,W*0.28,H*1.20);
+
+  ctx.beginPath();
+  ctx.ellipse(0,0,W*0.20,H*0.75,0,0,Math.PI*2);
+  ctx.fill();
+
+  /* Secondary cloud */
+  let g2=ctx.createRadialGradient(
+    -W*0.04,-H*0.18,W*0.02,
+    -W*0.04,-H*0.18,W*0.16
+  );
+
+  g2.addColorStop(0,"rgba(255,255,255,0.22)");
+  g2.addColorStop(0.45,"rgba(210,220,255,0.10)");
+  g2.addColorStop(1,"rgba(255,255,255,0)");
+
+  ctx.globalAlpha=0.45;
+  ctx.fillStyle=g2;
+
+  ctx.beginPath();
+  ctx.ellipse(-W*0.04,-H*0.18,W*0.14,H*0.36,0,0,Math.PI*2);
+  ctx.fill();
+
+  /* Dark split */
+  ctx.globalAlpha=0.20;
+  ctx.fillStyle="rgba(0,5,18,0.9)";
+
+  ctx.beginPath();
+  ctx.ellipse(W*0.03,0,W*0.045,H*0.55,0,0,Math.PI*2);
+  ctx.fill();
 
   ctx.restore();
-
 }
 function drawSkyV3Background(ctx,W,H,sunHc){
   let g=ctx.createLinearGradient(0,0,0,H);
