@@ -278,37 +278,44 @@ ctx.fillText(skyCardinal(centerDir),left+width/2-4,centerHY-10);
 ctx.fillText(skyCardinal(rightDir),right-18,rightHY-10);
 function projectSky(az,hc){
 
-az=norm360(az);
+  az=norm360(az);
 
-let center = mode==="north" ? 0 : course;
-let rel=normalizeError(az-center);
+  let center = mode==="north" ? 0 : course;
+  let rel = normalizeError(az-center);
 
-/* show only 180° forward sector */
-if(rel<-90 || rel>90)return null;
+  /* 180° visible sector */
+  if(rel < -90 || rel > 90) return null;
 
-/* normalized horizontal position */
-let t=(rel+90)/180;
+  let t = (rel + 90) / 180;
 
-/* wide view */
-let x=left+t*width;
+  /* adaptive horizontal position */
+  let x = left + t * width;
 
-/* altitude curve: low objects stay near horizon, high objects move upward faster */
-let h=Math.max(0,Math.min(90,hc));
-let altitudeFactor = Math.sin(degToRad(h));
+  /* adaptive vertical sky dome */
+  let h = Math.max(0, Math.min(90, hc));
 
-/* dome effect: centre of sky is higher than edges */
-let sideCurve=Math.sin(t*Math.PI);
-let domeLift = (canvas.height * 0.10) * sideCurve;
+  let skyTop = topY + canvas.height * 0.04;
+  let skyBottom = horizonY;
 
-/* final y */
-let usableHeight = horizonY - topY - 25;
-let y = horizonY - altitudeFactor * usableHeight - domeLift;
+  /*
+    Projection:
+    0°  = horizon
+    90° = zenith area
+  */
+  let altitudeFactor = Math.sin(degToRad(h));
 
-/* keep inside canvas */
-if(y<topY)y=topY;
-if(y>horizonY)y=horizonY;
+  /* dome lift strongest in the center */
+  let sideCurve = Math.sin(t * Math.PI);
+  let domeLift = canvas.height * 0.08 * sideCurve;
 
-return {x:x,y:y};
+  let usableHeight = skyBottom - skyTop - canvas.height * 0.08;
+
+  let y = skyBottom - altitudeFactor * usableHeight - domeLift;
+
+  if(y < skyTop) y = skyTop;
+  if(y > skyBottom) y = skyBottom;
+
+  return {x:x,y:y};
 
 }
 
