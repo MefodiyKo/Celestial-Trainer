@@ -1553,7 +1553,14 @@ updateSightCorrections();
 autoUpdateSky();
 return true;
 }
+function setUTCFromTimestamp(timestamp){
+  let d=new Date(timestamp);
 
+  dateUTC.value=d.toISOString().slice(0,10);
+  utcHour.value=String(d.getUTCHours()).padStart(2,"0");
+  utcMin.value=String(d.getUTCMinutes()).padStart(2,"0");
+  utcSec.value=String(d.getUTCSeconds()).padStart(2,"0");
+}
 function getGPSPosition(){
 if(!navigator.geolocation){alert("GPS not supported.");return;}
 navigator.geolocation.getCurrentPosition(pos=>{
@@ -1566,7 +1573,7 @@ let ld=Math.floor(lat), lm=(lat-ld)*60;
 let od=Math.floor(lon), om=(lon-od)*60;
 latDeg.value=ld;latMin.value=lm.toFixed(1);
 lonDeg.value=od;lonMin.value=om.toFixed(1);
-setNowUTC();
+setUTCFromTimestamp(pos.timestamp);
 calculateObject();
 populateObjectList();
 showStarPlanner();
