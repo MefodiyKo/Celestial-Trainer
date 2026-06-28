@@ -473,3 +473,86 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 /* Override old Sky View */
 window.drawSkyView=drawSkyViewV3;
 window.autoUpdateSky=function(){drawSkyViewV3();};
+let skyDragging=false;
+let lastSkyX=null;
+
+function setupSkyViewControls(){
+
+let canvas=document.getElementById("skyCanvas");
+if(!canvas)return;
+
+function getPoint(e){
+  let rect=canvas.getBoundingClientRect();
+  let p=e.touches ? e.touches[0] : e;
+  return {
+    x:p.clientX-rect.left,
+    y:p.clientY-rect.top,
+    rect:rect
+  };
+}
+
+function trySelectObject(x,y){
+  for(let i=skyObjects.length-1;i>=0;i--){
+    let o=skyObjects[i];
+    let dx=x-o.x;
+    let dy=y-o.y;
+
+    if(Math.sqrt(dx*dx+dy*dy)<32){
+      celestialObject.value=o.name;
+      calculateObject();
+      autoUpdateSky();
+      return true;
+    }
+  }
+  return false;
+}
+
+function start(e){
+  let p=getPoint(e);
+
+  if(trySelectObject(p.x,p.y)){
+    e.preventDefault();
+    return;
+  }
+
+  let activeTop=p.rect.height*0.58;
+  let activeBottom=p.rect.height*0.92;
+
+  if(p.y>activeTop && p.y<activeBottom){
+    skyDragging=true;
+    lastSkyX=p.x;
+    e.preventDefault();
+  }
+}
+
+function move(e){
+  if(!skyDragging)return;
+
+  let p=getPoint(e);
+  let dx=p.x-lastSkyX;
+  lastSkyX=p.x;
+
+  let current=parseFloat(skyCourse.value);
+  if(isNaN(current))current=0;
+
+  skyCourse.value=String(norm360(current+dx*0.35).toFixed(0)).padStart(3,"0");
+
+  autoUpdateSky();
+  e.preventDefault();
+}
+
+function end(){
+  skyDragging=false;
+  lastSkyX=null;
+}
+
+canvas.addEventListener("touchstart",start,{passive:false});
+canvas.addEventListener("touchmove",move,{passive:false});
+canvas.addEventListener("touchend",end);
+
+canvas.addEventListener("mousedown",start);
+canvas.addEventListener("mousemove",move);
+canvas.addEventListener("mouseup",end);
+canvas.addEventListener("mouseleave",end);
+
+}
