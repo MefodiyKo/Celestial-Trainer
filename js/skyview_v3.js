@@ -21,6 +21,34 @@ function skyV3StarColor(name){
 
   return colors[name] || "#ffffff";
 }
+function drawSkyProBrightStar(ctx,x,y,size,color){
+
+  let g=ctx.createRadialGradient(x,y,0,x,y,size*4);
+
+  g.addColorStop(0,color);
+  g.addColorStop(0.25,color);
+  g.addColorStop(1,"rgba(255,255,255,0)");
+
+  ctx.fillStyle=g;
+  ctx.beginPath();
+  ctx.arc(x,y,size*4,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle=color;
+  ctx.lineWidth=1;
+
+  ctx.beginPath();
+  ctx.moveTo(x-size*2.2,y);
+  ctx.lineTo(x+size*2.2,y);
+  ctx.moveTo(x,y-size*2.2);
+  ctx.lineTo(x,y+size*2.2);
+  ctx.stroke();
+}
 function drawSkyViewV3(){
   let canvas=document.getElementById("skyCanvas");
   if(!canvas)return;
@@ -257,9 +285,13 @@ if(o.type==="star"){
   ctx.save();
   ctx.globalAlpha *= twinkle;
 
+  if(o.mag<1.0){
+  drawSkyProBrightStar(ctx,x,y,size,skyV3StarColor(o.name));
+}else{
   ctx.beginPath();
   ctx.arc(x,y,size,0,Math.PI*2);
   ctx.fill();
+}
 
   ctx.restore();
 
