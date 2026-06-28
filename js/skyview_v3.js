@@ -182,7 +182,11 @@ function drawSkyViewV3(){
     else if(o.name==="Saturn")size=4;
     else size=Math.max(1.5,5-o.mag*1.1);
 
-    let fade=Math.min(1,Math.max(0.35,o.hc/22));
+   let fade=Math.min(1,Math.max(0.18,o.hc/28));
+
+if(o.type==="star"){
+  fade *= Math.max(0.35, 1 - o.mag*0.18);
+}
 
     ctx.save();
     ctx.globalAlpha=fade;
