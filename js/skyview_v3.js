@@ -498,20 +498,45 @@ window.setupSkyViewControls = function(){
   }
 
   function trySelectObject(x,y){
-    for(let i=skyObjects.length-1;i>=0;i--){
-      let o=skyObjects[i];
-      let dx=x-o.x;
-      let dy=y-o.y;
 
-      if(Math.sqrt(dx*dx+dy*dy)<34){
-        celestialObject.value=o.name;
-        calculateObject();
-        drawSkyViewV3();
-        return true;
+  for(let i=skyObjects.length-1;i>=0;i--){
+
+    let o=skyObjects[i];
+
+    let dx=x-o.x;
+    let dy=y-o.y;
+
+    if(Math.sqrt(dx*dx+dy*dy)<34){
+
+      /* Проверяем, есть ли объект в списке */
+      let exists=false;
+
+      for(let j=0;j<celestialObject.options.length;j++){
+        if(celestialObject.options[j].value===o.name){
+          exists=true;
+          break;
+        }
       }
+
+      /* Если нет — добавляем */
+      if(!exists){
+        let opt=document.createElement("option");
+        opt.value=o.name;
+        opt.text=o.name;
+        celestialObject.add(opt);
+      }
+
+      celestialObject.value=o.name;
+
+      calculateObject();
+      drawSkyViewV3();
+
+      return true;
     }
-    return false;
   }
+
+  return false;
+}
 
   function start(e){
     let p=getPoint(e);
