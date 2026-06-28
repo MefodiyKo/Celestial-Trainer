@@ -468,10 +468,12 @@ if(o.name===selectedObject){
   ctx.strokeStyle="#ffd966";
   ctx.lineWidth=1;
 
-  ctx.beginPath();
-  ctx.moveTo(x,horizonY);
-  ctx.lineTo(x,y);
-  ctx.stroke();
+  let bearingHY = skyHorizonY(x,left,width,horizonY);
+
+ctx.beginPath();
+ctx.moveTo(x,bearingHY);
+ctx.lineTo(x,y);
+ctx.stroke();
 
   /* Selection ring */
   ctx.lineWidth=2;
