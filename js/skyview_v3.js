@@ -71,6 +71,9 @@ function drawSkyViewV3(){
   let horizonY=H*0.76;
 
   drawSkyV3Sea(ctx,W,H,horizonY);
+  if(sunR.Hc<-12){
+    drawSkyV3MilkyWay(ctx,W,H,horizonY);
+}
   drawSkyV3Horizon(ctx,left,right,width,horizonY,course);
 
   function project(az,hc){
@@ -318,7 +321,29 @@ function skyV3Cardinal(d){
   if(d>=135&&d<225)return "S";
   return "W";
 }
+function drawSkyV3MilkyWay(ctx,W,H,horizonY){
 
+  ctx.save();
+
+  ctx.globalAlpha=0.16;
+
+  ctx.translate(W*0.60,H*0.35);
+  ctx.rotate(-0.55);
+
+  let g=ctx.createLinearGradient(0,-H*0.45,0,H*0.45);
+
+  g.addColorStop(0,"rgba(255,255,255,0)");
+  g.addColorStop(0.20,"rgba(210,220,255,0.04)");
+  g.addColorStop(0.50,"rgba(240,245,255,0.22)");
+  g.addColorStop(0.80,"rgba(210,220,255,0.04)");
+  g.addColorStop(1,"rgba(255,255,255,0)");
+
+  ctx.fillStyle=g;
+  ctx.fillRect(-W*0.14,-H*0.60,W*0.28,H*1.20);
+
+  ctx.restore();
+
+}
 function drawSkyV3Background(ctx,W,H,sunHc){
   let g=ctx.createLinearGradient(0,0,0,H);
 
