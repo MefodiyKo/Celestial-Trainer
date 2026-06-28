@@ -1,5 +1,26 @@
 /* Celestial Trainer - Sky View v3 */
+function skyV3StarColor(name){
 
+  const colors={
+    Sirius:"#dcecff",
+    Canopus:"#fff1d0",
+    Arcturus:"#ffd28a",
+    Vega:"#e8f1ff",
+    Capella:"#fff0b0",
+    Rigel:"#d6e8ff",
+    Betelgeuse:"#ffb07a",
+    Aldebaran:"#ffb07a",
+    Antares:"#ff8a65",
+    Spica:"#dcecff",
+    Altair:"#f2f6ff",
+    Deneb:"#e8f1ff",
+    Achernar:"#dbe9ff",
+    Procyon:"#fff2d0",
+    Pollux:"#ffdca0"
+  };
+
+  return colors[name] || "#ffffff";
+}
 function drawSkyViewV3(){
   let canvas=document.getElementById("skyCanvas");
   if(!canvas)return;
@@ -179,11 +200,12 @@ function drawSkyViewV3(){
     }
     else{
       ctx.fillStyle=
-        o.name==="Venus"?"#ffffff":
-        o.name==="Mars"?"#ff8a65":
-        o.name==="Jupiter"?"#f5deb3":
-        o.name==="Saturn"?"#ffe08a":
-        "#ffffff";
+  o.name==="Venus"?"#ffffff":
+  o.name==="Mars"?"#ff8a65":
+  o.name==="Jupiter"?"#f5deb3":
+  o.name==="Saturn"?"#ffe08a":
+  o.type==="star"?skyV3StarColor(o.name):
+  "#ffffff";
 
       if(o.type==="star"&&o.mag<1){
         drawSkyV3Glow(ctx,x,y,size+5,"rgba(255,255,255,0.20)");
