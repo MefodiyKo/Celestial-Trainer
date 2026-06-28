@@ -215,9 +215,26 @@ if(o.type==="star"){
         drawSkyV3Glow(ctx,x,y,size+5,"rgba(255,255,255,0.20)");
       }
 
-      ctx.beginPath();
-      ctx.arc(x,y,size,0,Math.PI*2);
-      ctx.fill();
+   if(o.type==="star"){
+
+  let twinkle = 0.85 + 0.15*Math.sin(Date.now()/350 + x*0.05 + y*0.04);
+
+  ctx.save();
+  ctx.globalAlpha *= twinkle;
+
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+
+}else{
+
+  ctx.beginPath();
+  ctx.arc(x,y,size,0,Math.PI*2);
+  ctx.fill();
+
+}
     }
 
     ctx.restore();
