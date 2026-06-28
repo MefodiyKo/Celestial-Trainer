@@ -294,14 +294,15 @@ let x=left+t*width;
 
 /* altitude curve: low objects stay near horizon, high objects move upward faster */
 let h=Math.max(0,Math.min(90,hc));
-let altitudeFactor=Math.pow(Math.sin(degToRad(h)),0.72);
+let altitudeFactor = Math.sin(degToRad(h));
 
 /* dome effect: centre of sky is higher than edges */
 let sideCurve=Math.sin(t*Math.PI);
 let domeLift = (canvas.height * 0.10) * sideCurve;
 
 /* final y */
-let y=horizonY - altitudeFactor*(horizonY-topY) - domeLift;
+let usableHeight = horizonY - topY - 25;
+let y = horizonY - altitudeFactor * usableHeight - domeLift;
 
 /* keep inside canvas */
 if(y<topY)y=topY;
