@@ -36,7 +36,13 @@ v.addColorStop(1,"rgba(0,0,0,0.42)");
 
 ctx.fillStyle=v;
 ctx.fillRect(0,0,W,H);
+/* sea depth */
+let seaShade=ctx.createLinearGradient(0,H*0.72,0,H);
+seaShade.addColorStop(0,"rgba(0,0,0,0)");
+seaShade.addColorStop(1,"rgba(0,10,20,0.45)");
 
+ctx.fillStyle=seaShade;
+ctx.fillRect(0,H*0.70,W,H*0.30);
   ctx.restore();
 }
 
