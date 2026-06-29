@@ -445,23 +445,77 @@ function drawSkyV3MilkyWay(ctx,W,H,horizonY){
 }
 function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
 
+  if(typeof BACKGROUND_STARS==="undefined")return;
+
   ctx.save();
 
-  for(let i=0;i<160;i++){
+  let data=getInputData();
+  if(data.error){
+    ctx.restore();
+    return;
+  }
 
-    let x=(Math.sin(i*91.7)*0.5+0.5)*W;
-    let y=(Math.sin(i*37.3)*0.5+0.5)*horizonY*0.95;
+  let sun=sunAlmanac(data.date,data.time);
 
-    let size=0.4+(Math.sin(i*13.1)*0.5+0.5)*1.0;
-    let alpha=0.18+(Math.sin(i*5.9)*0.5+0.5)*0.55;
+  let course=parseFloat(skyCourse.value);
+  if(isNaN(course))course=0;
+
+  let mode=skyMode.value;
+
+  let left=14;
+  let right=W-14;
+  let width=right-left;
+  let topY=18;
+
+  function projectBackgroundStar(az,hc){
+
+    let center=mode==="north"?0:course;
+    let rel=normalizeError(az-center);
+
+    if(rel<-90||rel>90)return null;
+
+    let t=(rel+90)/180;
+    let x=left+t*width;
+
+    let h=Math.max(0,Math.min(90,hc));
+    let alt=Math.sin(degToRad(h));
+
+    let skyTop=topY;
+    let skyBottom=horizonY;
+
+    let sideCurve=Math.sin(t*Math.PI);
+    let domeLift=H*0.05*sideCurve;
+
+    let usable=(skyBottom-skyTop)*0.80;
+    let y=skyBottom-alt*usable-domeLift;
+
+    if(y<skyTop)y=skyTop;
+    if(y>skyBottom)y=skyBottom;
+
+    return {x:x,y:y};
+  }
+
+  BACKGROUND_STARS.forEach(st=>{
+
+    let GHA=norm360(sun.GHAAries+st.SHA);
+    let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
+
+    if(r.Hc<=0)return;
+
+    let pos=projectBackgroundStar(r.Zn,r.Hc);
+    if(!pos)return;
+
+    let size=Math.max(0.6,3.2*Math.pow(0.72,st.Mag+1));
+    let alpha=Math.min(0.85,Math.max(0.15,1-st.Mag*0.12));
 
     ctx.globalAlpha=alpha;
-    ctx.fillStyle="#ffffff";
+    ctx.fillStyle=st.Color||"#ffffff";
 
     ctx.beginPath();
-    ctx.arc(x,y,size,0,Math.PI*2);
+    ctx.arc(pos.x,pos.y,size,0,Math.PI*2);
     ctx.fill();
-  }
+
+  });
 
   ctx.restore();
 }
