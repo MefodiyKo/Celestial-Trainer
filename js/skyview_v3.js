@@ -447,13 +447,8 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
 
   if(typeof BACKGROUND_STARS==="undefined")return;
 
-  ctx.save();
-
   let data=getInputData();
-  if(data.error){
-    ctx.restore();
-    return;
-  }
+  if(data.error)return;
 
   let sun=sunAlmanac(data.date,data.time);
 
@@ -467,7 +462,7 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
   let width=right-left;
   let topY=18;
 
-  function projectBackgroundStar(az,hc){
+  function projectStar(az,hc){
 
     let center=mode==="north"?0:course;
     let rel=normalizeError(az-center);
@@ -489,27 +484,32 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
     let usable=(skyBottom-skyTop)*0.80;
     let y=skyBottom-alt*usable-domeLift;
 
-    if(y<skyTop)y=skyTop;
-    if(y>skyBottom)y=skyBottom;
-
     return {x:x,y:y};
   }
 
+  ctx.save();
+
   BACKGROUND_STARS.forEach(st=>{
 
-    let GHA=norm360(sun.GHAAries+st.SHA);
-    let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
+    let name=st[0];
+    let SHA=st[1];
+    let Dec=st[2];
+    let Mag=st[3];
+    let Color=st[4];
+
+    let GHA=norm360(sun.GHAAries+SHA);
+    let r=calculateHcZn(data.lat,Dec,norm360(GHA+data.lon));
 
     if(r.Hc<=0)return;
 
-    let pos=projectBackgroundStar(r.Zn,r.Hc);
+    let pos=projectStar(r.Zn,r.Hc);
     if(!pos)return;
 
-    let size=Math.max(0.6,3.2*Math.pow(0.72,st.Mag+1));
-    let alpha=Math.min(0.85,Math.max(0.15,1-st.Mag*0.12));
+    let size=Math.max(0.45,3.4*Math.pow(0.72,Mag+1));
+    let alpha=Math.min(0.85,Math.max(0.12,1-Mag*0.13));
 
     ctx.globalAlpha=alpha;
-    ctx.fillStyle=st.Color||"#ffffff";
+    ctx.fillStyle=Color||"#ffffff";
 
     ctx.beginPath();
     ctx.arc(pos.x,pos.y,size,0,Math.PI*2);
