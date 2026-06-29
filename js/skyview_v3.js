@@ -210,7 +210,7 @@ if(sunR.Hc<-6){
 
 if(o.type==="sun") size=9;
 
-else if(o.type==="moon") size=8;
+else if(o.type==="moon") size=15;
 
 else if(o.name==="Venus") size=6.5;
 
@@ -615,71 +615,109 @@ function drawSkyV3Glow(ctx,x,y,r,color){
 }
 
 function drawSkyV3Moon(ctx,x,y,size,illum,waxing){
+
   ctx.save();
 
+  let k=Math.max(0,Math.min(1,illum/100));
+
+  /* Moon glow */
+  let glow=ctx.createRadialGradient(x,y,size*0.4,x,y,size*4.5);
+  glow.addColorStop(0,"rgba(230,230,255,0.35)");
+  glow.addColorStop(0.35,"rgba(180,190,255,0.12)");
+  glow.addColorStop(1,"rgba(180,190,255,0)");
+
+  ctx.fillStyle=glow;
   ctx.beginPath();
-  ctx.arc(x,y,size,0,Math.PI*2);
-  ctx.fillStyle="#06152a";
+  ctx.arc(x,y,size*4.5,0,Math.PI*2);
   ctx.fill();
 
+  /* Moon disk base */
   ctx.beginPath();
   ctx.arc(x,y,size,0,Math.PI*2);
   ctx.clip();
 
-  let k=illum/100;
+  let body=ctx.createRadialGradient(
+    x-size*0.35,y-size*0.35,size*0.1,
+    x,y,size*1.15
+  );
 
-  ctx.fillStyle="#dddddd";
+  body.addColorStop(0,"#fff6dc");
+  body.addColorStop(0.45,"#d8d2c0");
+  body.addColorStop(1,"#6f6f72");
 
-  if(k>0.97){
-    ctx.beginPath();
-    ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fill();
-  }
-  else if(k<0.03){
-    ctx.fillStyle="#152a3d";
-    ctx.beginPath();
-    ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fill();
-  }
-  else if(k<0.5){
-    let crescentWidth=size*(0.25+k*1.5);
+  ctx.fillStyle=body;
+  ctx.fillRect(x-size,y-size,size*2,size*2);
+
+  /* Phase shadow */
+  ctx.globalCompositeOperation="source-over";
+
+  let shadowAlpha=0.78;
+  ctx.fillStyle="rgba(2,8,18,"+shadowAlpha+")";
+
+  if(k<0.97){
+
+    let shadowShift;
+
+    if(k<0.5){
+      shadowShift=size*(k*2);
+    }else{
+      shadowShift=size*((1-k)*2);
+    }
+
     ctx.beginPath();
 
     if(waxing){
-      ctx.ellipse(x+size*0.45,y,crescentWidth,size,0,-Math.PI/2,Math.PI/2);
+      ctx.ellipse(x-size*0.55+shadowShift,y,size*(1.15-shadowShift/size*0.3),size*1.15,0,0,Math.PI*2);
     }else{
-      ctx.ellipse(x-size*0.45,y,crescentWidth,size,0,Math.PI/2,Math.PI*1.5);
+      ctx.ellipse(x+size*0.55-shadowShift,y,size*(1.15-shadowShift/size*0.3),size*1.15,0,0,Math.PI*2);
     }
 
-    ctx.fillStyle="#dddddd";
-    ctx.fill();
-  }
-  else{
-    ctx.beginPath();
-    ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fillStyle="#dddddd";
-    ctx.fill();
-
-    let shadowWidth=size*((1-k)*1.8);
-    ctx.beginPath();
-
-    if(waxing){
-      ctx.ellipse(x-size*0.65,y,shadowWidth,size,0,0,Math.PI*2);
+    if(k<0.5){
+      ctx.fill();
     }else{
-      ctx.ellipse(x+size*0.65,y,shadowWidth,size,0,0,Math.PI*2);
+      ctx.globalCompositeOperation="destination-out";
+      ctx.fill();
+      ctx.globalCompositeOperation="source-over";
     }
-
-    ctx.fillStyle="#06152a";
-    ctx.fill();
   }
+
+  /* Craters / maria */
+  ctx.globalAlpha=0.28;
+  ctx.fillStyle="rgba(70,70,75,0.75)";
+
+  const spots=[
+    [-0.25,-0.25,0.20],
+    [0.18,-0.18,0.15],
+    [-0.05,0.10,0.18],
+    [0.28,0.20,0.12],
+    [-0.32,0.28,0.10],
+    [0.05,0.34,0.08]
+  ];
+
+  spots.forEach(s=>{
+    ctx.beginPath();
+    ctx.ellipse(
+      x+s[0]*size,
+      y+s[1]*size,
+      s[2]*size,
+      s[2]*size*0.65,
+      0.4,
+      0,
+      Math.PI*2
+    );
+    ctx.fill();
+  });
 
   ctx.restore();
 
-  ctx.strokeStyle="#ffffff";
+  /* Moon rim */
+  ctx.save();
+  ctx.strokeStyle="rgba(255,255,255,0.85)";
   ctx.lineWidth=1;
   ctx.beginPath();
   ctx.arc(x,y,size,0,Math.PI*2);
   ctx.stroke();
+  ctx.restore();
 }
 
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
@@ -701,8 +739,8 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
     }
 
     ctx.strokeStyle=same?"#ffd966":"#9ee7ff";
-    ctx.globalAlpha=same?0.9:0.35;
-    ctx.lineWidth=same?2:1;
+    ctx.globalAlpha=same?0.55:0.22;
+    ctx.lineWidth=same?0.9:0.45;
 
     ctx.beginPath();
     ctx.moveTo(a.x,a.y);
