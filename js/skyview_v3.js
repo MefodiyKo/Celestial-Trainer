@@ -102,7 +102,7 @@ function drawSkyViewV3(){
   if(sunR.Hc<-12){
     drawSkyV3MilkyWay(ctx,W,H,horizonY);
 }
-if(sunR.Hc<-10){
+if(sunR.Hc<-6){
   drawSkyV3BackgroundStars(ctx,W,H,horizonY);
 }
   drawSkyV3Horizon(ctx,left,right,width,horizonY,course);
