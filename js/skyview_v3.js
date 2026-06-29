@@ -386,7 +386,7 @@ function skyV3Cardinal(d){
   return "W";
 }
 function drawSkyV3MilkyWay(ctx,W,H,horizonY){
-
+alert("NEW MILKY WAY");
   ctx.save();
 
   ctx.translate(W*0.58,H*0.36);
