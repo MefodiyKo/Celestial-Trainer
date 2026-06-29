@@ -59,30 +59,174 @@ Markab:{SHA:14,Dec:15,Mag:2.5,Con:"Pegasus"},
 Polaris:{SHA:319,Dec:89,Mag:2.0,Con:"Ursa Minor"}
 };
 const CONSTELLATION_LINES = [
-  ["Betelgeuse","Bellatrix"],
-  ["Bellatrix","Alnilam"],
-  ["Alnilam","Rigel"],
-  ["Betelgeuse","Alnilam"],
-  ["Alnilam","Sirius"],
 
-  ["Sirius","Adhara"],
+/* Orion */
+["Betelgeuse","Bellatrix"],
+["Bellatrix","Mintaka"],
+["Mintaka","Alnilam"],
+["Alnilam","Alnitak"],
+["Alnitak","Saiph"],
+["Saiph","Rigel"],
+["Rigel","Mintaka"],
+["Betelgeuse","Alnilam"],
 
-  ["Acrux","Gacrux"],
+/* Canis Major */
+["Sirius","Mirzam"],
+["Sirius","Adhara"],
+["Adhara","Wezen"],
+["Wezen","Aludra"],
 
-  ["Aldebaran","Elnath"],
+/* Canis Minor */
+["Procyon","Gomeisa"],
 
-  ["Regulus","Denebola"],
+/* Taurus / Pleiades */
+["Aldebaran","Elnath"],
+["Aldebaran","Alcyone"],
+["Alcyone","Maia"],
+["Maia","Electra"],
+["Electra","Merope"],
+["Merope","Atlas"],
 
-  ["Antares","Shaula"],
+/* Gemini */
+["Castor","Pollux"],
+["Pollux","Wasat"],
+["Wasat","Alhena"],
 
-  ["Dubhe","Alioth"],
-  ["Alioth","Alkaid"],
+/* Leo */
+["Regulus","Algieba"],
+["Algieba","Zosma"],
+["Zosma","Denebola"],
+["Regulus","Chertan"],
 
-  ["Polaris","Kochab"],
+/* Virgo */
+["Spica","Porrima"],
+["Porrima","Vindemiatrix"],
+["Vindemiatrix","Zavijava"],
+["Porrima","Zaniah"],
 
-  ["Markab","Enif"],
+/* Boötes */
+["Arcturus","Muphrid"],
+["Arcturus","Izar"],
+["Izar","Nekkar"],
+["Izar","Seginus"],
 
-  ["Vega","Altair"],
-  ["Altair","Deneb"],
-  ["Deneb","Vega"]
+/* Corona Borealis */
+["Alphecca","Nusakan"],
+
+/* Ursa Major */
+["Dubhe","Merak"],
+["Merak","Phecda"],
+["Phecda","Megrez"],
+["Megrez","Alioth"],
+["Alioth","Mizar"],
+["Mizar","Alkaid"],
+
+/* Ursa Minor */
+["Polaris","Kochab"],
+["Kochab","Pherkad"],
+
+/* Cassiopeia */
+["Caph","Schedar"],
+["Schedar","Navi"],
+["Navi","Ruchbah"],
+["Ruchbah","Segin"],
+
+/* Perseus */
+["Mirfak","Algol"],
+["Mirfak","Atik"],
+["Atik","Menkib"],
+
+/* Andromeda */
+["Alpheratz","Almach"],
+["Almach","Mirach"],
+
+/* Pegasus */
+["Markab","Alpheratz"],
+["Markab","Enif"],
+["Markab","Scheat"],
+["Scheat","Alpheratz"],
+
+/* Aries */
+["Hamal","Sheratan"],
+["Sheratan","Mesarthim"],
+
+/* Cetus */
+["Diphda","Menkar"],
+["Menkar","Baten Kaitos"],
+["Baten Kaitos","Mira"],
+
+/* Eridanus */
+["Achernar","Acamar"],
+["Acamar","Cursa"],
+["Cursa","Zaurak"],
+
+/* Cygnus */
+["Deneb","Sadr"],
+["Sadr","Gienah Cygni"],
+["Sadr","Delta Cygni"],
+["Sadr","Albireo"],
+
+/* Lyra */
+["Vega","Sheliak"],
+["Sheliak","Sulafat"],
+["Sulafat","Vega"],
+
+/* Aquila */
+["Altair","Tarazed"],
+["Altair","Alshain"],
+["Altair","Okab"],
+
+/* Summer Triangle */
+["Vega","Altair"],
+["Altair","Deneb"],
+["Deneb","Vega"],
+
+/* Draco */
+["Eltanin","Thuban"],
+["Thuban","Kochab"],
+
+/* Ophiuchus */
+["Rasalhague","Cebalrai"],
+["Cebalrai","Sabik"],
+["Sabik","Yed Prior"],
+["Yed Prior","Rasalhague"],
+
+/* Scorpius */
+["Antares","Dschubba"],
+["Antares","Shaula"],
+["Shaula","Sargas"],
+["Antares","Sabik"],
+
+/* Sagittarius */
+["Kaus Australis","Nunki"],
+["Nunki","Kaus Media"],
+["Kaus Australis","Kaus Borealis"],
+
+/* Libra */
+["Zubenelgenubi","Zubeneschamali"],
+
+/* Crux */
+["Acrux","Gacrux"],
+["Mimosa","Imai"],
+
+/* Centaurus */
+["Rigil Kentaurus","Hadar"],
+["Hadar","Menkent"],
+
+/* Carina / Vela */
+["Canopus","Miaplacidus"],
+["Miaplacidus","Avior"],
+["Avior","Aspidiske"],
+["Suhail","Markeb"],
+
+/* Hydra */
+["Alphard","Regulus"],
+
+/* Piscis Austrinus */
+["Fomalhaut","Diphda"],
+
+/* Phoenix / Grus / Pavo */
+["Ankaa","Achernar"],
+["Alnair","Peacock"]
+
 ];
