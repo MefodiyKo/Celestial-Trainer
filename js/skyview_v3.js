@@ -734,9 +734,9 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
     if(!a || !b)return;
 
-    ctx.strokeStyle="rgba(158,231,255,0.35)";
-    ctx.globalAlpha=0.28;
-    ctx.lineWidth=0.45;
+  ctx.strokeStyle="rgba(120,210,255,0.85)";
+ctx.globalAlpha=0.75;
+ctx.lineWidth=0.9;
 
     ctx.beginPath();
     ctx.moveTo(a.x,a.y);
