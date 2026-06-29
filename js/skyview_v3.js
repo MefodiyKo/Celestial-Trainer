@@ -720,7 +720,49 @@ function drawSkyV3Moon(ctx,x,y,size,illum,waxing){
   ctx.stroke();
   ctx.restore();
 }
-
+function skyStarAlias(name){
+  const A={
+    "Navi":"Gamma Cassiopeiae",
+    "Ruchbah":"Delta Cassiopeiae",
+    "Segin":"Epsilon Cassiopeiae",
+    "Sadr":"Gamma Cygni",
+    "Gienah Cygni":"Epsilon Cygni",
+    "Delta Cygni":"Delta Cygni",
+    "Albireo":"Beta Cygni",
+    "Merak":"Beta Ursae Majoris",
+    "Phecda":"Gamma Ursae Majoris",
+    "Megrez":"Delta Ursae Majoris",
+    "Mizar":"Zeta Ursae Majoris",
+    "Pherkad":"Gamma Ursae Minoris",
+    "Almach":"Gamma Andromedae",
+    "Mirach":"Beta Andromedae",
+    "Scheat":"Beta Pegasi",
+    "Mintaka":"Delta Orionis",
+    "Alnitak":"Zeta Orionis",
+    "Saiph":"Kappa Orionis",
+    "Mirzam":"Beta Canis Majoris",
+    "Wezen":"Delta Canis Majoris",
+    "Aludra":"Eta Canis Majoris",
+    "Gomeisa":"Beta Canis Minoris",
+    "Algieba":"Gamma Leonis",
+    "Zosma":"Delta Leonis",
+    "Chertan":"Theta Leonis",
+    "Porrima":"Gamma Virginis",
+    "Vindemiatrix":"Epsilon Virginis",
+    "Zavijava":"Beta Virginis",
+    "Zaniah":"Eta Virginis",
+    "Muphrid":"Eta Bootis",
+    "Izar":"Epsilon Bootis",
+    "Nekkar":"Beta Bootis",
+    "Seginus":"Gamma Bootis",
+    "Tarazed":"Gamma Aquilae",
+    "Alshain":"Beta Aquilae",
+    "Okab":"Zeta Aquilae",
+    "Sheliak":"Beta Lyrae",
+    "Sulafat":"Gamma Lyrae"
+  };
+  return A[name] || name;
+}
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
@@ -729,8 +771,8 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   CONSTELLATION_LINES.forEach(line=>{
 
-    let a=starMap[line[0]];
-    let b=starMap[line[1]];
+    let a=starMap[line[0]] || starMap[skyStarAlias(line[0])];
+let b=starMap[line[1]] || starMap[skyStarAlias(line[1])];
 
     if(!a || !b)return;
 
