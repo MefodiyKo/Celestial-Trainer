@@ -23,7 +23,7 @@ function skyV3StarColor(name){
 }
 function drawSkyProBrightStar(ctx,x,y,size,color){
 
-  let g=ctx.createRadialGradient(x,y,0,x,y,size*4);
+  let g=ctx.createRadialGradient(x,y,0,x,y,size*2.8);
 
   g.addColorStop(0,color);
   g.addColorStop(0.25,color);
@@ -31,7 +31,7 @@ function drawSkyProBrightStar(ctx,x,y,size,color){
 
   ctx.fillStyle=g;
   ctx.beginPath();
-  ctx.arc(x,y,size*4,0,Math.PI*2);
+  ctx.arc(x,y,size*2.8,0,Math.PI*2);
   ctx.fill();
 
   ctx.fillStyle=color;
@@ -43,10 +43,10 @@ function drawSkyProBrightStar(ctx,x,y,size,color){
   ctx.lineWidth=1;
 
   ctx.beginPath();
-  ctx.moveTo(x-size*2.2,y);
-  ctx.lineTo(x+size*2.2,y);
-  ctx.moveTo(x,y-size*2.2);
-  ctx.lineTo(x,y+size*2.2);
+  ctx.moveTo(x-size*1.3,y);
+  ctx.lineTo(x+size*1.3,y);
+  ctx.moveTo(x,y-size*1.3);
+  ctx.lineTo(x,y+size*1.3);
   ctx.stroke();
 }
 function drawSkyViewV3(){
@@ -205,13 +205,30 @@ function drawSkyViewV3(){
 
     let size=3;
 
-    if(o.type==="sun")size=9;
-    else if(o.type==="moon")size=8;
-    else if(o.name==="Venus")size=5.5;
-    else if(o.name==="Jupiter")size=5;
-    else if(o.name==="Mars")size=4;
-    else if(o.name==="Saturn")size=4;
-    else size=Math.max(1.5,5-o.mag*1.1);
+if(o.type==="sun") size=9;
+
+else if(o.type==="moon") size=8;
+
+else if(o.name==="Venus") size=6.5;
+
+else if(o.name==="Jupiter") size=5.8;
+
+else if(o.name==="Mars") size=4.8;
+
+else if(o.name==="Saturn") size=4.5;
+
+else{
+
+    /* Realistic stellar brightness */
+
+    let mag=o.mag;
+
+    size=
+        5.8*Math.pow(0.72,mag+1);
+
+    size=Math.max(1.2,size);
+
+}
 
    let fade=Math.min(1,Math.max(0.18,o.hc/28));
 
