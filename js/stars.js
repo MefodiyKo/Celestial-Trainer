@@ -227,6 +227,6 @@ const CONSTELLATION_LINES = [
 
 /* Phoenix / Grus / Pavo */
 ["Ankaa","Achernar"],
-["Alnair","Peacock"]
+["Alnair","Peacock"],
 
 ];
