@@ -68,6 +68,7 @@ function drawSkyViewV3(){
   ctx.clearRect(0,0,W,H);
 
   skyObjects=[];
+  window.skyAllStarPositions = {};
 
   let data=getInputData();
   let selectedObject=celestialObject.value;
