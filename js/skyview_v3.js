@@ -102,6 +102,9 @@ function drawSkyViewV3(){
   if(sunR.Hc<-12){
     drawSkyV3MilkyWay(ctx,W,H,horizonY);
 }
+if(sunR.Hc<-10){
+  drawSkyV3BackgroundStars(ctx,W,H,horizonY);
+}
   drawSkyV3Horizon(ctx,left,right,width,horizonY,course);
 
   function project(az,hc){
@@ -406,51 +409,59 @@ function drawSkyV3MilkyWay(ctx,W,H,horizonY){
 
   ctx.save();
 
-  ctx.translate(W*0.58,H*0.36);
-  ctx.rotate(-0.55);
+  ctx.translate(W*0.55,H*0.38);
+  ctx.rotate(-0.62);
 
-  /* Main soft cloud */
-  let g=ctx.createRadialGradient(
-    0,0,W*0.03,
-    0,0,W*0.22
-  );
+  for(let i=0;i<9;i++){
 
-  g.addColorStop(0,"rgba(240,245,255,0.28)");
-  g.addColorStop(0.35,"rgba(210,220,255,0.14)");
-  g.addColorStop(0.70,"rgba(180,200,255,0.06)");
-  g.addColorStop(1,"rgba(255,255,255,0)");
+    let x=(Math.sin(i*12.989)*0.5)*W*0.18;
+    let y=(-H*0.55)+(i/8)*H*1.1;
+    let rx=W*(0.10+0.04*Math.sin(i));
+    let ry=H*(0.16+0.05*Math.cos(i*1.7));
 
-  ctx.globalAlpha=0.55;
-  ctx.fillStyle=g;
+    let g=ctx.createRadialGradient(x,y,0,x,y,rx);
 
-  ctx.beginPath();
-  ctx.ellipse(0,0,W*0.20,H*0.75,0,0,Math.PI*2);
-  ctx.fill();
+    g.addColorStop(0,"rgba(230,240,255,0.18)");
+    g.addColorStop(0.45,"rgba(120,160,220,0.08)");
+    g.addColorStop(1,"rgba(255,255,255,0)");
 
-  /* Secondary cloud */
-  let g2=ctx.createRadialGradient(
-    -W*0.04,-H*0.18,W*0.02,
-    -W*0.04,-H*0.18,W*0.16
-  );
+    ctx.globalAlpha=0.75;
+    ctx.fillStyle=g;
 
-  g2.addColorStop(0,"rgba(255,255,255,0.22)");
-  g2.addColorStop(0.45,"rgba(210,220,255,0.10)");
-  g2.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.beginPath();
+    ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);
+    ctx.fill();
+  }
 
-  ctx.globalAlpha=0.45;
-  ctx.fillStyle=g2;
+  /* dark dust lane */
+  ctx.globalAlpha=0.28;
+  ctx.fillStyle="rgba(0,5,18,0.85)";
 
   ctx.beginPath();
-  ctx.ellipse(-W*0.04,-H*0.18,W*0.14,H*0.36,0,0,Math.PI*2);
+  ctx.ellipse(W*0.035,0,W*0.045,H*0.70,0.1,0,Math.PI*2);
   ctx.fill();
 
-  /* Dark split */
-  ctx.globalAlpha=0.20;
-  ctx.fillStyle="rgba(0,5,18,0.9)";
+  ctx.restore();
+}
+function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
 
-  ctx.beginPath();
-  ctx.ellipse(W*0.03,0,W*0.045,H*0.55,0,0,Math.PI*2);
-  ctx.fill();
+  ctx.save();
+
+  for(let i=0;i<160;i++){
+
+    let x=(Math.sin(i*91.7)*0.5+0.5)*W;
+    let y=(Math.sin(i*37.3)*0.5+0.5)*horizonY*0.95;
+
+    let size=0.4+(Math.sin(i*13.1)*0.5+0.5)*1.0;
+    let alpha=0.18+(Math.sin(i*5.9)*0.5+0.5)*0.55;
+
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle="#ffffff";
+
+    ctx.beginPath();
+    ctx.arc(x,y,size,0,Math.PI*2);
+    ctx.fill();
+  }
 
   ctx.restore();
 }
