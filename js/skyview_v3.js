@@ -505,7 +505,7 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
 
     let pos=projectStar(r.Zn,r.Hc);
     if(!pos)return;
-
+window.skyAllStarPositions[name]={x:pos.x,y:pos.y};
     let size=Math.max(0.45,3.4*Math.pow(0.72,Mag+1));
     let alpha=Math.min(0.85,Math.max(0.12,1-Mag*0.13));
 
@@ -722,31 +722,27 @@ function drawSkyV3Moon(ctx,x,y,size,illum,waxing){
 }
 
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
+
+  let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
+
   ctx.save();
 
   CONSTELLATION_LINES.forEach(line=>{
-    let a=plottedStars[line[0]];
-    let b=plottedStars[line[1]];
 
-    if(!a||!b)return;
+    let a=starMap[line[0]];
+    let b=starMap[line[1]];
 
-    let selectedStar=STAR_CATALOG[selectedObject];
-    let same=false;
+    if(!a || !b)return;
 
-    if(selectedStar&&STAR_CATALOG[line[0]]&&STAR_CATALOG[line[1]]){
-      same=
-        STAR_CATALOG[line[0]].Con===selectedStar.Con &&
-        STAR_CATALOG[line[1]].Con===selectedStar.Con;
-    }
-
-    ctx.strokeStyle=same?"#ffd966":"#9ee7ff";
-    ctx.globalAlpha=same?0.55:0.22;
-    ctx.lineWidth=same?0.9:0.45;
+    ctx.strokeStyle="rgba(158,231,255,0.35)";
+    ctx.globalAlpha=0.28;
+    ctx.lineWidth=0.45;
 
     ctx.beginPath();
     ctx.moveTo(a.x,a.y);
     ctx.lineTo(b.x,b.y);
     ctx.stroke();
+
   });
 
   ctx.restore();
