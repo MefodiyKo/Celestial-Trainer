@@ -363,8 +363,11 @@ if(o.type==="star"){
     skyObjects.push({name:o.name,x:x,y:y,r:22});
 
     if(o.type==="star"){
-      plottedStars[o.name]={x:x,y:y};
-    }
+  plottedStars[o.name]={x:x,y:y};
+  plottedStars[skyNameKey(o.name)]={x:x,y:y};
+
+  saveSkyStarPosition(o.name,x,y);
+}
   });
 
   if(sunR.Hc<-6){
@@ -505,7 +508,7 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
 
     let pos=projectStar(r.Zn,r.Hc);
     if(!pos)return;
-window.skyAllStarPositions[name]={x:pos.x,y:pos.y};
+saveSkyStarPosition(name,pos.x,pos.y);
     let size=Math.max(0.45,3.4*Math.pow(0.72,Mag+1));
     let alpha=Math.min(0.85,Math.max(0.12,1-Mag*0.13));
 
@@ -763,23 +766,38 @@ function skyStarAlias(name){
   };
   return A[name] || name;
 }
+function skyNameKey(name){
+  return String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g,"");
+}
 
+function saveSkyStarPosition(name,x,y){
+  if(!window.skyAllStarPositions) window.skyAllStarPositions={};
+
+  window.skyAllStarPositions[name]={x:x,y:y};
+  window.skyAllStarPositions[skyNameKey(name)]={x:x,y:y};
+}
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
+
+  function getStarPoint(name){
+    return starMap[name] || starMap[skyNameKey(name)] || null;
+  }
 
   ctx.save();
 
   CONSTELLATION_LINES.forEach(line=>{
 
-    let a=starMap[line[0]] || starMap[skyStarAlias(line[0])];
-let b=starMap[line[1]] || starMap[skyStarAlias(line[1])];
+    let a=getStarPoint(line[0]);
+    let b=getStarPoint(line[1]);
 
     if(!a || !b)return;
 
-  ctx.strokeStyle="rgba(120,210,255,0.85)";
-ctx.globalAlpha=0.75;
-ctx.lineWidth=0.9;
+    ctx.strokeStyle="rgba(120,210,255,0.88)";
+    ctx.globalAlpha=0.82;
+    ctx.lineWidth=0.85;
 
     ctx.beginPath();
     ctx.moveTo(a.x,a.y);
