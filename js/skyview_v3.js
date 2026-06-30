@@ -782,9 +782,17 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
 
-  function getStarPoint(name){
-    return starMap[name] || starMap[skyNameKey(name)] || null;
-  }
+ function getStarPoint(name){
+  let alias = skyStarAlias(name);
+
+  return (
+    starMap[name] ||
+    starMap[skyNameKey(name)] ||
+    starMap[alias] ||
+    starMap[skyNameKey(alias)] ||
+    null
+  );
+}
 
   ctx.save();
 
