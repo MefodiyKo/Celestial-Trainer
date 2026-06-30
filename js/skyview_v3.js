@@ -392,10 +392,6 @@ if(o.type==="star"){
 
   ctx.fillStyle="#9ee7ff";
   ctx.font="11px Arial";
-  if(window.debugConstellationsOnce!==true){
-  window.debugConstellationsOnce=true;
-  debugConstellationNames();
-}
   ctx.fillText("Sky View v3 | Course "+course.toFixed(0)+"°",12,H-14);
 }
 
@@ -767,41 +763,7 @@ function skyStarAlias(name){
   };
   return A[name] || name;
 }
-function debugConstellationNames(){
 
-  if(typeof CONSTELLATION_LINES==="undefined"){
-    alert("CONSTELLATION_LINES not found");
-    return;
-  }
-
-  let starMap = Object.assign({}, window.skyAllStarPositions || {});
-
-  let missing = {};
-
-  CONSTELLATION_LINES.forEach(line=>{
-
-    let aName = line[0];
-    let bName = line[1];
-
-    let a = starMap[aName] || starMap[skyStarAlias(aName)];
-    let b = starMap[bName] || starMap[skyStarAlias(bName)];
-
-    if(!a) missing[aName] = skyStarAlias(aName);
-    if(!b) missing[bName] = skyStarAlias(bName);
-
-  });
-
-  let list = Object.keys(missing);
-
-  if(list.length===0){
-    alert("All constellation stars found.");
-  }else{
-    alert(
-      "Missing constellation stars:\n\n" +
-      list.map(n => n + " → " + missing[n]).join("\n")
-    );
-  }
-}
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
