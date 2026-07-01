@@ -6115,7 +6115,12 @@ function drawSextant(){
 function drawSextantSkyObjects(ctx,canvas){
 
   let data=getInputData();
-  if(data.error)return;
+  if(data.error){
+    ctx.fillStyle="red";
+    ctx.font="16px Arial";
+    ctx.fillText("AR: no UTC / position data",20,165);
+    return;
+  }
 
   let course=parseFloat(skyCourse.value);
   if(isNaN(course))course=0;
@@ -6145,9 +6150,17 @@ function drawSextantSkyObjects(ctx,canvas){
     let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
 
     if(r.Hc>0){
-      objects.push({name:name,type:"star",hc:r.Hc,zn:r.Zn,mag:st.Mag});
+      objects.push({
+        name:name,
+        type:"star",
+        hc:r.Hc,
+        zn:r.Zn,
+        mag:st.Mag
+      });
     }
   }
+
+  let visibleCount=0;
 
   function project(zn,hc){
 
@@ -6155,17 +6168,15 @@ function drawSextantSkyObjects(ctx,canvas){
 
     let rel=normalizeError(zn-course);
 
-    if(rel<-45 || rel>45)return null;
+    // шире сектор, чтобы точно увидеть объекты
+    if(rel<-90 || rel>90)return null;
 
-    let x=W/2+(rel/45)*(W/2);
+    let x=W/2+(rel/90)*(W/2);
 
-    let pitch=sextantCurrentPitch || 0;
-    let centerAlt=20+pitch;
-    let altRange=60;
+    // пока без pitch, стабильный обзор от горизонта до зенита
+    let y=H-(hc/90)*H;
 
-    let y=H/2-((hc-centerAlt)/altRange)*H;
-
-    if(y<-60 || y>H+60)return null;
+    if(y<20 || y>H-20)return null;
 
     return {x:x,y:y};
   }
@@ -6175,10 +6186,12 @@ function drawSextantSkyObjects(ctx,canvas){
     let p=project(o.zn,o.hc);
     if(!p)return;
 
+    visibleCount++;
+
     let size=4;
 
-    if(o.type==="sun")size=11;
-    else if(o.type==="moon")size=9;
+    if(o.type==="sun")size=12;
+    else if(o.type==="moon")size=10;
     else if(o.name==="Venus")size=7;
     else if(o.type==="planet")size=6;
     else size=Math.max(2,5-o.mag);
@@ -6186,6 +6199,7 @@ function drawSextantSkyObjects(ctx,canvas){
     ctx.save();
 
     ctx.globalAlpha=0.95;
+
     ctx.fillStyle=
       o.type==="sun"?"#ffd966":
       o.type==="moon"?"#dddddd":
@@ -6198,7 +6212,7 @@ function drawSextantSkyObjects(ctx,canvas){
     ctx.arc(p.x,p.y,size,0,Math.PI*2);
     ctx.fill();
 
-    ctx.strokeStyle="rgba(255,217,102,0.8)";
+    ctx.strokeStyle="rgba(255,217,102,0.9)";
     ctx.lineWidth=1;
     ctx.beginPath();
     ctx.arc(p.x,p.y,size+5,0,Math.PI*2);
@@ -6214,8 +6228,12 @@ function drawSextantSkyObjects(ctx,canvas){
 
   ctx.save();
   ctx.fillStyle="#9ee7ff";
-  ctx.font="13px Arial";
-  ctx.fillText("AR Sky Overlay | Course "+course.toFixed(0)+"°",20,H-25);
+  ctx.font="14px Arial";
+  ctx.fillText(
+    "AR Sky Overlay | objects: "+visibleCount+" | course "+course.toFixed(0)+"°",
+    20,
+    165
+  );
   ctx.restore();
 }
 function drawSextantSkyOverlay(){
