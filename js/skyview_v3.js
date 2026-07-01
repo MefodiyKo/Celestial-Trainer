@@ -850,102 +850,45 @@ const CONSTELLATION_STAR_FIXES = {
 };
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
-  if(typeof CONSTELLATION_LINES==="undefined")return;
+  if(typeof SKY_CONSTELLATIONS==="undefined")return;
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
 
-  let canvas=document.getElementById("skyCanvas");
-  let rect=canvas.getBoundingClientRect();
-
-  let W=rect.width;
-  let H=rect.height;
-
-  let left=14;
-  let right=W-14;
-  let width=right-left;
-  let topY=18;
-  let horizonY=H*0.76;
-
-  let data=getInputData();
-  if(data.error)return;
-
-  let sun=sunAlmanac(data.date,data.time);
-
-  let course=parseFloat(skyCourse.value);
-  if(isNaN(course))course=0;
-
-  let mode=skyMode.value;
-
-  function projectFixedStar(SHA,Dec){
-
-    let GHA=norm360(sun.GHAAries+SHA);
-    let r=calculateHcZn(data.lat,Dec,norm360(GHA+data.lon));
-
-    if(r.Hc<=0)return null;
-
-    let center=mode==="north"?0:course;
-    let rel=normalizeError(r.Zn-center);
-
-    if(rel<-90||rel>90)return null;
-
-    let t=(rel+90)/180;
-    let x=left+t*width;
-
-    let h=Math.max(0,Math.min(90,r.Hc));
-    let alt=Math.sin(degToRad(h));
-
-    let sideCurve=Math.sin(t*Math.PI);
-    let domeLift=H*0.05*sideCurve;
-
-    let usable=(horizonY-topY)*0.80;
-    let y=horizonY-alt*usable-domeLift;
-
-    return {x:x,y:y};
-  }
-
   function getStarPoint(name){
-
     let alias=skyStarAlias(name);
 
-    let p =
+    return (
       starMap[name] ||
       starMap[skyNameKey(name)] ||
       starMap[alias] ||
-      starMap[skyNameKey(alias)];
-
-    if(p)return p;
-
-    if(STAR_CATALOG[name]){
-      return projectFixedStar(STAR_CATALOG[name].SHA,STAR_CATALOG[name].Dec);
-    }
-
-    if(CONSTELLATION_STAR_FIXES[name]){
-      return projectFixedStar(
-        CONSTELLATION_STAR_FIXES[name].SHA,
-        CONSTELLATION_STAR_FIXES[name].Dec
-      );
-    }
-
-    return null;
+      starMap[skyNameKey(alias)] ||
+      null
+    );
   }
 
   ctx.save();
 
-  CONSTELLATION_LINES.forEach(line=>{
+  Object.keys(SKY_CONSTELLATIONS).forEach(conName=>{
 
-    let a=getStarPoint(line[0]);
-    let b=getStarPoint(line[1]);
+    let lines=SKY_CONSTELLATIONS[conName];
 
-    if(!a || !b)return;
+    lines.forEach(line=>{
 
-    ctx.strokeStyle="rgba(120,210,255,0.90)";
-    ctx.globalAlpha=0.82;
-    ctx.lineWidth=0.9;
+      let a=getStarPoint(line[0]);
+      let b=getStarPoint(line[1]);
 
-    ctx.beginPath();
-    ctx.moveTo(a.x,a.y);
-    ctx.lineTo(b.x,b.y);
-    ctx.stroke();
+      if(!a || !b)return;
+
+      ctx.strokeStyle="rgba(120,210,255,0.72)";
+      ctx.globalAlpha=0.65;
+      ctx.lineWidth=0.8;
+
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y);
+      ctx.lineTo(b.x,b.y);
+      ctx.stroke();
+
+    });
 
   });
 
