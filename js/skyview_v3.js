@@ -778,21 +778,156 @@ function saveSkyStarPosition(name,x,y){
   window.skyAllStarPositions[name]={x:x,y:y};
   window.skyAllStarPositions[skyNameKey(name)]={x:x,y:y};
 }
+const CONSTELLATION_STAR_FIXES = {
+  Merak:{SHA:194.0,Dec:56.4},
+  Phecda:{SHA:184.0,Dec:53.7},
+  Megrez:{SHA:177.0,Dec:57.0},
+  Mizar:{SHA:159.0,Dec:54.9},
+  Pherkad:{SHA:130.0,Dec:71.8},
+
+  Mintaka:{SHA:276.0,Dec:-0.3},
+  Alnitak:{SHA:275.0,Dec:-1.9},
+  Saiph:{SHA:275.0,Dec:-9.7},
+  Mirzam:{SHA:257.0,Dec:-17.9},
+  Wezen:{SHA:252.0,Dec:-26.4},
+  Aludra:{SHA:244.0,Dec:-29.3},
+  Gomeisa:{SHA:248.0,Dec:8.3},
+
+  Algieba:{SHA:207.0,Dec:19.8},
+  Zosma:{SHA:191.0,Dec:20.5},
+  Chertan:{SHA:185.0,Dec:15.4},
+  Porrima:{SHA:170.0,Dec:-1.4},
+  Vindemiatrix:{SHA:164.0,Dec:10.9},
+  Zavijava:{SHA:171.0,Dec:1.8},
+  Zaniah:{SHA:169.0,Dec:-0.6},
+
+  Muphrid:{SHA:145.0,Dec:18.0},
+  Izar:{SHA:139.0,Dec:27.1},
+  Nekkar:{SHA:119.0,Dec:40.4},
+  Seginus:{SHA:128.0,Dec:38.3},
+  Nusakan:{SHA:125.0,Dec:29.0},
+
+  Sadr:{SHA:60.0,Dec:40.3},
+  "Gienah Cygni":{SHA:56.0,Dec:33.9},
+  "Delta Cygni":{SHA:67.0,Dec:45.1},
+  Albireo:{SHA:69.0,Dec:27.9},
+
+  Tarazed:{SHA:74.0,Dec:10.6},
+  Alshain:{SHA:66.0,Dec:6.4},
+  Okab:{SHA:73.0,Dec:13.9},
+
+  Almach:{SHA:329.0,Dec:42.3},
+  Mirach:{SHA:343.0,Dec:35.6},
+  Scheat:{SHA:14.0,Dec:28.1},
+
+  Caph:{SHA:358.0,Dec:59.1},
+  Navi:{SHA:347.0,Dec:60.7},
+  Ruchbah:{SHA:352.0,Dec:60.2},
+  Segin:{SHA:347.6,Dec:63.7},
+
+  Algol:{SHA:313.0,Dec:40.9},
+  Atik:{SHA:303.0,Dec:32.3},
+  Menkib:{SHA:296.0,Dec:35.8},
+
+  Dschubba:{SHA:98.0,Dec:-22.6},
+  Sargas:{SHA:96.0,Dec:-42.9},
+  Cebalrai:{SHA:75.0,Dec:4.6},
+  "Yed Prior":{SHA:91.0,Dec:-3.7},
+
+  "Kaus Media":{SHA:84.0,Dec:-29.8},
+  "Kaus Borealis":{SHA:86.0,Dec:-25.4},
+  Zubeneschamali:{SHA:131.0,Dec:-9.4},
+
+  "Baten Kaitos":{SHA:337.0,Dec:-10.3},
+  Mira:{SHA:326.0,Dec:-2.0},
+  Cursa:{SHA:286.5,Dec:-5.1},
+  Zaurak:{SHA:319.2,Dec:-13.5},
+
+  Mimosa:{SHA:170.0,Dec:-59.7},
+  Imai:{SHA:145.0,Dec:-59.7},
+  Aspidiske:{SHA:223.0,Dec:-59.5},
+  Markeb:{SHA:226.0,Dec:-55.0}
+};
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
+
+  if(typeof CONSTELLATION_LINES==="undefined")return;
 
   let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
 
- function getStarPoint(name){
-  let alias = skyStarAlias(name);
+  let canvas=document.getElementById("skyCanvas");
+  let rect=canvas.getBoundingClientRect();
 
-  return (
-    starMap[name] ||
-    starMap[skyNameKey(name)] ||
-    starMap[alias] ||
-    starMap[skyNameKey(alias)] ||
-    null
-  );
-}
+  let W=rect.width;
+  let H=rect.height;
+
+  let left=14;
+  let right=W-14;
+  let width=right-left;
+  let topY=18;
+  let horizonY=H*0.76;
+
+  let data=getInputData();
+  if(data.error)return;
+
+  let sun=sunAlmanac(data.date,data.time);
+
+  let course=parseFloat(skyCourse.value);
+  if(isNaN(course))course=0;
+
+  let mode=skyMode.value;
+
+  function projectFixedStar(SHA,Dec){
+
+    let GHA=norm360(sun.GHAAries+SHA);
+    let r=calculateHcZn(data.lat,Dec,norm360(GHA+data.lon));
+
+    if(r.Hc<=0)return null;
+
+    let center=mode==="north"?0:course;
+    let rel=normalizeError(r.Zn-center);
+
+    if(rel<-90||rel>90)return null;
+
+    let t=(rel+90)/180;
+    let x=left+t*width;
+
+    let h=Math.max(0,Math.min(90,r.Hc));
+    let alt=Math.sin(degToRad(h));
+
+    let sideCurve=Math.sin(t*Math.PI);
+    let domeLift=H*0.05*sideCurve;
+
+    let usable=(horizonY-topY)*0.80;
+    let y=horizonY-alt*usable-domeLift;
+
+    return {x:x,y:y};
+  }
+
+  function getStarPoint(name){
+
+    let alias=skyStarAlias(name);
+
+    let p =
+      starMap[name] ||
+      starMap[skyNameKey(name)] ||
+      starMap[alias] ||
+      starMap[skyNameKey(alias)];
+
+    if(p)return p;
+
+    if(STAR_CATALOG[name]){
+      return projectFixedStar(STAR_CATALOG[name].SHA,STAR_CATALOG[name].Dec);
+    }
+
+    if(CONSTELLATION_STAR_FIXES[name]){
+      return projectFixedStar(
+        CONSTELLATION_STAR_FIXES[name].SHA,
+        CONSTELLATION_STAR_FIXES[name].Dec
+      );
+    }
+
+    return null;
+  }
 
   ctx.save();
 
@@ -803,9 +938,9 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
     if(!a || !b)return;
 
-    ctx.strokeStyle="rgba(120,210,255,0.88)";
+    ctx.strokeStyle="rgba(120,210,255,0.90)";
     ctx.globalAlpha=0.82;
-    ctx.lineWidth=0.85;
+    ctx.lineWidth=0.9;
 
     ctx.beginPath();
     ctx.moveTo(a.x,a.y);
