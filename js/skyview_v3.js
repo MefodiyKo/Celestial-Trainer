@@ -874,17 +874,7 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
   let mode=skyMode.value;
 
-  function projectConstellationStar(name){
-
-    let st=null;
-
-    if(STAR_CATALOG && STAR_CATALOG[name]){
-      st=STAR_CATALOG[name];
-    }else if(CT_CONSTELLATION_STARS[name]){
-      st=CT_CONSTELLATION_STARS[name];
-    }else{
-      return null;
-    }
+  function projectStar(st){
 
     let GHA=norm360(sun.GHAAries+st.SHA);
     let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
@@ -908,23 +898,36 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
     let usable=(horizonY-topY)*0.80;
     let y=horizonY-alt*usable-domeLift;
 
-    return {x:x,y:y};
+    return {x:x,y:y,hc:r.Hc};
   }
 
   ctx.save();
 
   Object.keys(CT_CONSTELLATIONS).forEach(conName=>{
 
-    CT_CONSTELLATIONS[conName].forEach(line=>{
+    let con=CT_CONSTELLATIONS[conName];
 
-      let a=projectConstellationStar(line[0]);
-      let b=projectConstellationStar(line[1]);
+    con.lines.forEach(line=>{
+
+      let aStar=con.stars[line[0]];
+      let bStar=con.stars[line[1]];
+
+      if(!aStar || !bStar)return;
+
+      let a=projectStar(aStar);
+      let b=projectStar(bStar);
 
       if(!a || !b)return;
 
-      ctx.strokeStyle="rgba(120,210,255,0.72)";
-      ctx.globalAlpha=0.65;
-      ctx.lineWidth=0.8;
+      let dx=a.x-b.x;
+      let dy=a.y-b.y;
+      let dist=Math.sqrt(dx*dx+dy*dy);
+
+      if(dist>W*0.45)return;
+
+      ctx.strokeStyle="rgba(120,210,255,0.76)";
+      ctx.globalAlpha=0.70;
+      ctx.lineWidth=0.85;
 
       ctx.beginPath();
       ctx.moveTo(a.x,a.y);
