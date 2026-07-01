@@ -5775,7 +5775,8 @@ let sextantHorizonY=180;
 let sextantStartPitch=0;
 let sextantCurrentPitch=0;
 let sextantCurrentRoll=0;
-
+let sextantHeading=0;
+let sextantHasHeading=false;
 let sextantPixelScale=6;
 
 async function startSextant(){
@@ -5879,7 +5880,13 @@ function handleSextantOrientation(event){
 
   let pitchBox=document.getElementById("sextantPitch");
   let rollBox=document.getElementById("sextantRoll");
-
+if(typeof event.webkitCompassHeading==="number"){
+  sextantHeading=event.webkitCompassHeading;
+  sextantHasHeading=true;
+}else if(typeof event.alpha==="number"){
+  sextantHeading=norm360(360-event.alpha);
+  sextantHasHeading=true;
+}
   if(pitchBox){
     pitchBox.innerText=sextantCurrentPitch.toFixed(1)+"°";
   }
@@ -6162,24 +6169,37 @@ function drawSextantSkyObjects(ctx,canvas){
 
   let visibleCount=0;
 
-  function project(zn,hc){
+function project(zn,hc){
 
-    if(hc<=0)return null;
+  if(hc<=0)return null;
 
-    let rel=normalizeError(zn-course);
+  let centerAz = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
+  if(isNaN(centerAz)) centerAz=0;
 
-    // шире сектор, чтобы точно увидеть объекты
-    if(rel<-90 || rel>90)return null;
+  let relAz=normalizeError(zn-centerAz);
 
-    let x=W/2+(rel/90)*(W/2);
+  let horizontalFOV=60; // camera view approx
+  if(relAz<-horizontalFOV/2 || relAz>horizontalFOV/2)return null;
 
-    // пока без pitch, стабильный обзор от горизонта до зенита
-    let y=H-(hc/90)*H;
+  let x=W/2+(relAz/(horizontalFOV/2))*(W/2);
 
-    if(y<20 || y>H-20)return null;
+  /*
+    Phone pitch logic:
+    beta about 90° = phone vertical.
+    We convert it to camera center altitude.
+    This will need calibration, but now objects move dynamically.
+  */
+  let cameraAlt = 90 - Math.abs(sextantCurrentPitch || 90);
 
-    return {x:x,y:y};
-  }
+  let verticalFOV=45;
+  let relAlt=hc-cameraAlt;
+
+  if(relAlt<-verticalFOV/2 || relAlt>verticalFOV/2)return null;
+
+  let y=H/2-(relAlt/(verticalFOV/2))*(H/2);
+
+  return {x:x,y:y};
+}
 
   objects.forEach(o=>{
 
@@ -6229,11 +6249,13 @@ function drawSextantSkyObjects(ctx,canvas){
   ctx.save();
   ctx.fillStyle="#9ee7ff";
   ctx.font="14px Arial";
-  ctx.fillText(
-    "AR Sky Overlay | objects: "+visibleCount+" | course "+course.toFixed(0)+"°",
-    20,
-    165
-  );
+ctx.fillText(
+  "AR Sky | objects: "+visibleCount+
+  " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
+  " | Pitch "+sextantCurrentPitch.toFixed(0)+"°",
+  20,
+  165
+);
   ctx.restore();
 }
 function drawSextantSkyOverlay(){
