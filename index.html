@@ -6110,9 +6110,140 @@ function drawSextant(){
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
   ctx.fillText("For training only — not for official navigation",20,340);
-  
+  drawSextantSkyOverlay();
 }
+function drawSextantSkyOverlay(){
 
+  let canvas=document.getElementById("sextantSkyOverlay");
+  if(!canvas)return;
+
+  let ctx=canvas.getContext("2d");
+  let rect=canvas.getBoundingClientRect();
+
+  let dpr=window.devicePixelRatio||1;
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  let W=rect.width;
+  let H=rect.height;
+
+  ctx.clearRect(0,0,W,H);
+
+  let data=getInputData();
+  if(data.error)return;
+
+  let course=parseFloat(skyCourse.value);
+  if(isNaN(course))course=0;
+
+  let centerAz=course;
+
+  let objects=[];
+
+  let sun=sunAlmanac(data.date,data.time);
+  let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
+
+  objects.push({name:"Sun",type:"sun",hc:sunR.Hc,zn:sunR.Zn});
+
+  let moon=moonAlmanac(data.date,data.time);
+  let moonR=calculateHcZn(data.lat,moon.Dec,norm360(moon.GHA+data.lon));
+
+  objects.push({name:"Moon",type:"moon",hc:moonR.Hc,zn:moonR.Zn});
+
+  ["Venus","Mars","Jupiter","Saturn"].forEach(name=>{
+    let p=planetAlmanac(data.date,data.time,name);
+    let r=calculateHcZn(data.lat,p.Dec,norm360(p.GHA+data.lon));
+    objects.push({name:name,type:"planet",hc:r.Hc,zn:r.Zn});
+  });
+
+  for(let name in STAR_CATALOG){
+    let st=STAR_CATALOG[name];
+    let GHA=norm360(sun.GHAAries+st.SHA);
+    let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
+
+    if(r.Hc>0){
+      objects.push({
+        name:name,
+        type:"star",
+        hc:r.Hc,
+        zn:r.Zn,
+        mag:st.Mag
+      });
+    }
+  }
+
+  function project(zn,hc){
+
+    if(hc<=0)return null;
+
+    let rel=normalizeError(zn-centerAz);
+
+    if(rel<-45 || rel>45)return null;
+
+    let x=W/2 + (rel/45)*(W/2);
+
+    let pitch=sextantCurrentPitch || 0;
+
+    let verticalCenterAlt=20 + pitch;
+    let altRange=60;
+
+    let y=H/2 - ((hc-verticalCenterAlt)/altRange)*H;
+
+    if(y<-80 || y>H+80)return null;
+
+    return {x:x,y:y};
+  }
+
+  objects.forEach(o=>{
+
+    let p=project(o.zn,o.hc);
+    if(!p)return;
+
+    let size=4;
+
+    if(o.type==="sun")size=13;
+    else if(o.type==="moon")size=11;
+    else if(o.name==="Venus")size=7;
+    else if(o.type==="planet")size=6;
+    else size=Math.max(2,5-o.mag);
+
+    ctx.save();
+
+    ctx.globalAlpha=0.9;
+
+    ctx.fillStyle=
+      o.type==="sun"?"#ffd966":
+      o.type==="moon"?"#dddddd":
+      o.name==="Mars"?"#ff8a65":
+      o.name==="Jupiter"?"#ffe0a0":
+      o.name==="Saturn"?"#ffe08a":
+      "#ffffff";
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,size,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle="rgba(255,217,102,0.8)";
+    ctx.lineWidth=1;
+
+    if(o.type==="sun" || o.type==="moon"){
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,size+8,0,Math.PI*2);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle="#ffffff";
+    ctx.font="13px Arial";
+    ctx.fillText(o.name,p.x+size+6,p.y+4);
+
+    ctx.restore();
+
+  });
+
+  ctx.fillStyle="rgba(158,231,255,0.9)";
+  ctx.font="12px Arial";
+  ctx.fillText("Live sky overlay | GPS/UTC calculated",12,H-14);
+}
 </script>
 
 </body>
