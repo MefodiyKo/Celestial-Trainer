@@ -850,32 +850,75 @@ const CONSTELLATION_STAR_FIXES = {
 };
 function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
 
-  if(typeof SKY_CONSTELLATIONS==="undefined")return;
+  if(typeof CT_CONSTELLATIONS==="undefined")return;
 
-  let starMap=Object.assign({}, window.skyAllStarPositions || {}, plottedStars || {});
+  let canvas=document.getElementById("skyCanvas");
+  let rect=canvas.getBoundingClientRect();
 
-  function getStarPoint(name){
-    let alias=skyStarAlias(name);
+  let W=rect.width;
+  let H=rect.height;
 
-    return (
-      starMap[name] ||
-      starMap[skyNameKey(name)] ||
-      starMap[alias] ||
-      starMap[skyNameKey(alias)] ||
-      null
-    );
+  let left=14;
+  let right=W-14;
+  let width=right-left;
+  let topY=18;
+  let horizonY=H*0.76;
+
+  let data=getInputData();
+  if(data.error)return;
+
+  let sun=sunAlmanac(data.date,data.time);
+
+  let course=parseFloat(skyCourse.value);
+  if(isNaN(course))course=0;
+
+  let mode=skyMode.value;
+
+  function projectConstellationStar(name){
+
+    let st=null;
+
+    if(STAR_CATALOG && STAR_CATALOG[name]){
+      st=STAR_CATALOG[name];
+    }else if(CT_CONSTELLATION_STARS[name]){
+      st=CT_CONSTELLATION_STARS[name];
+    }else{
+      return null;
+    }
+
+    let GHA=norm360(sun.GHAAries+st.SHA);
+    let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
+
+    if(r.Hc<=0)return null;
+
+    let center=mode==="north"?0:course;
+    let rel=normalizeError(r.Zn-center);
+
+    if(rel<-90||rel>90)return null;
+
+    let t=(rel+90)/180;
+    let x=left+t*width;
+
+    let h=Math.max(0,Math.min(90,r.Hc));
+    let alt=Math.sin(degToRad(h));
+
+    let sideCurve=Math.sin(t*Math.PI);
+    let domeLift=H*0.05*sideCurve;
+
+    let usable=(horizonY-topY)*0.80;
+    let y=horizonY-alt*usable-domeLift;
+
+    return {x:x,y:y};
   }
 
   ctx.save();
 
-  Object.keys(SKY_CONSTELLATIONS).forEach(conName=>{
+  Object.keys(CT_CONSTELLATIONS).forEach(conName=>{
 
-    let lines=SKY_CONSTELLATIONS[conName];
+    CT_CONSTELLATIONS[conName].forEach(line=>{
 
-    lines.forEach(line=>{
-
-      let a=getStarPoint(line[0]);
-      let b=getStarPoint(line[1]);
+      let a=projectConstellationStar(line[0]);
+      let b=projectConstellationStar(line[1]);
 
       if(!a || !b)return;
 
