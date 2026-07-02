@@ -407,53 +407,18 @@ function drawSextantSkyObjects(ctx,canvas){
 
 function project(zn,hc){
 
-  if(hc<=0)return null;
-
   let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
-  if(isNaN(heading)) heading=0;
+  if(isNaN(heading)) heading = 0;
 
-  let beta = sextantCurrentPitch || 0;
-  let gamma = sextantCurrentRoll || 0;
-
-  let relAz = normalizeError(zn-heading);
-
-  /*
-    Camera field of view.
-    iPhone main camera approx:
-    horizontal 60°, vertical 45°.
-  */
-  let hFOV = 60;
-  let vFOV = 45;
-
-  if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
-
-  /*
-    beta:
-    about 90° = phone vertical
-    about 0°  = phone flat
-    This converts phone tilt to camera altitude.
-  */
-  let cameraAlt = 90 - Math.abs(beta);
-
-  let relAlt = hc - cameraAlt;
-
-  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
-
-  let x = W/2 + (relAz/(hFOV/2))*(W/2);
-  let y = H/2 - (relAlt/(vFOV/2))*(H/2);
-
-  /*
-    Roll compensation.
-    Rotates projected point around screen center.
-  */
-  let roll = degToRad(gamma);
-  let dx = x - W/2;
-  let dy = y - H/2;
-
-  let xr = W/2 + dx*Math.cos(roll) - dy*Math.sin(roll);
-  let yr = H/2 + dx*Math.sin(roll) + dy*Math.cos(roll);
-
-  return {x:xr,y:yr};
+  return CT_AR.projectObject(
+    zn,
+    hc,
+    heading,
+    sextantCurrentPitch || 0,
+    sextantCurrentRoll || 0,
+    W,
+    H
+  );
 }
 
   objects.forEach(o=>{
