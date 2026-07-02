@@ -15,7 +15,8 @@ let sextantCurrentRoll=0;
 let sextantHeading=0;
 let sextantHasHeading=false;
 let sextantPixelScale=6;
-
+let sextantHeadingOffset=0;
+let sextantPitchOffset=0;
 async function startSextant(){
 
   sextantActive=true;
@@ -410,11 +411,16 @@ function project(zn,hc){
   let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
   if(isNaN(heading)) heading = 0;
 
+function project(zn,hc){
+
+  let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
+  if(isNaN(heading)) heading = 0;
+
   return CT_AR.projectObject(
     zn,
     hc,
-    heading,
-    sextantCurrentPitch || 0,
+    norm360(heading + sextantHeadingOffset),
+    (sextantCurrentPitch || 0) + sextantPitchOffset,
     sextantCurrentRoll || 0,
     W,
     H
@@ -473,9 +479,30 @@ ctx.fillText(
   "AR Sky | objects: "+visibleCount+
   " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
   " | Pitch "+sextantCurrentPitch.toFixed(0)+"°"+
-  " | Roll "+sextantCurrentRoll.toFixed(0)+"°",
+  " | HOff "+sextantHeadingOffset.toFixed(0)+"°"+
+  " | POff "+sextantPitchOffset.toFixed(0)+"°",
   20,
   165
 );
   ctx.restore();
+}
+ctx.restore();
+}
+
+/* ===== AR calibration ===== */
+
+function adjustARHeading(delta){
+  sextantHeadingOffset += delta;
+  drawSextant();
+}
+
+function adjustARPitch(delta){
+  sextantPitchOffset += delta;
+  drawSextant();
+}
+
+function resetARCalibration(){
+  sextantHeadingOffset = 0;
+  sextantPitchOffset = 0;
+  drawSextant();
 }
