@@ -406,10 +406,6 @@ function drawSextantSkyObjects(ctx,canvas){
 
   let visibleCount=0;
 
-function project(zn,hc){
-
-  let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
-  if(isNaN(heading)) heading = 0;
 
 function project(zn,hc){
 
@@ -429,7 +425,7 @@ function project(zn,hc){
 
   objects.forEach(o=>{
 
-    let p=project(o.zn,o.hc);
+let p = project(o.zn,o.hc);
     if(!p)return;
 
     visibleCount++;
@@ -485,8 +481,6 @@ ctx.fillText(
   165
 );
   ctx.restore();
-}
-ctx.restore();
 }
 
 /* ===== AR calibration ===== */
