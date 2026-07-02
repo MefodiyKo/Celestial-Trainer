@@ -409,18 +409,29 @@ function drawSextantSkyObjects(ctx,canvas){
 
 function project(zn,hc){
 
+  if(hc<=0)return null;
+
   let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
   if(isNaN(heading)) heading = 0;
 
-  return CT_AR.projectObject(
-    zn,
-    hc,
-    norm360(heading + sextantHeadingOffset),
-    (sextantCurrentPitch || 0) + sextantPitchOffset,
-    sextantCurrentRoll || 0,
-    W,
-    H
-  );
+  heading = norm360(heading + sextantHeadingOffset);
+
+  let relAz = normalizeError(zn - heading);
+
+  let hFOV = 120;
+  if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
+
+  let x = W/2 + (relAz/(hFOV/2))*(W/2);
+
+  let cameraAlt = sextantPitchOffset;
+  let relAlt = hc - cameraAlt;
+
+  let vFOV = 90;
+  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+
+  let y = H/2 - (relAlt/(vFOV/2))*(H/2);
+
+  return {x:x,y:y};
 }
 
   objects.forEach(o=>{
