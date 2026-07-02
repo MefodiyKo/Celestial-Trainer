@@ -409,32 +409,51 @@ function project(zn,hc){
 
   if(hc<=0)return null;
 
-  let centerAz = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
-  if(isNaN(centerAz)) centerAz=0;
+  let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
+  if(isNaN(heading)) heading=0;
 
-  let relAz=normalizeError(zn-centerAz);
+  let beta = sextantCurrentPitch || 0;
+  let gamma = sextantCurrentRoll || 0;
 
-  let horizontalFOV=60; // camera view approx
-  if(relAz<-horizontalFOV/2 || relAz>horizontalFOV/2)return null;
-
-  let x=W/2+(relAz/(horizontalFOV/2))*(W/2);
+  let relAz = normalizeError(zn-heading);
 
   /*
-    Phone pitch logic:
-    beta about 90° = phone vertical.
-    We convert it to camera center altitude.
-    This will need calibration, but now objects move dynamically.
+    Camera field of view.
+    iPhone main camera approx:
+    horizontal 60°, vertical 45°.
   */
-  let cameraAlt = 90 - Math.abs(sextantCurrentPitch || 90);
+  let hFOV = 60;
+  let vFOV = 45;
 
-  let verticalFOV=45;
-  let relAlt=hc-cameraAlt;
+  if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
 
-  if(relAlt<-verticalFOV/2 || relAlt>verticalFOV/2)return null;
+  /*
+    beta:
+    about 90° = phone vertical
+    about 0°  = phone flat
+    This converts phone tilt to camera altitude.
+  */
+  let cameraAlt = 90 - Math.abs(beta);
 
-  let y=H/2-(relAlt/(verticalFOV/2))*(H/2);
+  let relAlt = hc - cameraAlt;
 
-  return {x:x,y:y};
+  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+
+  let x = W/2 + (relAz/(hFOV/2))*(W/2);
+  let y = H/2 - (relAlt/(vFOV/2))*(H/2);
+
+  /*
+    Roll compensation.
+    Rotates projected point around screen center.
+  */
+  let roll = degToRad(gamma);
+  let dx = x - W/2;
+  let dy = y - H/2;
+
+  let xr = W/2 + dx*Math.cos(roll) - dy*Math.sin(roll);
+  let yr = H/2 + dx*Math.sin(roll) + dy*Math.cos(roll);
+
+  return {x:xr,y:yr};
 }
 
   objects.forEach(o=>{
@@ -488,7 +507,8 @@ function project(zn,hc){
 ctx.fillText(
   "AR Sky | objects: "+visibleCount+
   " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
-  " | Pitch "+sextantCurrentPitch.toFixed(0)+"°",
+  " | Pitch "+sextantCurrentPitch.toFixed(0)+"°"+
+  " | Roll "+sextantCurrentRoll.toFixed(0)+"°",
   20,
   165
 );
