@@ -365,3 +365,132 @@ function drawSextantSkyObjects(ctx,canvas){
     ctx.fillText("AR: no UTC / position data",20,165);
     return;
   }
+  let course=parseFloat(skyCourse.value);
+  if(isNaN(course))course=0;
+
+  let W=canvas.width;
+  let H=canvas.height;
+
+  let sun=sunAlmanac(data.date,data.time);
+  let objects=[];
+
+  let sunR=calculateHcZn(data.lat,sun.Dec,norm360(sun.GHA+data.lon));
+  objects.push({name:"Sun",type:"sun",hc:sunR.Hc,zn:sunR.Zn,mag:-26});
+
+  let moon=moonAlmanac(data.date,data.time);
+  let moonR=calculateHcZn(data.lat,moon.Dec,norm360(moon.GHA+data.lon));
+  objects.push({name:"Moon",type:"moon",hc:moonR.Hc,zn:moonR.Zn,mag:-12});
+
+  ["Venus","Mars","Jupiter","Saturn"].forEach(name=>{
+    let p=planetAlmanac(data.date,data.time,name);
+    let r=calculateHcZn(data.lat,p.Dec,norm360(p.GHA+data.lon));
+    objects.push({name:name,type:"planet",hc:r.Hc,zn:r.Zn,mag:0});
+  });
+
+  for(let name in STAR_CATALOG){
+    let st=STAR_CATALOG[name];
+    let GHA=norm360(sun.GHAAries+st.SHA);
+    let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
+
+    if(r.Hc>0){
+      objects.push({
+        name:name,
+        type:"star",
+        hc:r.Hc,
+        zn:r.Zn,
+        mag:st.Mag
+      });
+    }
+  }
+
+  let visibleCount=0;
+
+function project(zn,hc){
+
+  if(hc<=0)return null;
+
+  let centerAz = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
+  if(isNaN(centerAz)) centerAz=0;
+
+  let relAz=normalizeError(zn-centerAz);
+
+  let horizontalFOV=60; // camera view approx
+  if(relAz<-horizontalFOV/2 || relAz>horizontalFOV/2)return null;
+
+  let x=W/2+(relAz/(horizontalFOV/2))*(W/2);
+
+  /*
+    Phone pitch logic:
+    beta about 90° = phone vertical.
+    We convert it to camera center altitude.
+    This will need calibration, but now objects move dynamically.
+  */
+  let cameraAlt = 90 - Math.abs(sextantCurrentPitch || 90);
+
+  let verticalFOV=45;
+  let relAlt=hc-cameraAlt;
+
+  if(relAlt<-verticalFOV/2 || relAlt>verticalFOV/2)return null;
+
+  let y=H/2-(relAlt/(verticalFOV/2))*(H/2);
+
+  return {x:x,y:y};
+}
+
+  objects.forEach(o=>{
+
+    let p=project(o.zn,o.hc);
+    if(!p)return;
+
+    visibleCount++;
+
+    let size=4;
+
+    if(o.type==="sun")size=12;
+    else if(o.type==="moon")size=10;
+    else if(o.name==="Venus")size=7;
+    else if(o.type==="planet")size=6;
+    else size=Math.max(2,5-o.mag);
+
+    ctx.save();
+
+    ctx.globalAlpha=0.95;
+
+    ctx.fillStyle=
+      o.type==="sun"?"#ffd966":
+      o.type==="moon"?"#dddddd":
+      o.name==="Mars"?"#ff8a65":
+      o.name==="Jupiter"?"#ffe0a0":
+      o.name==="Saturn"?"#ffe08a":
+      "#ffffff";
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,size,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle="rgba(255,217,102,0.9)";
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,size+5,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle="#ffffff";
+    ctx.font="14px Arial";
+    ctx.fillText(o.name,p.x+size+7,p.y+5);
+
+    ctx.restore();
+
+  });
+
+  ctx.save();
+  ctx.fillStyle="#9ee7ff";
+  ctx.font="14px Arial";
+ctx.fillText(
+  "AR Sky | objects: "+visibleCount+
+  " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
+  " | Pitch "+sextantCurrentPitch.toFixed(0)+"°",
+  20,
+  165
+);
+  ctx.restore();
+}
