@@ -1,8 +1,8 @@
 /* Celestial Trainer - AR Engine v1 */
 
 const CT_AR = {
-  hFOV: 60,
-  vFOV: 45,
+  hFOV: 120,
+  vFOV: 90,
 
   toRad(d){ return d * Math.PI / 180; },
   toDeg(r){ return r * 180 / Math.PI; },
@@ -42,7 +42,7 @@ const CT_AR = {
 
     let relAz = this.clampAngle(az - heading);
 
-    let cameraAlt = 90 - Math.abs(pitch);
+    let cameraAlt = 0;
     let relAlt = alt - cameraAlt;
 
     if(relAz < -this.hFOV/2 || relAz > this.hFOV/2) return null;
