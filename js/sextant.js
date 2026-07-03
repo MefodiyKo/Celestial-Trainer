@@ -1,3 +1,8 @@
+let sextantARBaseSet=false;
+let sextantARBasePitch=0;
+let sextantARBaseRoll=0;
+let sextantARCenterAlt=25;
+
 let sextantActive=false;
 let sextantFrozenAngle=0;
 
@@ -116,6 +121,11 @@ function handleSextantOrientation(event){
   sextantCurrentPitch=event.beta || 0;
   sextantCurrentRoll=event.gamma || 0;
 
+if(!sextantARBaseSet){
+  sextantARBasePitch=sextantCurrentPitch;
+  sextantARBaseRoll=sextantCurrentRoll;
+  sextantARBaseSet=true;
+}
   let pitchBox=document.getElementById("sextantPitch");
   let rollBox=document.getElementById("sextantRoll");
 if(typeof event.webkitCompassHeading==="number"){
@@ -393,14 +403,23 @@ function project(zn,hc){
 
   let x = W/2 + (relAz/(hFOV/2))*(W/2);
 
-  let cameraAlt = 90 - Math.abs(sextantCurrentPitch || 90);
-cameraAlt += sextantPitchOffset;
-  let relAlt = hc - cameraAlt;
+ let pitchDelta = sextantCurrentPitch - sextantARBasePitch;
+let rollDelta  = sextantCurrentRoll - sextantARBaseRoll;
 
-  let vFOV = 90;
-  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+/* выбираем датчик, который реально меняется */
+let tiltMove =
+Math.abs(pitchDelta) > Math.abs(rollDelta)
+? pitchDelta
+: rollDelta;
 
-  let y = H/2 - (relAlt/(vFOV/2))*(H/2);
+let cameraAlt = sextantARCenterAlt + tiltMove + sextantPitchOffset;
+
+let relAlt = hc - cameraAlt;
+
+let vFOV = 90;
+if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+
+let y = H/2 - (relAlt/(vFOV/2))*(H/2);
 
   return {x:x,y:y};
 }
