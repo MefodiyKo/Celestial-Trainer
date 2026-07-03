@@ -393,7 +393,8 @@ function project(zn,hc){
 
   let x = W/2 + (relAz/(hFOV/2))*(W/2);
 
-  let cameraAlt = sextantPitchOffset;
+  let cameraAlt = 90 - Math.abs(sextantCurrentPitch || 90);
+cameraAlt += sextantPitchOffset;
   let relAlt = hc - cameraAlt;
 
   let vFOV = 90;
