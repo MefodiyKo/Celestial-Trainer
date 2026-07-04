@@ -59,3 +59,23 @@ button.main{width:100%;padding:14px;font-size:16px;background:#1f8ac0;color:whit
 .cross{position:absolute;top:50%;left:50%;width:20px;height:20px;margin-left:-10px;margin-top:-10px;border:2px solid yellow;border-radius:50%}
 
 hr{border:0;border-top:1px solid #31506a;margin:20px 0}
+#arFloatControls{
+  display:none;
+}
+
+body.sextant-fullscreen #arFloatControls{
+  display:flex;
+  position:fixed;
+  left:12px;
+  bottom:92px;
+  z-index:10020;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+body.sextant-fullscreen #arFloatControls button{
+  padding:8px 10px;
+  border-radius:10px;
+  border:0;
+  font-weight:bold;
+}
