@@ -545,3 +545,37 @@ function nudgeARLeft(){ adjustARHeading(-1); }
 function nudgeARRight(){ adjustARHeading(1); }
 function nudgeARUp(){ adjustARPitch(1); }
 function nudgeARDown(){ adjustARPitch(-1); }
+function calibrateARToSelectedObject(){
+
+  let selected=document.getElementById("celestialObject")?.value || "Sun";
+  let objects=getVisibleSkyObjects();
+  let target=objects.find(o=>o.name===selected);
+
+  if(!target){
+    alert(selected+" is not visible now.");
+    return;
+  }
+
+  let heading=sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
+  if(isNaN(heading))heading=0;
+
+  sextantHeadingOffset=normalizeError(target.zn-heading);
+
+  let pitchDelta=sextantCurrentPitch-sextantARBasePitch;
+  let rollDelta=sextantCurrentRoll-sextantARBaseRoll;
+
+  let tiltMove=
+    Math.abs(pitchDelta)>Math.abs(rollDelta)
+    ? pitchDelta
+    : rollDelta;
+
+  sextantPitchOffset=target.hc-sextantARCenterAlt-tiltMove;
+
+  drawSextant();
+
+  alert(
+    "AR calibrated to "+selected+
+    "\nHeading offset: "+sextantHeadingOffset.toFixed(1)+"°"+
+    "\nPitch offset: "+sextantPitchOffset.toFixed(1)+"°"
+  );
+}
