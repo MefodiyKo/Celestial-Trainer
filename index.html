@@ -720,7 +720,19 @@ Use Captured Hs for Sight
 <button class="main" onclick="stopSextant()">
 Stop
 </button>
+<hr>
 
+<b>AR Calibration</b><br><br>
+
+<button onclick="calibrateARToCenter()">Auto Calibrate</button>
+
+<button onclick="nudgeARLeft()">◀</button>
+<button onclick="nudgeARRight()">▶</button>
+
+<button onclick="nudgeARUp()">▲</button>
+<button onclick="nudgeARDown()">▼</button>
+
+<button onclick="resetARCalibration()">Reset AR</button>
 </div>
 <label style="margin-top:10px;display:block;">
 <input type="checkbox" id="showSkyLabels" checked>
