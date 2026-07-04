@@ -753,7 +753,14 @@ Stop
     height="360"
     style="position:absolute;left:0;top:0;width:100%;height:100%;">
   </canvas>
-
+<div id="arFloatControls">
+  <button onclick="calibrateARToSelectedObject()">CAL</button>
+  <button onclick="nudgeARLeft()">◀</button>
+  <button onclick="nudgeARRight()">▶</button>
+  <button onclick="nudgeARUp()">▲</button>
+  <button onclick="nudgeARDown()">▼</button>
+  <button onclick="resetARCalibration()">RST</button>
+</div>
 </div>
 <button class="sextant-float-freeze" onclick="freezeSextant()">
 FREEZE
