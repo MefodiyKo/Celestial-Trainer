@@ -22,9 +22,62 @@ let sextantHasHeading=false;
 let sextantPixelScale=6;
 let sextantHeadingOffset=0;
 let sextantPitchOffset=0;
+
+function fillDMSFromDecimal(value, degId, minId, dirId, posDir, negDir){
+  let dir = value >= 0 ? posDir : negDir;
+  let abs = Math.abs(value);
+  let deg = Math.floor(abs);
+  let min = (abs - deg) * 60;
+
+  document.getElementById(degId).value = deg;
+  document.getElementById(minId).value = min.toFixed(3);
+  document.getElementById(dirId).value = dir;
+}
+
+async function prepareSextantNavData(){
+
+  if(typeof setNowUTC === "function"){
+    setNowUTC();
+  }
+
+  let data = getInputData();
+  if(!data.error) return true;
+
+  if(!navigator.geolocation){
+    alert("GPS not available. Enter position manually.");
+    return false;
+  }
+
+  return new Promise(resolve=>{
+    navigator.geolocation.getCurrentPosition(
+      pos=>{
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+
+        fillDMSFromDecimal(lat,"latDeg","latMin","latDir","N","S");
+        fillDMSFromDecimal(lon,"lonDeg","lonMin","lonDir","E","W");
+
+        resolve(true);
+      },
+      err=>{
+        alert("GPS position required for AR Sextant.");
+        resolve(false);
+      },
+      {
+        enableHighAccuracy:true,
+        timeout:10000,
+        maximumAge:0
+      }
+    );
+  });
+}
 async function startSextant(){
 
-  sextantActive=true;
+  let navReady = await prepareSextantNavData();
+if(!navReady)return;
+
+sextantActive=true;
+sextantARBaseSet=false;
 if(
   typeof DeviceOrientationEvent!=="undefined" &&
   typeof DeviceOrientationEvent.requestPermission==="function"
