@@ -501,45 +501,7 @@ function resetARCalibration(){
   sextantPitchOffset = 0;
   drawSextant();
 }
-function calibrateARToCenter(){
-  sextantHeadingOffset = 0;
-  sextantPitchOffset = 0;
 
-  let obj = document.getElementById("celestialObject")?.value || "Sun";
-  let data = getInputData();
-  if(data.error)return;
-
-  let objects = getVisibleSkyObjects();
-  let target = objects.find(o => o.name === obj);
-
-  if(!target){
-    alert("Selected object is not visible now.");
-    return;
-  }
-
-  let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
-  if(isNaN(heading))heading=0;
-
-  sextantHeadingOffset = normalizeError(target.zn - heading);
-
-  let pitchDelta = sextantCurrentPitch - sextantARBasePitch;
-  let rollDelta  = sextantCurrentRoll - sextantARBaseRoll;
-
-  let tiltMove =
-    Math.abs(pitchDelta) > Math.abs(rollDelta)
-    ? pitchDelta
-    : rollDelta;
-
-  sextantPitchOffset = target.hc - sextantARCenterAlt - tiltMove;
-
-  drawSextant();
-
-  alert(
-    "AR calibrated to "+obj+
-    "\nHeading offset: "+sextantHeadingOffset.toFixed(1)+"°"+
-    "\nPitch offset: "+sextantPitchOffset.toFixed(1)+"°"
-  );
-}
 
 function nudgeARLeft(){ adjustARHeading(-1); }
 function nudgeARRight(){ adjustARHeading(1); }
