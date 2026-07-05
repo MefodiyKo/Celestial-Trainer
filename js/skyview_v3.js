@@ -97,7 +97,7 @@ function drawSkyViewV3(){
   let right=W-14;
   let width=right-left;
   let topY=18;
-  let horizonY=H*0.76;
+  let horizonY=H*0.68;
 
   drawSkyV3BelowHorizonSky(ctx,W,H,horizonY);
   if(sunR.Hc<-12){
@@ -550,7 +550,39 @@ function drawSkyV3Background(ctx,W,H,sunHc){
   ctx.fillStyle=g;
   ctx.fillRect(0,0,W,H);
 }
+function drawSkyV3Sea(ctx,W,H,horizonY){
 
+    /* Верхнее небо */
+    let sky=ctx.createLinearGradient(0,0,0,H);
+
+    sky.addColorStop(0.00,"#04111f");
+    sky.addColorStop(0.35,"#0b2342");
+    sky.addColorStop(0.65,"#16395d");
+    sky.addColorStop(1.00,"#0d2238");
+
+    ctx.fillStyle=sky;
+    ctx.fillRect(0,0,W,H);
+
+    /* Затемнение ниже горизонта */
+    let below=ctx.createLinearGradient(0,horizonY,0,H);
+
+    below.addColorStop(0,"rgba(0,0,0,0.10)");
+    below.addColorStop(0.35,"rgba(0,0,0,0.25)");
+    below.addColorStop(1,"rgba(0,0,0,0.55)");
+
+    ctx.fillStyle=below;
+    ctx.fillRect(0,horizonY,W,H-horizonY);
+
+    /* Горизонт */
+    ctx.strokeStyle="#86d7ff";
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.moveTo(0,horizonY);
+    ctx.lineTo(W,horizonY);
+    ctx.stroke();
+
+}
 function drawSkyV3BelowHorizonSky(ctx,W,H,horizonY){
 
   let g=ctx.createLinearGradient(0,horizonY-40,0,H);
@@ -858,7 +890,7 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
   let right=W-14;
   let width=right-left;
   let topY=18;
-  let horizonY=H*0.76;
+  let horizonY=H*0.68;
 
   let data=getInputData();
   if(data.error)return;
