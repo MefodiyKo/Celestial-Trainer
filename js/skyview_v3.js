@@ -119,7 +119,7 @@ if(sunR.Hc<-6){
     let t=(rel+90)/180;
     let x=left+t*width;
 
-    let h=Math.max(0,Math.min(90,hc));
+    let h=Math.max(-45,Math.min(90,hc));
     let alt=Math.sin(degToRad(h));
 
     let skyTop=topY;
@@ -565,11 +565,12 @@ function drawSkyV3Background(ctx,W,H,sunHc){
 }
 function drawSkyV3Sea(ctx,W,H,horizonY){
 
+  /* Full sky dome below horizon, no sea */
   let below=ctx.createLinearGradient(0,horizonY,0,H);
 
-  below.addColorStop(0,"rgba(0,0,0,0.04)");
-  below.addColorStop(0.45,"rgba(0,0,0,0.18)");
-  below.addColorStop(1,"rgba(0,0,0,0.46)");
+  below.addColorStop(0,"rgba(0,0,0,0.05)");
+  below.addColorStop(0.45,"rgba(0,0,0,0.22)");
+  below.addColorStop(1,"rgba(0,0,0,0.55)");
 
   ctx.fillStyle=below;
   ctx.fillRect(0,horizonY,W,H-horizonY);
