@@ -552,17 +552,7 @@ function drawSkyV3Background(ctx,W,H,sunHc){
 }
 function drawSkyV3Sea(ctx,W,H,horizonY){
 
-    /* Верхнее небо */
-    let sky=ctx.createLinearGradient(0,0,0,H);
-
-    sky.addColorStop(0.00,"#04111f");
-    sky.addColorStop(0.35,"#0b2342");
-    sky.addColorStop(0.65,"#16395d");
-    sky.addColorStop(1.00,"#0d2238");
-
-    ctx.fillStyle=sky;
-    ctx.fillRect(0,0,W,H);
-
+ 
     /* Затемнение ниже горизонта */
     let below=ctx.createLinearGradient(0,horizonY,0,H);
 
