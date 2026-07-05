@@ -524,24 +524,37 @@ saveSkyStarPosition(name,pos.x,pos.y);
   ctx.restore();
 }
 function drawSkyV3Background(ctx,W,H,sunHc){
+
   let g=ctx.createLinearGradient(0,0,0,H);
 
-  if(sunHc>5){
-    g.addColorStop(0,"#1b6fa8");
-    g.addColorStop(0.6,"#63b7e6");
-    g.addColorStop(1,"#d6f3ff");
+  if(sunHc > 15){
+    /* Day */
+    g.addColorStop(0,"#2b82c4");
+    g.addColorStop(0.45,"#67bce8");
+    g.addColorStop(1,"#d8f4ff");
   }
-  else if(sunHc>-6){
+  else if(sunHc > 0){
+    /* Low Sun / sunrise / sunset */
+    g.addColorStop(0,"#1a4f82");
+    g.addColorStop(0.45,"#3f87b8");
+    g.addColorStop(0.78,"#f0a35c");
+    g.addColorStop(1,"#ffd08a");
+  }
+  else if(sunHc > -6){
+    /* Civil twilight */
     g.addColorStop(0,"#102b4a");
-    g.addColorStop(0.65,"#234f78");
-    g.addColorStop(1,"#d98b4a");
+    g.addColorStop(0.55,"#204d78");
+    g.addColorStop(0.82,"#c06d48");
+    g.addColorStop(1,"#f0a060");
   }
-  else if(sunHc>-12){
+  else if(sunHc > -12){
+    /* Nautical twilight */
     g.addColorStop(0,"#06152a");
     g.addColorStop(0.7,"#0b2b4c");
     g.addColorStop(1,"#17476d");
   }
   else{
+    /* Night */
     g.addColorStop(0,"#00040a");
     g.addColorStop(0.65,"#020812");
     g.addColorStop(1,"#06152a");
@@ -552,26 +565,14 @@ function drawSkyV3Background(ctx,W,H,sunHc){
 }
 function drawSkyV3Sea(ctx,W,H,horizonY){
 
- 
-    /* Затемнение ниже горизонта */
-    let below=ctx.createLinearGradient(0,horizonY,0,H);
+  let below=ctx.createLinearGradient(0,horizonY,0,H);
 
-    below.addColorStop(0,"rgba(0,0,0,0.10)");
-    below.addColorStop(0.35,"rgba(0,0,0,0.25)");
-    below.addColorStop(1,"rgba(0,0,0,0.55)");
+  below.addColorStop(0,"rgba(0,0,0,0.04)");
+  below.addColorStop(0.45,"rgba(0,0,0,0.18)");
+  below.addColorStop(1,"rgba(0,0,0,0.46)");
 
-    ctx.fillStyle=below;
-    ctx.fillRect(0,horizonY,W,H-horizonY);
-
-    /* Горизонт */
-    ctx.strokeStyle="#86d7ff";
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-    ctx.moveTo(0,horizonY);
-    ctx.lineTo(W,horizonY);
-    ctx.stroke();
-
+  ctx.fillStyle=below;
+  ctx.fillRect(0,horizonY,W,H-horizonY);
 }
 function drawSkyV3BelowHorizonSky(ctx,W,H,horizonY){
 
