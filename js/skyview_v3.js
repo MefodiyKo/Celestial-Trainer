@@ -551,20 +551,6 @@ function drawSkyV3Background(ctx,W,H,sunHc){
   ctx.fillRect(0,0,W,H);
 }
 
-function drawSkyV3Sea(ctx,W,H,horizonY){
-  let haze=ctx.createLinearGradient(0,horizonY-60,0,horizonY+30);
-  haze.addColorStop(0,"rgba(255,255,255,0)");
-  haze.addColorStop(0.5,"rgba(180,230,255,0.16)");
-  haze.addColorStop(1,"rgba(120,180,210,0.25)");
-  ctx.fillStyle=haze;
-  ctx.fillRect(0,horizonY-60,W,90);
-
-  let sea=ctx.createLinearGradient(0,horizonY,0,H);
-  sea.addColorStop(0,"rgba(15,65,85,0.85)");
-  sea.addColorStop(1,"rgba(3,18,30,0.95)");
-  ctx.fillStyle=sea;
-  ctx.fillRect(0,horizonY,W,H-horizonY);
-}
 function drawSkyV3BelowHorizonSky(ctx,W,H,horizonY){
 
   let g=ctx.createLinearGradient(0,horizonY-40,0,H);
