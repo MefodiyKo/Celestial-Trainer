@@ -996,11 +996,13 @@ window.setupSkyViewControls = function(){
 
   function trySelectObject(x,y){
 
-  for(let i=skyObjects.length-1;i>=0;i--){
+ for(let i=skyObjects.length-1;i>=0;i--){
 
-    let o=skyObjects[i];
+  let o=skyObjects[i];
 
-    let dx=x-o.x;
+  if(o.hc < 0) continue;
+
+  let dx=x-o.x;
     let dy=y-o.y;
 
     if(o.hc < 0) continue;
