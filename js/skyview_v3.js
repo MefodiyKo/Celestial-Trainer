@@ -360,7 +360,13 @@ if(o.type==="star"){
 
     ctx.fillText(o.name,labelX,labelY);
 
-    skyObjects.push({name:o.name,x:x,y:y,r:22});
+    skyObjects.push({
+  name:o.name,
+  x:x,
+  y:y,
+  r:22,
+  hc:o.hc
+});
 
     if(o.type==="star"){
   plottedStars[o.name]={x:x,y:y};
@@ -997,7 +1003,9 @@ window.setupSkyViewControls = function(){
     let dx=x-o.x;
     let dy=y-o.y;
 
-    if(Math.sqrt(dx*dx+dy*dy)<34){
+    if(o.hc < 0) continue;
+
+if(Math.sqrt(dx*dx+dy*dy)<34){
 
       /* Проверяем, есть ли объект в списке */
       let exists=false;
