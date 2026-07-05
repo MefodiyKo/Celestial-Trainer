@@ -99,7 +99,7 @@ function drawSkyViewV3(){
   let topY=18;
   let horizonY=H*0.68;
 
-  drawSkyV3BelowHorizonSky(ctx,W,H,horizonY);
+  drawSkyV3Sea(ctx,W,H,horizonY);
   if(sunR.Hc<-12){
     drawSkyV3MilkyWay(ctx,W,H,horizonY);
 }
@@ -132,7 +132,7 @@ if(sunR.Hc<-6){
     let y=skyBottom-alt*usable-domeLift;
 
     if(y<skyTop)y=skyTop;
-    if(y>skyBottom)y=skyBottom;
+    if(y>H-18)y=H-18;
 
     return {x,y,t};
   }
@@ -476,8 +476,8 @@ function drawSkyV3BackgroundStars(ctx,W,H,horizonY){
     let t=(rel+90)/180;
     let x=left+t*width;
 
-    let h=Math.max(0,Math.min(90,hc));
-    let alt=Math.sin(degToRad(h));
+    let h=Math.max(-35,Math.min(90,hc));
+let alt=Math.sin(degToRad(h));
 
     let skyTop=topY;
     let skyBottom=horizonY;
@@ -907,7 +907,7 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
     let GHA=norm360(sun.GHAAries+st.SHA);
     let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
 
-    if(r.Hc<=0)return null;
+    if(r.Hc<=-35)return null;
 
     let center=mode==="north"?0:course;
     let rel=normalizeError(r.Zn-center);
@@ -917,7 +917,7 @@ function drawSkyV3Constellations(ctx,plottedStars,selectedObject){
     let t=(rel+90)/180;
     let x=left+t*width;
 
-    let h=Math.max(0,Math.min(90,r.Hc));
+    let h=Math.max(-35,Math.min(90,r.Hc));
     let alt=Math.sin(degToRad(h));
 
     let sideCurve=Math.sin(t*Math.PI);
