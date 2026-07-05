@@ -99,7 +99,7 @@ function drawSkyViewV3(){
   let topY=18;
   let horizonY=H*0.76;
 
-  drawSkyV3Sea(ctx,W,H,horizonY);
+  drawSkyV3BelowHorizonSky(ctx,W,H,horizonY);
   if(sunR.Hc<-12){
     drawSkyV3MilkyWay(ctx,W,H,horizonY);
 }
@@ -186,7 +186,7 @@ if(sunR.Hc<-6){
       let GHA=norm360(sun.GHAAries+st.SHA);
       let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
 
-      if(r.Hc>5){
+      if(r.Hc>-35){
         objects.push({
           name:name,
           type:"star",
@@ -565,7 +565,17 @@ function drawSkyV3Sea(ctx,W,H,horizonY){
   ctx.fillStyle=sea;
   ctx.fillRect(0,horizonY,W,H-horizonY);
 }
+function drawSkyV3BelowHorizonSky(ctx,W,H,horizonY){
 
+  let g=ctx.createLinearGradient(0,horizonY-40,0,H);
+
+  g.addColorStop(0,"rgba(8,22,38,0.35)");
+  g.addColorStop(0.45,"rgba(4,12,24,0.70)");
+  g.addColorStop(1,"rgba(0,4,10,0.95)");
+
+  ctx.fillStyle=g;
+  ctx.fillRect(0,horizonY-40,W,H-horizonY+40);
+}
 function drawSkyV3Horizon(ctx,left,right,width,horizonY,course){
   ctx.strokeStyle="#9ee7ff";
   ctx.lineWidth=2;
