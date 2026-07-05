@@ -186,7 +186,7 @@ if(sunR.Hc<-6){
       let GHA=norm360(sun.GHAAries+st.SHA);
       let r=calculateHcZn(data.lat,st.Dec,norm360(GHA+data.lon));
 
-      if(r.Hc>-35){
+      if(r.Hc>-45){
         objects.push({
           name:name,
           type:"star",
