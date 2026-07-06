@@ -170,3 +170,72 @@ body.sextant-fullscreen .sextant-float-freeze{
   top:50%;
   z-index:10030;
 }
+/* ===== Theory Book ===== */
+
+.theoryBook{
+  background:#0f2a40;
+  color:#ffffff;
+  border-radius:14px;
+  padding:16px;
+  margin-top:15px;
+  line-height:1.55;
+}
+
+.theoryPage h2{
+  margin-top:0;
+  color:#9ee7ff;
+}
+
+.theoryFormula{
+  background:#06152a;
+  border:1px solid #5fb8d9;
+  border-radius:12px;
+  padding:18px;
+  text-align:center;
+  font-size:28px;
+  margin:15px 0;
+}
+
+.thTerm{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:8px;
+  cursor:pointer;
+  color:#9ee7ff;
+  font-weight:bold;
+}
+
+.thTerm.active{
+  background:#ffd966;
+  color:#000;
+  box-shadow:0 0 12px rgba(255,217,102,.8);
+}
+
+.theorySmall{
+  text-align:center;
+  color:#b8dfff;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+.theoryExplain{
+  background:#132f46;
+  border-left:5px solid #5fb8d9;
+  border-radius:8px;
+  padding:12px;
+  margin:12px 0;
+}
+
+.theoryExplain.active{
+  background:#203f55;
+  border-left-color:#ffd966;
+  box-shadow:0 0 14px rgba(255,217,102,.35);
+}
+
+.bookNote{
+  background:#092035;
+  border:1px solid #31506a;
+  border-radius:8px;
+  padding:12px;
+  margin-top:12px;
+}
