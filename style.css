@@ -239,3 +239,53 @@ body.sextant-fullscreen .sextant-float-freeze{
   padding:12px;
   margin-top:12px;
 }
+/* ===== THEORY BOOK LAYOUT ===== */
+
+.theoryPage{
+    background:#0f2337;
+    border-radius:14px;
+    padding:20px;
+    color:white;
+}
+
+.theoryHeader{
+    border-bottom:1px solid #31506a;
+    margin-bottom:18px;
+    padding-bottom:12px;
+}
+
+.theoryChapter{
+    color:#8fd9ff;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+}
+
+.theoryTitle{
+    font-size:30px;
+    font-weight:bold;
+    margin-top:6px;
+}
+
+.theoryProgress{
+    margin-top:12px;
+    height:6px;
+    border-radius:6px;
+    background:#1a3d59;
+    overflow:hidden;
+}
+
+.theoryProgressBar{
+    height:100%;
+    width:6%;
+    background:#ffd966;
+}
+
+.theoryFormulaBox{
+    background:#06152a;
+    border:1px solid #4b7394;
+    border-radius:12px;
+    padding:22px;
+    margin:20px 0;
+    text-align:center;
+}
