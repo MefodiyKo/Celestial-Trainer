@@ -7,7 +7,7 @@ function renderTheoryBook(topic){
 
   let book=THEORY_BOOK[topic];
 
-  if(!book){
+  if(!book || !book.pages || !book.pages.length){
     box.innerHTML="";
     return;
   }
@@ -15,12 +15,26 @@ function renderTheoryBook(topic){
   let page=book.pages[0];
 
   box.innerHTML=
-  "<div class='theoryPage'>"+
-    "<h2>"+book.title+"</h2>"+
-    "<h3>"+page.title+"</h3>"+
-    page.formula+
-    page.content+
-  "</div>";
+    "<div class='theoryPage'>"+
+
+      "<div class='theoryHeader'>"+
+        "<div class='theoryChapter'>Chapter 1</div>"+
+        "<div class='theoryTitle'>"+page.title+"</div>"+
+
+        "<div class='theoryProgress'>"+
+          "<div class='theoryProgressBar'></div>"+
+        "</div>"+
+      "</div>"+
+
+      "<div class='theoryFormulaBox'>"+
+        page.formula+
+      "</div>"+
+
+      "<div id='theoryPageContent'>"+
+        page.content+
+      "</div>"+
+
+    "</div>";
 }
 
 function theoryExplain(key){
