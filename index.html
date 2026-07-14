@@ -1191,7 +1191,9 @@ Date / UTC:<br>
 
 <h3>📘 Celestial Navigation Theory</h3>
 
-<select id="theorySelect" class="full" onchange="showTheory()">
+<select id="theorySelect"
+        class="full"
+        onchange="renderTheoryBook(this.value,0)">
 
 <option value="almanac">Almanac</option>
 <option value="compass">Compass Observation</option>
@@ -1206,14 +1208,18 @@ Date / UTC:<br>
 <option value="catalogue">57 Navigation Stars Catalogue</option>
 </select>
 
-<div id="theoryContent" class="resultBox" style="margin-top:15px">
+<div id="theoryContent"
+     class="resultBox"
+     style="margin-top:15px;display:none;">
 
 Select topic.
 
 </div>
 <div id="theoryBook" class="theoryBook" style="margin-top:15px"></div>
-<canvas id="theoryCanvas" width="520" height="320"
-style="width:100%;background:white;border-radius:8px;margin-top:15px">
+<canvas id="theoryCanvas"
+        width="520"
+        height="320"
+        style="display:none;">
 </canvas>
 </div>
 
