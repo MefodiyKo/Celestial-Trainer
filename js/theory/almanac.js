@@ -158,6 +158,139 @@ THEORY_BOOK.almanac = {
 
         </div>
       `
-    }
-  ]
+   },
+{
+  title: "Finding GHA in the Nautical Almanac",
+
+  formula: [
+    { key:"utc", label:"UTC" },
+    "→",
+    { key:"gha", label:"GHA" },
+    "+",
+    { key:"increment", label:"Increment" }
+  ],
+
+  formulaHint:
+    "The Almanac gives the hourly value. The Increment corrects it to the exact minute and second.",
+
+  content: `
+
+<div class="theoryBookIntro">
+
+<h3>Step 1 — Start with UTC</h3>
+
+<p>
+Every celestial calculation begins with the exact UTC.
+The Nautical Almanac is arranged by date and by every full hour.
+</p>
+
+<p>
+Example:
+</p>
+
+<div class="theoryTableExample">
+
+<div>Date</div><div>15 July</div>
+
+<div>UTC</div><div>10:23:18</div>
+
+</div>
+
+</div>
+
+
+<div class="theoryExplain" id="explain_utc" hidden>
+
+<h3>UTC</h3>
+
+<p>
+
+UTC determines which page of the Almanac must be opened.
+
+</p>
+
+<p>
+
+Always use UTC, never ship's local time.
+
+</p>
+
+</div>
+
+
+<div class="theoryExplain" id="explain_gha" hidden>
+
+<h3>Hourly GHA</h3>
+
+<p>
+
+The Almanac provides GHA for every full hour.
+
+</p>
+
+<p>
+
+For 10:00 UTC you simply read the value directly from the daily page.
+
+</p>
+
+</div>
+
+
+<div class="theoryExplain" id="explain_increment" hidden>
+
+<h3>Increment</h3>
+
+<p>
+
+Because the observation is rarely made exactly on the hour,
+an Increment is added.
+
+</p>
+
+<p>
+
+The Increment is taken from the Increment and Correction Tables.
+
+</p>
+
+<div class="theoryRemember">
+
+Final GHA = Hourly GHA + Increment
+
+</div>
+
+</div>
+
+`,
+
+diagram: `
+
+<div class="theoryDiagramPlaceholder">
+
+📖 Nautical Almanac
+
+<br><br>
+
+Daily page
+
+↓
+
+Hourly GHA
+
+↓
+
+Increment Tables
+
+↓
+
+Final GHA
+
+</div>
+
+`
+
+}
+]
+};
 };
