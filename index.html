@@ -5601,42 +5601,65 @@ function openObjectTheory(){
 }
 function openTheoryTopic(topic){
 
-  document.querySelectorAll(".section")
-  .forEach(s => s.classList.remove("active"));
+  document
+    .querySelectorAll(".section")
+    .forEach(section=>{
+      section.classList.remove("active");
+    });
 
-  document.querySelectorAll(".tab")
-  .forEach(t => t.classList.remove("active"));
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab=>{
+      tab.classList.remove("active");
+    });
 
-  document.getElementById("theory").classList.add("active");
+  const theorySection =
+    document.getElementById("theory");
 
-  let theoryTab = [...document.querySelectorAll(".tab")]
-  .find(b => b.textContent.includes("Theory"));
+  if(!theorySection){
+    console.warn(
+      'Element with id="theory" not found.'
+    );
+
+    return;
+  }
+
+  theorySection.classList.add("active");
+
+  const theoryTab =
+    [...document.querySelectorAll(".tab")]
+    .find(button=>
+      button.textContent.includes("Theory")
+    );
 
   if(theoryTab){
     theoryTab.classList.add("active");
   }
 
-  let theorySelect = document.getElementById("theorySelect");
+  const theorySelect =
+    document.getElementById("theorySelect");
 
-  /*
-  Если тема передана из другой части приложения:
-  openTheoryTopic("almanac")
-  */
-  if(topic){
+  const requestedTopic =
+    topic ||
+    theorySelect?.value ||
+    "almanac";
+
+  if(theorySelect && topic){
     theorySelect.value = topic;
   }
 
   /*
-  Если функция вызвана из самого списка без параметра,
-  используется уже выбранное значение.
+    Используем новый Theory Book Engine.
   */
-  showTheory();
+  renderTheoryBook(
+    requestedTopic,
+    0
+  );
 
-  document.getElementById("theory").scrollIntoView({
+  theorySection.scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
-
 }
 function openStarTheory(star){
 
