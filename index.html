@@ -5601,27 +5601,41 @@ function openObjectTheory(){
 }
 function openTheoryTopic(topic){
 
-document.querySelectorAll(".section")
-.forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".section")
+  .forEach(s => s.classList.remove("active"));
 
-document.querySelectorAll(".tab")
-.forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".tab")
+  .forEach(t => t.classList.remove("active"));
 
-document.getElementById("theory").classList.add("active");
+  document.getElementById("theory").classList.add("active");
 
-let theoryTab=[...document.querySelectorAll(".tab")]
-.find(b=>b.textContent.includes("Theory"));
+  let theoryTab = [...document.querySelectorAll(".tab")]
+  .find(b => b.textContent.includes("Theory"));
 
-if(theoryTab) theoryTab.classList.add("active");
+  if(theoryTab){
+    theoryTab.classList.add("active");
+  }
 
-document.getElementById("theorySelect").value=topic;
+  let theorySelect = document.getElementById("theorySelect");
 
-showTheory();
+  /*
+  Если тема передана из другой части приложения:
+  openTheoryTopic("almanac")
+  */
+  if(topic){
+    theorySelect.value = topic;
+  }
 
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
+  /*
+  Если функция вызвана из самого списка без параметра,
+  используется уже выбранное значение.
+  */
+  showTheory();
+
+  document.getElementById("theory").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 
 }
 function openStarTheory(star){
