@@ -2,7 +2,9 @@
    CELESTIAL TRAINER — THEORY: SIGHT REDUCTION
    ========================================================= */
 
-THEORY_BOOK.sight = {
+window.THEORY_BOOK = window.THEORY_BOOK || {};
+
+window.THEORY_BOOK.sight = {
   title: "Sight Reduction",
 
   pages: [
