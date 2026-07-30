@@ -172,32 +172,127 @@ THEORY_BOOK.sight = {
         </div>
       `,
 
-      diagram: `
-        <div class="theoryDiagramPlaceholder">
+diagram: `
+  <div class="sightProcessDiagram">
 
-          Sextant observation
+    <div
+      class="sightProcessStep"
+      data-diagram-term="hs">
 
-          <br><br>
+      <div class="sightProcessCode">
+        Hs
+      </div>
 
-          Hs
+      <div class="sightProcessText">
+        Sextant altitude
+      </div>
 
-          ↓
+      <div class="sightProcessNote">
+        Raw angle measured with the sextant
+      </div>
 
-          Corrections
+    </div>
 
-          ↓
 
-          Ho
+    <div class="sightProcessArrow">
+      ↓ apply corrections
+    </div>
 
-          ↓
 
-          Compare with Hc
+    <div
+      class="sightProcessStep"
+      data-diagram-term="ho">
 
-          ↓
+      <div class="sightProcessCode">
+        Ho
+      </div>
 
-          Intercept
+      <div class="sightProcessText">
+        Observed altitude
+      </div>
+
+      <div class="sightProcessNote">
+        Corrected altitude used for navigation
+      </div>
+
+    </div>
+
+
+    <div class="sightProcessCompare">
+
+      <div class="sightCompareLabel">
+        Compare
+      </div>
+
+      <div class="sightCompareValues">
+
+        <div
+          class="sightCompareValue"
+          data-diagram-term="ho">
+
+          <span>Ho</span>
+          <b>35° 14.4′</b>
 
         </div>
+
+        <div class="sightCompareMinus">
+          −
+        </div>
+
+        <div
+          class="sightCompareValue"
+          data-diagram-term="hc">
+
+          <span>Hc</span>
+          <b>35° 09.1′</b>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="sightProcessArrow">
+      ↓ difference
+    </div>
+
+
+    <div
+      class="sightProcessStep sightInterceptStep"
+      data-diagram-term="intercept">
+
+      <div class="sightProcessCode">
+        5.3 NM
+      </div>
+
+      <div class="sightProcessText">
+        Toward
+      </div>
+
+      <div class="sightProcessNote">
+        Ho is greater than Hc
+      </div>
+
+    </div>
+
+
+    <div class="sightProcessRule">
+
+      <div>
+        <b>Ho &gt; Hc</b>
+        <span>Toward</span>
+      </div>
+
+      <div>
+        <b>Ho &lt; Hc</b>
+        <span>Away</span>
+      </div>
+
+    </div>
+
+  </div>
+`
       `
     },
 
