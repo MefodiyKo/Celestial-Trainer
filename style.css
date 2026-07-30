@@ -592,3 +592,167 @@ body.sextant-fullscreen .sextant-float-freeze{
   background:#102a40;
   color:#b9d9ea;
 }
+/* =========================================================
+   THEORY — SIGHT REDUCTION PROCESS DIAGRAM
+   ========================================================= */
+
+.sightProcessDiagram{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:100%;
+  padding:14px;
+  box-sizing:border-box;
+}
+
+.sightProcessStep{
+  padding:14px;
+  border:1px solid rgba(158,231,255,0.35);
+  border-radius:14px;
+  background:rgba(5,25,48,0.55);
+  text-align:center;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sightProcessCode{
+  font-size:24px;
+  font-weight:800;
+  color:#ffffff;
+}
+
+.sightProcessText{
+  margin-top:3px;
+  font-size:16px;
+  font-weight:700;
+  color:#9ee7ff;
+}
+
+.sightProcessNote{
+  margin-top:6px;
+  font-size:13px;
+  line-height:1.35;
+  color:rgba(255,255,255,0.72);
+}
+
+.sightProcessArrow{
+  text-align:center;
+  font-size:14px;
+  color:#9ee7ff;
+}
+
+.sightProcessCompare{
+  padding:12px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.05);
+}
+
+.sightCompareLabel{
+  margin-bottom:10px;
+  text-align:center;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:rgba(255,255,255,0.65);
+}
+
+.sightCompareValues{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+}
+
+.sightCompareValue{
+  padding:10px 6px;
+  border:1px solid rgba(158,231,255,0.28);
+  border-radius:12px;
+  text-align:center;
+  background:rgba(5,25,48,0.45);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sightCompareValue span{
+  display:block;
+  font-weight:700;
+  color:#9ee7ff;
+}
+
+.sightCompareValue b{
+  display:block;
+  margin-top:4px;
+  font-size:15px;
+  color:#ffffff;
+}
+
+.sightCompareMinus{
+  font-size:24px;
+  font-weight:700;
+  color:#ffffff;
+}
+
+.sightInterceptStep{
+  border-color:rgba(255,217,102,0.5);
+}
+
+.sightProcessRule{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:2px;
+}
+
+.sightProcessRule > div{
+  padding:10px 6px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.06);
+  text-align:center;
+}
+
+.sightProcessRule b,
+.sightProcessRule span{
+  display:block;
+}
+
+.sightProcessRule b{
+  color:#ffffff;
+}
+
+.sightProcessRule span{
+  margin-top:3px;
+  font-size:13px;
+  color:#9ee7ff;
+}
+
+
+/* Подсветка выбранного элемента формулы */
+
+.sightProcessDiagram
+[data-diagram-term].active{
+  transform:scale(1.025);
+  border-color:#ffd966;
+  background:rgba(255,217,102,0.14);
+  box-shadow:
+    0 0 0 2px rgba(255,217,102,0.12),
+    0 8px 20px rgba(0,0,0,0.22);
+}
+
+.sightProcessDiagram
+[data-diagram-term].active
+.sightProcessCode,
+
+.sightProcessDiagram
+[data-diagram-term].active
+.sightProcessText,
+
+.sightProcessDiagram
+[data-diagram-term].active span{
+  color:#ffd966;
+}
