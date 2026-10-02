@@ -1,7 +1,7 @@
 let sextantARBaseSet=false;
 let sextantARBasePitch=0;
 let sextantARBaseRoll=0;
-let sextantARCenterAlt=25;
+let sextantARCenterAlt=0;
 
 let sextantActive=false;
 let sextantFrozenAngle=0;
@@ -15,13 +15,15 @@ let sextantDisplayBodyY=120;
 let sextantHorizonY=180;
 
 let sextantStartPitch=0;
+let sextantStartRoll=0;
 let sextantCurrentPitch=0;
 let sextantCurrentRoll=0;
 let sextantHeading=0;
 let sextantHasHeading=false;
-let sextantPixelScale=6;
 let sextantHeadingOffset=0;
 let sextantPitchOffset=0;
+let sextantLockedObject=null;
+let sextantLockedHs=null;
 
 function fillDMSFromDecimal(value, degId, minId, dirId, posDir, negDir){
   let dir = value >= 0 ? posDir : negDir;
@@ -36,12 +38,14 @@ function fillDMSFromDecimal(value, degId, minId, dirId, posDir, negDir){
 
 async function prepareSextantNavData(){
 
-  if(typeof setNowUTC === "function"){
-    setNowUTC();
-  }
-
   let data = getInputData();
   if(!data.error) return true;
+
+  if(!document.getElementById("dateUTC")?.value && typeof setNowUTC === "function"){
+    setNowUTC();
+    data=getInputData();
+    if(!data.error)return true;
+  }
 
   if(!navigator.geolocation){
     alert("GPS not available. Enter position manually.");
@@ -76,8 +80,14 @@ async function startSextant(){
   let navReady = await prepareSextantNavData();
 if(!navReady)return;
 
-sextantActive=true;
-sextantARBaseSet=false;
+  stopSextant();
+  sextantActive=true;
+  sextantARBaseSet=false;
+  sextantHasHeading=false;
+  sextantHeading=0;
+  sextantHeadingOffset=0;
+  sextantPitchOffset=0;
+  window.removeEventListener("deviceorientation",handleSextantOrientation);
 if(
   typeof DeviceOrientationEvent!=="undefined" &&
   typeof DeviceOrientationEvent.requestPermission==="function"
@@ -94,10 +104,14 @@ if(
       );
     }else{
       alert("Sensor permission denied.");
+      sextantActive=false;
+      return;
     }
 
   }catch(err){
     alert("Sensor error: "+err);
+    sextantActive=false;
+    return;
   }
 }else{
   window.addEventListener(
@@ -115,6 +129,9 @@ if(
 
   }catch(e){
     alert("Camera error: "+e.message);
+    sextantActive=false;
+    window.removeEventListener("deviceorientation",handleSextantOrientation);
+    return;
   }
 
   let canvas=document.getElementById("sextantCanvas");
@@ -154,6 +171,9 @@ function stopSextant(){
     sextantStream.getTracks().forEach(t=>t.stop());
     sextantStream=null;
   }
+
+  let video=document.getElementById("sextantVideo");
+  if(video)video.srcObject=null;
 
 document.body.classList.remove("sextant-fullscreen");
 let view=document.getElementById("sextantView");
@@ -201,18 +221,67 @@ if(typeof event.webkitCompassHeading==="number"){
 
 function selectSextantBody(event){
 
+  if(!sextantActive){
+    alert("Start sensors first.");
+    return;
+  }
+
   let canvas=document.getElementById("sextantCanvas");
   let rect=canvas.getBoundingClientRect();
 
-  sextantBodyX=
+  let tapX=
     (event.clientX-rect.left)*
     (canvas.width/rect.width);
 
-  sextantBodyY=
+  let tapY=
     (event.clientY-rect.top)*
     (canvas.height/rect.height);
 
+  let nearest=null;
+  let nearestDistance=Infinity;
+
+  getVisibleSkyObjects().forEach(object=>{
+    let point=projectSextantObject(object.zn,object.hc,canvas);
+    if(!point)return;
+
+    let distance=Math.hypot(tapX-point.x,tapY-point.y);
+    if(distance<nearestDistance){
+      nearestDistance=distance;
+      nearest={object,point};
+    }
+  });
+
+  if(!nearest || nearestDistance>45){
+    alert("Tap a labelled celestial object.");
+    return;
+  }
+
+  sextantBodyX=nearest.point.x;
+  sextantBodyY=nearest.point.y;
+  sextantDisplayBodyY=nearest.point.y;
+  sextantLockedObject=nearest.object.name;
+  sextantLockedHs=nearest.object.hc;
+
+  let objectSelect=document.getElementById("celestialObject");
+  if(objectSelect){
+    let hasOption=[...objectSelect.options]
+      .some(option=>option.value===sextantLockedObject);
+
+    if(!hasOption){
+      let option=document.createElement("option");
+      option.value=sextantLockedObject;
+      option.textContent="⭐ "+sextantLockedObject;
+      objectSelect.appendChild(option);
+    }
+
+    objectSelect.value=sextantLockedObject;
+    if(typeof updateSightCorrections==="function"){
+      updateSightCorrections();
+    }
+  }
+
   sextantStartPitch=sextantCurrentPitch;
+  sextantStartRoll=sextantCurrentRoll;
   sextantBodyLocked=true;
 sextantFrozenAngle=0;
 
@@ -225,15 +294,63 @@ if(captured){
 
 function getTrainingHs(){
 
-  if(!sextantBodyLocked){
+  if(!sextantBodyLocked || !Number.isFinite(sextantLockedHs)){
     return 0;
   }
 
-  return Math.abs(
-    sextantCurrentPitch - sextantStartPitch
-  );
+  return sextantLockedHs;
 }
+
+function getSextantTiltDelta(){
+  let pitchDelta=sextantCurrentPitch-sextantStartPitch;
+  let rollDelta=sextantCurrentRoll-sextantStartRoll;
+
+  return Math.abs(pitchDelta)>=Math.abs(rollDelta)
+    ? pitchDelta
+    : rollDelta;
+}
+
+function getSextantRemainingAngle(){
+  let canvas=document.getElementById("sextantCanvas");
+  if(!canvas || !sextantBodyLocked)return Infinity;
+
+  let pixelsPerDegree=canvas.height/90;
+  return Math.abs(sextantDisplayBodyY-sextantHorizonY)/pixelsPerDegree;
+}
+
+function getSextantCameraAltitude(){
+  let pitchDelta=sextantCurrentPitch-sextantARBasePitch;
+  let rollDelta=sextantCurrentRoll-sextantARBaseRoll;
+  let tiltMove=Math.abs(pitchDelta)>Math.abs(rollDelta)
+    ? pitchDelta
+    : rollDelta;
+
+  return sextantARCenterAlt+tiltMove+sextantPitchOffset;
+}
+
+function getSextantProjectedHorizonY(canvas){
+  let vFOV=90;
+  let cameraAlt=getSextantCameraAltitude();
+  return canvas.height/2+(cameraAlt/(vFOV/2))*(canvas.height/2);
+}
+
 function freezeSextant(){
+
+  if(!sextantActive || !sextantBodyLocked){
+    alert("Start sensors and tap a labelled celestial object first.");
+    return;
+  }
+
+  drawSextant();
+  let remaining=getSextantRemainingAngle();
+
+  if(remaining>1){
+    alert(
+      "Lower the captured body to the horizon. Remaining angle: "+
+      remaining.toFixed(1)+"°"
+    );
+    return;
+  }
 
   sextantFrozenAngle=getTrainingHs();
 
@@ -244,25 +361,16 @@ function freezeSextant(){
       sextantFrozenAngle.toFixed(1)+"°";
   }
 
-  if(sextantFrozenAngle<=0.2){
-    alert("Body is on horizon. Hs captured.");
-  }else{
-    alert(
-      "Body is not on horizon yet. Current remaining angle: "+
-      sextantFrozenAngle.toFixed(1)+"°"
-    );
-  }
+  alert("Body is on horizon. Hs captured for "+sextantLockedObject+".");
 }
 function useCapturedHsForSight(){
 
-  let capturedText = document.getElementById("sextantCaptured")?.innerText || "--";
-
-  if(capturedText === "--"){
+  if(!Number.isFinite(sextantFrozenAngle) || sextantFrozenAngle<=0){
     alert("No captured Hs available. Freeze angle first.");
     return;
   }
 
-  let hsValue = parseFloat(capturedText);
+  let hsValue = sextantFrozenAngle;
 
   if(isNaN(hsValue)){
     alert("Captured Hs is not valid.");
@@ -285,7 +393,14 @@ function useCapturedHsForSight(){
     hsMinInput.dispatchEvent(new Event("change"));
   }
 
-  let object = document.getElementById("celestialObject")?.value || "Sun";
+  let object = sextantLockedObject || "Sun";
+  let objectSelect=document.getElementById("celestialObject");
+  if(objectSelect)objectSelect.value=object;
+
+  if(typeof calculateObject==="function" && !calculateObject()){
+    alert("Could not calculate the captured object for Sight Reduction.");
+    return;
+  }
 
   window.lastObservation = {
     source: "Digital Sextant",
@@ -313,6 +428,12 @@ function useCapturedHsForSight(){
     object + "\n" +
     "Hs: " + deg + "° " + min.toFixed(1) + "'"
   );
+
+  stopSextant();
+
+  let sightTab=[...document.querySelectorAll(".tab")]
+    .find(button=>button.getAttribute("onclick")?.includes("'sight'"));
+  if(sightTab && typeof openTab==="function")openTab("sight",sightTab);
 }
 function resetSextantBody(){
 
@@ -322,6 +443,9 @@ function resetSextantBody(){
   sextantBodyY=120;
   sextantDisplayBodyY=120;
   sextantStartPitch=sextantCurrentPitch;
+  sextantStartRoll=sextantCurrentRoll;
+  sextantLockedObject=null;
+  sextantLockedHs=null;
 
   let captured=document.getElementById("sextantCaptured");
   if(captured){
@@ -331,6 +455,15 @@ function resetSextantBody(){
   let angle=document.getElementById("sextantAngle");
   if(angle){
     angle.innerText="0.0°";
+  }
+
+  let hsDegInput=document.getElementById("hsDeg");
+  let hsMinInput=document.getElementById("hsMin");
+  if(hsDegInput)hsDegInput.value="";
+  if(hsMinInput)hsMinInput.value="";
+
+  if(window.lastObservation?.source==="Digital Sextant"){
+    window.lastObservation=null;
   }
 
   drawSextant();
@@ -344,7 +477,7 @@ function drawSextant(){
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  sextantHorizonY=canvas.height/2;
+  sextantHorizonY=getSextantProjectedHorizonY(canvas);
 
   let hs=getTrainingHs();
 
@@ -386,12 +519,13 @@ function drawSextant(){
 
   if(sextantBodyLocked){
 
-    let pitchDelta=
-      sextantCurrentPitch-sextantStartPitch;
+    let indexMovement=Math.abs(getSextantTiltDelta());
+    let pixelsPerDegree=canvas.height/90;
+    let remainingAngle=sextantLockedHs-indexMovement;
 
     sextantDisplayBodyY=
-      sextantBodyY+
-      pitchDelta*sextantPixelScale;
+      sextantHorizonY-
+      remainingAngle*pixelsPerDegree;
 
     ctx.strokeStyle="#ffd966";
     ctx.lineWidth=2;
@@ -408,7 +542,7 @@ function drawSextant(){
 
     ctx.fillStyle="#ffd966";
     ctx.font="15px Arial";
-    ctx.fillText("BODY",sextantBodyX+15,sextantDisplayBodyY+5);
+    ctx.fillText(sextantLockedObject || "BODY",sextantBodyX+15,sextantDisplayBodyY+5);
   }
 
   ctx.fillStyle="#9ee7ff";
@@ -438,48 +572,11 @@ function drawSextantSkyObjects(ctx,canvas){
   let objects=getVisibleSkyObjects();
 
   let visibleCount=0;
-
-
-function project(zn,hc){
-
-  if(hc<=0)return null;
-
-  let heading = sextantHasHeading ? sextantHeading : parseFloat(skyCourse.value);
-  if(isNaN(heading)) heading = 0;
-
-  heading = norm360(heading + sextantHeadingOffset);
-
-  let relAz = normalizeError(zn - heading);
-
-  let hFOV = 120;
-  if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
-
-  let x = W/2 + (relAz/(hFOV/2))*(W/2);
-
- let pitchDelta = sextantCurrentPitch - sextantARBasePitch;
-let rollDelta  = sextantCurrentRoll - sextantARBaseRoll;
-
-/* выбираем датчик, который реально меняется */
-let tiltMove =
-Math.abs(pitchDelta) > Math.abs(rollDelta)
-? pitchDelta
-: rollDelta;
-
-let cameraAlt = sextantARCenterAlt + tiltMove + sextantPitchOffset;
-
-let relAlt = hc - cameraAlt;
-
-let vFOV = 90;
-if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
-
-let y = H/2 - (relAlt/(vFOV/2))*(H/2);
-
-  return {x:x,y:y};
-}
+  let showLabels=document.getElementById("showSkyLabels")?.checked!==false;
 
   objects.forEach(o=>{
 
-let p = project(o.zn,o.hc);
+let p = projectSextantObject(o.zn,o.hc,canvas);
     if(!p)return;
 
     visibleCount++;
@@ -514,9 +611,11 @@ let p = project(o.zn,o.hc);
     ctx.arc(p.x,p.y,size+5,0,Math.PI*2);
     ctx.stroke();
 
-    ctx.fillStyle="#ffffff";
-    ctx.font="14px Arial";
-    ctx.fillText(o.name,p.x+size+7,p.y+5);
+    if(showLabels){
+      ctx.fillStyle="#ffffff";
+      ctx.font="14px Arial";
+      ctx.fillText(o.name,p.x+size+7,p.y+5);
+    }
 
     ctx.restore();
 
@@ -535,6 +634,34 @@ ctx.fillText(
   165
 );
   ctx.restore();
+}
+
+function projectSextantObject(zn,hc,canvas){
+  if(hc<=0)return null;
+
+  let W=canvas.width;
+  let H=canvas.height;
+  let courseInput=document.getElementById("skyCourse");
+  let heading=sextantHasHeading
+    ? sextantHeading
+    : parseFloat(courseInput?.value);
+  if(isNaN(heading))heading=0;
+
+  heading=norm360(heading+sextantHeadingOffset);
+  let relAz=normalizeError(zn-heading);
+  let hFOV=120;
+  if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
+
+  let x=W/2+(relAz/(hFOV/2))*(W/2);
+  let cameraAlt=getSextantCameraAltitude();
+  let relAlt=hc-cameraAlt;
+  let vFOV=90;
+  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+
+  return {
+    x,
+    y:H/2-(relAlt/(vFOV/2))*(H/2)
+  };
 }
 
 /* ===== AR calibration ===== */
