@@ -331,7 +331,12 @@ function getSextantCameraAltitude(){
 function getSextantProjectedHorizonY(canvas){
   let vFOV=90;
   let cameraAlt=getSextantCameraAltitude();
-  return canvas.height/2+(cameraAlt/(vFOV/2))*(canvas.height/2);
+  let projectedY=canvas.height/2+(cameraAlt/(vFOV/2))*(canvas.height/2);
+
+  /* Keep the training horizon visible after AR calibration. */
+  let minY=canvas.height*0.35;
+  let maxY=canvas.height*0.68;
+  return Math.max(minY,Math.min(maxY,projectedY));
 }
 
 function freezeSextant(){
@@ -653,14 +658,15 @@ function projectSextantObject(zn,hc,canvas){
   if(relAz < -hFOV/2 || relAz > hFOV/2)return null;
 
   let x=W/2+(relAz/(hFOV/2))*(W/2);
-  let cameraAlt=getSextantCameraAltitude();
-  let relAlt=hc-cameraAlt;
+  let horizonY=getSextantProjectedHorizonY(canvas);
   let vFOV=90;
-  if(relAlt < -vFOV/2 || relAlt > vFOV/2)return null;
+  let pixelsPerDegree=H/vFOV;
+  let y=horizonY-hc*pixelsPerDegree;
+  if(y < -H*0.15 || y > H*1.15)return null;
 
   return {
     x,
-    y:H/2-(relAlt/(vFOV/2))*(H/2)
+    y
   };
 }
 
