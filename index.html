@@ -383,8 +383,8 @@ body.sextant-fullscreen .sextant-float-freeze{
   top:50%;
   transform:translateY(-50%);
   z-index:10000;
-  width:90px;
-  height:90px;
+  width:72px;
+  height:72px;
   border-radius:50%;
   background:#ffd966;
   color:#061824;
@@ -397,7 +397,7 @@ body.sextant-fullscreen #sextantControls{
   bottom:10px !important;
   z-index:10001 !important;
   display:grid !important;
-  grid-template-columns:1fr 1fr 1fr 1fr;
+  grid-template-columns:1.4fr 0.8fr 1fr;
   gap:6px;
 }
 
@@ -405,6 +405,29 @@ body.sextant-fullscreen #sextantControls button{
   min-height:44px;
   font-size:12px;
   padding:6px;
+}
+
+body.sextant-fullscreen #sextantStartButton,
+body.sextant-fullscreen #sextantFreezeButton{
+  display:none !important;
+}
+
+body.sextant-fullscreen #sextantCalibrationPanel,
+body.sextant-fullscreen #sextantLabelsControl{
+  display:none !important;
+}
+
+body.sextant-fullscreen #arFloatControls{
+  left:10px !important;
+  top:10px !important;
+  bottom:auto !important;
+  max-width:230px;
+}
+
+body.sextant-fullscreen #arFloatControls button{
+  padding:6px 8px !important;
+  font-size:11px;
+  opacity:0.82;
 }
 .skyCanvasWrap{
   position:relative !important;
@@ -704,26 +727,28 @@ Calculated Angle:
 <span id="sextantAngle">0.0°</span><br><br>
 Captured Hs:
 <span id="sextantCaptured">--</span>
+</div>
 <div id="sextantControls">
-<button class="main" onclick="startSextant()">
+<button id="sextantStartButton" class="main" onclick="startSextant()">
 Start Sensors
 </button>
 
-<button class="main" onclick="freezeSextant()">
+<button id="sextantFreezeButton" class="main" onclick="freezeSextant()">
 Freeze Angle
 </button>
 
-<button class="main" onclick="useCapturedHsForSight()">
+<button id="sextantUseButton" class="main" onclick="useCapturedHsForSight()">
 Use Captured Hs for Sight
 </button>
 
-<button class="main" onclick="stopSextant()">
+<button id="sextantStopButton" class="main" onclick="stopSextant()">
 Stop
 </button>
-<button class="main" onclick="resetSextantBody()">Reset Body / New Sight</button>
+<button id="sextantResetButton" class="main" onclick="resetSextantBody()">Reset Body / New Sight</button>
+</div>
 <hr>
 
-<div class="resultBox">
+<div class="resultBox" id="sextantCalibrationPanel">
   <b>AR Calibration</b><br><br>
 
   <button onclick="calibrateARToSelectedObject()">Auto Calibrate</button>
@@ -733,11 +758,10 @@ Stop
   <button onclick="nudgeARDown()">▼</button>
   <button onclick="resetARCalibration()">Reset AR</button>
 </div>
-<label style="margin-top:10px;display:block;">
+<label id="sextantLabelsControl" style="margin-top:10px;display:block;">
 <input type="checkbox" id="showSkyLabels" checked onchange="drawSextant()">
  Sky Labels
 </label>
-</div>
 <div id="sextantView" style="position:relative;width:100%;height:360px;margin-top:15px;background:#06152a;border-radius:8px;overflow:hidden;">
 
   <video
@@ -761,6 +785,7 @@ Stop
   <button onclick="nudgeARUp()">▲</button>
   <button onclick="nudgeARDown()">▼</button>
   <button onclick="resetARCalibration()">RST</button>
+  <button onclick="stopSextant()">EXIT</button>
 </div>
 </div>
 <button class="sextant-float-freeze" onclick="freezeSextant()">

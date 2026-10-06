@@ -1,8 +1,3 @@
-let sextantARBaseSet=false;
-let sextantARBasePitch=0;
-let sextantARBaseRoll=0;
-let sextantARCenterAlt=0;
-
 let sextantActive=false;
 let sextantFrozenAngle=0;
 
@@ -82,7 +77,6 @@ if(!navReady)return;
 
   stopSextant();
   sextantActive=true;
-  sextantARBaseSet=false;
   sextantHasHeading=false;
   sextantHeading=0;
   sextantHeadingOffset=0;
@@ -142,7 +136,6 @@ if(
     };
   }
 
-  drawSextant();
   let view=document.getElementById("sextantView");
 
 if(view){
@@ -158,6 +151,8 @@ if(view){
 }
 
 document.body.classList.add("sextant-fullscreen");
+window.addEventListener("resize",handleSextantResize);
+drawSextant();
 
 }
 
@@ -166,6 +161,7 @@ function stopSextant(){
   sextantActive=false;
 
   window.removeEventListener("deviceorientation",handleSextantOrientation);
+  window.removeEventListener("resize",handleSextantResize);
 
   if(sextantStream){
     sextantStream.getTracks().forEach(t=>t.stop());
@@ -194,11 +190,6 @@ function handleSextantOrientation(event){
   sextantCurrentPitch=event.beta || 0;
   sextantCurrentRoll=event.gamma || 0;
 
-if(!sextantARBaseSet){
-  sextantARBasePitch=sextantCurrentPitch;
-  sextantARBaseRoll=sextantCurrentRoll;
-  sextantARBaseSet=true;
-}
   let pitchBox=document.getElementById("sextantPitch");
   let rollBox=document.getElementById("sextantRoll");
 if(typeof event.webkitCompassHeading==="number"){
@@ -217,6 +208,21 @@ if(typeof event.webkitCompassHeading==="number"){
   }
 
   drawSextant();
+}
+
+function handleSextantResize(){
+  if(sextantActive)drawSextant();
+}
+
+function syncSextantCanvasSize(canvas){
+  let rect=canvas.getBoundingClientRect();
+  let width=Math.max(1,Math.round(rect.width));
+  let height=Math.max(1,Math.round(rect.height));
+
+  if(canvas.width!==width || canvas.height!==height){
+    canvas.width=width;
+    canvas.height=height;
+  }
 }
 
 function selectSextantBody(event){
@@ -240,7 +246,11 @@ function selectSextantBody(event){
   let nearest=null;
   let nearestDistance=Infinity;
 
-  getVisibleSkyObjects().forEach(object=>{
+  let selectedName=document.getElementById("celestialObject")?.value || "Sun";
+
+  getVisibleSkyObjects()
+    .filter(object=>object.name===selectedName)
+    .forEach(object=>{
     let point=projectSextantObject(object.zn,object.hc,canvas);
     if(!point)return;
 
@@ -319,24 +329,20 @@ function getSextantRemainingAngle(){
 }
 
 function getSextantCameraAltitude(){
-  let pitchDelta=sextantCurrentPitch-sextantARBasePitch;
-  let rollDelta=sextantCurrentRoll-sextantARBaseRoll;
-  let tiltMove=Math.abs(pitchDelta)>Math.abs(rollDelta)
-    ? pitchDelta
-    : rollDelta;
+  let beta=sextantCurrentPitch*Math.PI/180;
+  let gamma=sextantCurrentRoll*Math.PI/180;
 
-  return sextantARCenterAlt+tiltMove+sextantPitchOffset;
+  /* Back-camera optical axis derived from DeviceOrientation beta/gamma. */
+  let vertical=-Math.cos(beta)*Math.cos(gamma);
+  vertical=Math.max(-1,Math.min(1,vertical));
+
+  return Math.asin(vertical)*180/Math.PI+sextantPitchOffset;
 }
 
 function getSextantProjectedHorizonY(canvas){
   let vFOV=90;
   let cameraAlt=getSextantCameraAltitude();
-  let projectedY=canvas.height/2+(cameraAlt/(vFOV/2))*(canvas.height/2);
-
-  /* Keep the training horizon visible after AR calibration. */
-  let minY=canvas.height*0.35;
-  let maxY=canvas.height*0.68;
-  return Math.max(minY,Math.min(maxY,projectedY));
+  return canvas.height/2+(cameraAlt/vFOV)*canvas.height;
 }
 
 function freezeSextant(){
@@ -478,6 +484,8 @@ function drawSextant(){
   let canvas=document.getElementById("sextantCanvas");
   if(!canvas)return;
 
+  syncSextantCanvasSize(canvas);
+
   let ctx=canvas.getContext("2d");
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -556,7 +564,11 @@ function drawSextant(){
 
   ctx.fillStyle="#cccccc";
   ctx.font="12px Arial";
-  ctx.fillText("For training only — not for official navigation",20,340);
+  ctx.fillText(
+    "For training only — not for official navigation",
+    20,
+    canvas.height-18
+  );
   drawSextantSkyObjects(ctx,canvas);
 }
 function drawSextantSkyObjects(ctx,canvas){
@@ -574,12 +586,16 @@ function drawSextantSkyObjects(ctx,canvas){
   let W=canvas.width;
   let H=canvas.height;
 
-  let objects=getVisibleSkyObjects();
+  let selectedName=document.getElementById("celestialObject")?.value || "Sun";
+  let objects=getVisibleSkyObjects()
+    .filter(object=>object.name===selectedName);
 
   let visibleCount=0;
   let showLabels=document.getElementById("showSkyLabels")?.checked!==false;
 
   objects.forEach(o=>{
+
+    if(sextantBodyLocked && o.name===sextantLockedObject)return;
 
 let p = projectSextantObject(o.zn,o.hc,canvas);
     if(!p)return;
@@ -629,15 +645,13 @@ let p = projectSextantObject(o.zn,o.hc,canvas);
   ctx.save();
   ctx.fillStyle="#9ee7ff";
   ctx.font="14px Arial";
-ctx.fillText(
-  "AR Sky | objects: "+visibleCount+
-  " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
-  " | Pitch "+sextantCurrentPitch.toFixed(0)+"°"+
-  " | HOff "+sextantHeadingOffset.toFixed(0)+"°"+
-  " | POff "+sextantPitchOffset.toFixed(0)+"°",
-  20,
-  165
-);
+  let target=objects[0];
+  let diagnostic=
+    "Target "+selectedName+
+    (target ? " | Hc "+target.hc.toFixed(1)+"° | Zn "+target.zn.toFixed(0)+"°" : " | below horizon")+
+    " | HDG "+(sextantHasHeading?sextantHeading.toFixed(0):"---")+"°"+
+    " | CamAlt "+getSextantCameraAltitude().toFixed(0)+"°";
+  ctx.fillText(diagnostic,20,150);
   ctx.restore();
 }
 
@@ -708,22 +722,13 @@ function calibrateARToSelectedObject(){
   if(isNaN(heading))heading=0;
 
   sextantHeadingOffset=normalizeError(target.zn-heading);
-
-  let pitchDelta=sextantCurrentPitch-sextantARBasePitch;
-  let rollDelta=sextantCurrentRoll-sextantARBaseRoll;
-
-  let tiltMove=
-    Math.abs(pitchDelta)>Math.abs(rollDelta)
-    ? pitchDelta
-    : rollDelta;
-
-  sextantPitchOffset=target.hc-sextantARCenterAlt-tiltMove;
+  sextantPitchOffset=0;
 
   drawSextant();
 
   alert(
     "AR calibrated to "+selected+
     "\nHeading offset: "+sextantHeadingOffset.toFixed(1)+"°"+
-    "\nPitch offset: "+sextantPitchOffset.toFixed(1)+"°"
+    "\nVertical position now follows the iPhone orientation sensor."
   );
 }
